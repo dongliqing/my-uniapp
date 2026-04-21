@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'uni-simple-router';
+  import { useRouter } from 'uni-mini-router';
 
   const title = ref('Hello');
   const router = useRouter();

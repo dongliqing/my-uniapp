@@ -3,14 +3,15 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "缙云餐饮综合管理小程序"
+        "navigationBarTitleText": "首页"
       }
     },
-     {
+    {
       "path": "pages/login/login",
       "style": {
         "navigationBarTitleText": "登录"
-      },
+      }
+    },
     {
       "path": "pages/storeList/storeList",
       "style": {

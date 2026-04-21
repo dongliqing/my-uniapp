@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'uni-simple-router';
+  import { useRouter } from 'uni-mini-router';
   import { ref } from 'vue';
 
   const router = useRouter();
@@ -40,10 +40,14 @@
 
     // 登录成功后跳转
     setTimeout(() => {
-      // 如果有重定向路径，则跳转到目标页面
+      // 从 query 中获取重定向路径
       const redirect = router.currentRoute.value.query.redirect;
       if (redirect) {
-        router.replace(redirect as string);
+        // 如果 redirect 包含路径，直接跳转
+        const targetUrl = (redirect as string).startsWith('/')
+          ? (redirect as string)
+          : '/' + (redirect as string);
+        router.replace({ path: targetUrl });
       } else {
         // 否则跳转到首页
         router.replace({ name: 'home' });

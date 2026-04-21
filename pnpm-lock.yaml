@@ -56,9 +56,9 @@ importers:
       '@dcloudio/uni-quickapp-webview':
         specifier: 3.0.0-4080420251103001
         version: 3.0.0-4080420251103001(postcss@8.5.10)(rollup@4.60.2)(vue@3.5.32(typescript@4.9.5))
-      uni-simple-router:
-        specifier: 2.0.8-beta.4
-        version: 2.0.8-beta.4
+      uni-mini-router:
+        specifier: ^0.1.6
+        version: 0.1.6
       vue:
         specifier: ^3.4.21
         version: 3.5.32(typescript@4.9.5)
@@ -3390,8 +3390,8 @@ packages:
   undici-types@7.19.2:
     resolution: {integrity: sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==}
 
-  uni-simple-router@2.0.8-beta.4:
-    resolution: {integrity: sha512-ipTHhOaRvjV8qrt3HosX5pNMhwFYBnFOuKyV5joH0evfXubjrGI5tjdwpmwzfW5h3VBth3iAqScv+pW/QmIJXw==}
+  uni-mini-router@0.1.6:
+    resolution: {integrity: sha512-dgeEYCv00yTkiX3gVAQXrx4IAzAVtZv+2lVtVaixH6J/IHfZP7R3wqUwBvy4eFD0vP20p+QWNNE2c5LuHbPSiQ==}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}
@@ -3716,7 +3716,7 @@ snapshots:
 
   '@babel/generator@7.25.6':
     dependencies:
-      '@babel/types': 7.25.6
+      '@babel/types': 7.29.0
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 2.5.2
@@ -5935,13 +5935,13 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
-      '@babel/parser': 7.25.6
+      '@babel/parser': 7.29.2
       '@vue/compiler-core': 3.4.21
       '@vue/compiler-dom': 3.4.21
       '@vue/compiler-ssr': 3.4.21
       '@vue/shared': 3.4.21
       estree-walker: 2.0.2
-      magic-string: 0.30.11
+      magic-string: 0.30.21
       postcss: 8.5.10
       source-map-js: 1.2.1
 
@@ -8039,7 +8039,7 @@ snapshots:
 
   undici-types@7.19.2: {}
 
-  uni-simple-router@2.0.8-beta.4: {}
+  uni-mini-router@0.1.6: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
