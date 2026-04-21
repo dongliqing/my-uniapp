@@ -3,7 +3,8 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "首页",
+        "navigationBarBackgroundColor": "#007AFF"
       }
     },
     {
@@ -15,7 +16,10 @@
     {
       "path": "pages/storeList/storeList",
       "style": {
-        "navigationBarTitleText": "商家列表"
+        "navigationBarTitleText": "商家列表",
+        "enablePullDownRefresh": true,
+        "backgroundTextStyle": "dark",
+        "onReachBottomDistance": 50
       }
     },
     {

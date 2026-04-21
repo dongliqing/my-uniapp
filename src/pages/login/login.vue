@@ -56,7 +56,7 @@
   };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .login-area {
     margin: 40rpx 0;
   }

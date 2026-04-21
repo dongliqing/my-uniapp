@@ -2,7 +2,7 @@
   <view class="content">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
-      <text class="title" @click="handleClick">{{ title }}</text>
+      <text class="title !text-[red]" @click="handleClick">{{ title }}</text>
     </view>
   </view>
 </template>
