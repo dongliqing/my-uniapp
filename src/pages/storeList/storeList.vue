@@ -1,27 +1,12 @@
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png" />
-    <view class="text-area">
-      <text class="title" @click="handleClick">{{ title }}</text>
-    </view>
-  </view>
+  <view class="content"> 商家列表 </view>
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'uni-simple-router';
-
   const title = ref('Hello');
-  const router = useRouter();
-
-  // 点击title跳转到商家列表页
-  const handleClick = () => {
-    router.push({
-      name: 'storeList',
-    });
-  };
 </script>
 
-<style scoped>
+<style>
   .content {
     display: flex;
     flex-direction: column;
