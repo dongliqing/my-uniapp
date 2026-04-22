@@ -3,6 +3,7 @@
     {
       "path": "pages/index/index",
       "style": {
+        "navigationStyle": "custom",
         "navigationBarTitleText": "首页",
         "navigationBarBackgroundColor": "#007AFF"
       }
@@ -31,8 +32,39 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
+    "navigationBarTitleText": "缙云阳光厨房",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F5F5F5",
+    "app-plus": {
+      "titleNView": {
+        "buttons": []
+      }
+    }
+  },
+  "tabBar": {
+    "color": "#333333",
+    "selectedColor": "#1782FC",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home_hl.png"
+      },
+      {
+        "pagePath": "pages/storeList/storeList",
+        "text": "你点我查",
+        "iconPath": "static/tabbar/search.png",
+        "selectedIconPath": "static/tabbar/search_hl.png"
+      },
+      {
+        "pagePath": "pages/login/login",
+        "text": "我的",
+        "iconPath": "static/tabbar/my.png",
+        "selectedIconPath": "static/tabbar/my_hl.png"
+      }
+    ]
   }
 }
