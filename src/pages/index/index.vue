@@ -3,6 +3,7 @@
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
       <text class="title !text-[red]" @click="handleClick">{{ title }}</text>
+      <text class="title !text-[red]" @click="handleLogin">去登陆</text>
     </view>
   </view>
 </template>
@@ -17,6 +18,11 @@
   const handleClick = () => {
     router.push({
       name: 'storeList',
+    });
+  };
+  const handleLogin = () => {
+    router.push({
+      name: 'login',
     });
   };
 </script>
