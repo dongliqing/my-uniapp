@@ -3,9 +3,9 @@
     <!-- 背景图 -->
     <image class="bg-image" src="/static/images/login_bg.png" mode="cover" />
 
-    <view class="mt-[100px] ml-[15px]">
-      <view class="text-[20px] mb-[4px]">欢迎使用</view>
-      <text class="text-[16px]">缙云餐饮综合管理平台</text>
+    <view class="mt-[90px] ml-[20px]">
+      <view class="text-[22px] mb-[10px] font-bold">欢迎使用</view>
+      <text class="text-[18px]">缙云餐饮综合管理平台</text>
     </view>
 
     <!-- 登录内容区域 -->
@@ -194,6 +194,7 @@
     width: 100%;
     height: 60%;
     z-index: -1;
+    filter: hue-rotate(165deg);
   }
 
   .login-form {
@@ -202,7 +203,7 @@
     background: #ffffff;
     border-radius: 20rpx;
     margin: auto;
-    margin-top: 40rpx;
+    margin-top: 50rpx;
     width: 92%;
 
     .form-item {
@@ -221,8 +222,7 @@
 
     .get-phone-btn {
       width: 160rpx !important;
-      // height: 48rpx !important;
-      color: #46b2ff !important;
+      color: #1882fc !important;
       background: none !important;
       font-size: 32rpx;
       margin: 0 0 0 26rpx !important;
