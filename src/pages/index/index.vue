@@ -4,6 +4,7 @@
     <view class="text-area">
       <text class="title !text-[red]" @click="handleClick">{{ title }}</text>
       <text class="title !text-[red]" @click="handleLogin">去登陆</text>
+      <text @tap="goMerchant">去商户列表</text>
     </view>
   </view>
 </template>
@@ -25,6 +26,10 @@
       name: 'login',
     });
   };
+
+const goMerchant = (item: any) => {
+  uni.navigateTo({ url: `/pages/merchantList/index?id=${item.id}` })
+}
 </script>
 
 <style scoped>
