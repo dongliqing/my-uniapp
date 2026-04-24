@@ -89,11 +89,11 @@ $danger: #f44336;
 $info: #9e9e9e;
 
 // ===== 状态色（商家状态）=====
-$status-normal: #4caf50;      // 正常经营
+$status-normal: #4caf50; // 正常经营
 $status-normal-bg: #e8f5e9;
-$status-reform: #ff9800;      // 整改中
+$status-reform: #ff9800; // 整改中
 $status-reform-bg: #fff3e0;
-$status-risk: #f44336;        // 高风险
+$status-risk: #f44336; // 高风险
 $status-risk-bg: #ffebee;
 
 // ===== 文字色 =====
@@ -152,3 +152,15 @@ $transition-slow: 0.35s ease;
 // ===== 安全区 =====
 $safe-area-top: constant(safe-area-inset-top);
 $safe-area-bottom: constant(safe-area-inset-bottom);
+
+// 字体
+$font-family:
+  'Alibaba PuHuiTi',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  sans-serif;
+$font-family-special: 'FZXiaoBiaoSong-B05', $font-family;
+
+$uni-font-path: '/static/iconfont';

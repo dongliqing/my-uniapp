@@ -7,7 +7,7 @@
 
     <!-- 品牌展示区 -->
     <view class="brand-showcase">
-      <view v-for="(brand, index) in brandList" :key="index" class="brand-box">
+      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('storeList')">
         <view class="brand-item">
           <text class="brand-name">{{ brand.name }}</text>
           <image src="@/static/images/home-head-line.png" mode="aspectFit" class="line" />
@@ -23,7 +23,7 @@
     </view>
 
     <!-- 搜索栏 -->
-    <view class="search-bar">
+    <view class="search-bar" @click="navigateTo('storeList')">
       <view class="search-box">
         <image class="search-icon" src="@/static/images/search-icon.png" mode="aspectFit" />
         <text class="search-placeholder">搜索店铺</text>
@@ -40,7 +40,7 @@
       </view>
       <view class="services-grid">
         <!-- 红黑榜单 -->
-        <view class="service-card" @click="navigateTo('youDianWoCha')">
+        <view class="service-card" @click="navigateTo('redBlackRank')">
           <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">红黑榜单</text>
@@ -54,7 +54,7 @@
           </view>
         </view>
         <!-- 你点我查 -->
-        <view class="service-card" @click="navigateTo('youDianWoCha')">
+        <view class="service-card" @click="switchTo">
           <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">你点我查</text>
@@ -68,7 +68,7 @@
           </view>
         </view>
         <!-- 我要咨询 -->
-        <view class="service-card" @click="navigateTo('consult')">
+        <view class="service-card" @click="navigateTo('redBlackRank')">
           <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">我要咨询</text>
@@ -121,8 +121,7 @@
       </view>
       <view class="info-cards">
         <view v-for="(card, index) in storeInfoCards" :key="index" class="info-card">
-          <view class="card-bg" />
-          <!-- <image class="card-icon" :src="card.icon" mode="aspectFit" /> -->
+          <image class="card-icon" src="@/static/images/store-info-bg.png" mode="aspectFill" />
           <text class="info-title">{{ card.title }}</text>
           <view class="info-num">
             <text class="num">{{ card.count }}</text>
@@ -133,22 +132,19 @@
     </view>
 
     <!-- 最新资讯 -->
-    <view class="section news">
+    <view class="section news !pb-0">
       <view class="section-header">
         <text class="section-title">最新资讯</text>
       </view>
       <view class="news-list">
         <view class="news-item" v-for="(item, index) in newsList" :key="index" @click="viewNews(item.id)">
-          <!-- <image class="news-thumb" :src="'@/static/assets/CodeBuddyAssets/0_3/' + item.thumb + '.svg'"
-            mode="aspectFit" /> -->
           <text class="news-title">{{ item.title }}</text>
-          <!-- <image class="news-arrow" :src="'@/static/assets/CodeBuddyAssets/0_3/' + item.arrow + '.svg'"
-            mode="aspectFit" /> -->
+          <uni-icons type="forward" size="20" color="#999" class="news-arrow shrink-0" />
         </view>
       </view>
       <view class="view-more" @click="viewAllNews">
         <text class="more-text">查看更多</text>
-        <!-- <image class="more-arrow" src="@/static/assets/CodeBuddyAssets/0_3/17.svg" mode="aspectFit" /> -->
+        <uni-icons type="down" size="20" color="#1782fc" class="more-arrow" />
       </view>
     </view>
 
@@ -160,6 +156,7 @@
 </template>
 
 <script setup lang="ts">
+// import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
 import { useRouter } from 'uni-mini-router';
 import { ref } from 'vue';
 
@@ -241,11 +238,11 @@ const storeInfoCards = [
 
 // 资讯列表数据
 const newsList = ref([
-  { id: 1, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 7, arrow: 8 },
-  { id: 2, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 9, arrow: 10 },
-  { id: 3, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 11, arrow: 12 },
-  { id: 4, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 13, arrow: 14 },
-  { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 15, arrow: 16 }
+  { id: 1, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
+  { id: 2, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
+  { id: 3, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
+  { id: 4, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
+  { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' }
 ])
 
 // 返回
@@ -254,45 +251,30 @@ const goBack = () => {
 }
 
 // 导航到指定页面
-const navigateTo = (page: string) => {
-  const routes: Record<string, string> = {
-    report: '/pages/report/index',
-    consult: '/pages/consult/index',
-    youDianWoCha: '/pages/search/index',
-    banquet: '/pages/banquet/index',
-    certificate: '/pages/certificate/index',
-    audit: '/pages/audit/index'
-  }
-  if (routes[page]) {
-    router.push(routes[page])
-  }
-}
-
-// 查看资讯详情
-const viewNews = (id: number) => {
+const navigateTo = (name: string) => {
   router.push({
-    name: 'newsDetail',
-    params: { id }
+    name: name
   })
 }
 
-// 查看全部资讯
-const viewAllNews = () => {
-  router.push({ name: 'newsList' })
+const switchTo = () => {
+  uni.switchTab({
+    url: '/pages/check/index'
+  })
 }
 
-const goMerchant = (item: any) => {
-  uni.navigateTo({ url: `/pages/merchantList/index?id=${item.id}` })
-}
+// 查看资讯详情
+const viewNews = (id: number) => { }
+
+// 查看全部资讯
+const viewAllNews = () => { }
 </script>
 
 <style lang="scss" scoped>
-@use '@/static/css/_variables.scss' as vars;
-
 .home-page {
   background: #f5f5f5;
   position: relative;
-  font-family: vars.$font-family;
+  font-family: $font-family;
 }
 
 // 顶部渐变
@@ -670,66 +652,64 @@ const goMerchant = (item: any) => {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16rpx;
-  }
 
-  .info-card {
-    position: relative;
-    height: 180rpx;
-    background: #e5f1ff;
-    border-radius: 16rpx;
-    border: 1rpx solid #afd3ff;
-    padding: 20rpx;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-  }
+    .info-card {
+      position: relative;
+      height: 180rpx;
+      // width: 208rpx;
+      // background: #e5f1ff;
+      border-radius: 16rpx;
+      // border: 1rpx solid #afd3ff;
+      // padding: 20rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
 
-  .card-bg {
-    position: absolute;
-    top: -66rpx;
-    left: 84rpx;
-    width: 153rpx;
-    height: 153rpx;
-    background: linear-gradient(180deg, rgba(24, 130, 252, 0) 0%, rgba(24, 130, 252, 0.12) 100%);
-    border-radius: 9999rpx;
-    z-index: 0;
-  }
+      .card-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
 
-  .card-icon {
-    width: 100rpx;
-    height: 100rpx;
-    margin-top: 60rpx;
-    z-index: 1;
-  }
+      .info-title {
+        font-size: 26rpx;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+        // margin-top: 16rpx;
+        z-index: 1;
+        white-space: pre-line;
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
 
-  .info-title {
-    font-size: 26rpx;
-    font-weight: 500;
-    color: #333;
-    text-align: center;
-    margin-top: 16rpx;
-    z-index: 1;
-    white-space: pre-line;
-  }
+      .info-num {
+        display: flex;
+        align-items: center;
+        margin-top: 8rpx;
+        z-index: 1;
+        height: 76rpx;
+      }
 
-  .info-num {
-    display: flex;
-    align-items: baseline;
-    margin-top: 8rpx;
-    z-index: 1;
-  }
+      .num {
+        font-size: 32rpx;
+        font-weight: 500;
+        color: #1782fc;
+        line-height: 40rpx;
+      }
 
-  .num {
-    font-size: 32rpx;
-    font-weight: 500;
-    color: #1782fc;
-  }
-
-  .unit {
-    font-size: 24rpx;
-    color: #333;
-    margin-left: 8rpx;
+      .unit {
+        font-size: 24rpx;
+        color: #333;
+        margin-left: 8rpx;
+        line-height: 40rpx;
+      }
+    }
   }
 }
 
@@ -745,10 +725,6 @@ const goMerchant = (item: any) => {
     align-items: center;
     padding: 24rpx 0;
     border-bottom: 1rpx solid #f0f0f0;
-
-    &:last-child {
-      border-bottom: none;
-    }
   }
 
   .news-thumb {
@@ -776,29 +752,27 @@ const goMerchant = (item: any) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 24rpx;
-  }
+    height: 90rpx;
 
-  .more-text {
-    font-size: 24rpx;
-    color: #999;
-  }
+    .more-text {
+      font-size: 24rpx;
+      color: #000;
+    }
 
-  .more-arrow {
-    width: 24rpx;
-    height: 24rpx;
-    margin-left: 8rpx;
+    .more-arrow {
+      margin-left: 8rpx;
+    }
   }
 }
 
 // 监管声明
 .supervision-declaration {
   text-align: center;
-  padding: 24rpx;
-}
+  padding: 28rpx 0 68rpx;
 
-.declaration-text {
-  font-size: 20rpx;
-  color: #999;
+  .declaration-text {
+    font-size: 24rpx;
+    color: #999;
+  }
 }
 </style>

@@ -1,0 +1,8 @@
+{
+    "setting": {
+        "ignoreDevUnusedFiles": false,
+        "ignoreUploadUnusedFiles": false,
+        "es6": true,
+        "minified": true
+    }
+}

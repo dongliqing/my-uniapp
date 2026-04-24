@@ -29,13 +29,13 @@
         "navigationBarTitleText": "商家详情"
       }
     },
-     {
+    {
       "path": "pages/check/index",
       "style": {
         "navigationBarTitleText": "你点我查"
       }
     },
-        {
+    {
       "path": "pages/checkDetail/index",
       "style": {
         "navigationBarTitleText": "活动详情"
@@ -96,5 +96,11 @@
         "selectedIconPath": "static/tabbar/my_hl.png"
       }
     ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
   }
 }
