@@ -15,7 +15,8 @@
         <view class="merchant-card__rating">
           <view class="merchant-card__stars">
             <image v-for="n in 5" :key="n" class="merchant-card__star"
-              :src="n <= data.stars ? '/static/images/svg/star-active.svg' : '/static/images/svg/star-default.svg'" mode="aspectFit" />
+              :src="n <= data.stars ? '/static/images/svg/star-active.svg' : '/static/images/svg/star-default.svg'"
+              mode="aspectFit" />
           </view>
           <text class="merchant-card__score">{{ data.score }}分</text>
           <text class="merchant-card__distance">{{ data.distance }}</text>
@@ -30,7 +31,7 @@
         <!-- 标签 -->
         <view class="merchant-card__tags">
           <view class="merchant-card__year-tag">
-            <image class="merchant-card__year-icon" src="/static/detail/21.svg" mode="aspectFit" />
+            <image class="merchant-card__year-icon" src="/static/images/svg/shop.svg" mode="aspectFit" />
             <text class="merchant-card__year-text">{{ data.year }}年店铺</text>
           </view>
           <view class="merchant-card__badge">{{ data.badge }}</view>
@@ -40,8 +41,9 @@
     </view>
     <!-- 投诉信息 -->
     <view class="merchant-card__stats">
-      <view>
-        <image class="merchant-card__stats-icon" src="/static/images/svg/merchant-info.svg" mode="aspectFit" />
+      <view class="merchant-card__stats-item">
+        <image class="merchant-card__stats-icon"
+          :src="`/static/images/svg/${data.status === 'high' ? 'high.svg' : 'normal.svg'}`" mode="aspectFit" />
         <text class="merchant-card__stats-text">年度投诉{{ data.complaint }}件</text>
         <text class="merchant-card__stats-text">立案查处{{ data.penalty }}件</text>
       </view>
@@ -52,11 +54,10 @@
         'merchant-card__status--rectify': data.status === 'rectify',
         'merchant-card__status--high': data.status === 'high'
       }">
-        <text class="merchant-card__status-text">{{ statusText }}</text>
+        {{ statusText }}
       </view>
     </view>
   </view>
-
 </template>
 
 <script setup lang="ts">
@@ -113,7 +114,7 @@ function goDetail() {
   &__top {
     display: flex;
     padding-bottom: 20rpx;
-    border-bottom: 1rpx solid #D9D9D9;
+    border-bottom: 1rpx solid #d9d9d9;
   }
 
   &__img-wrap {
@@ -123,7 +124,7 @@ function goDetail() {
     border-radius: 8rpx;
     overflow: hidden;
     flex-shrink: 0;
-    background: #D9D9D9;
+    background: #d9d9d9;
   }
 
   &__img {
@@ -165,7 +166,7 @@ function goDetail() {
 
   &__score {
     font-size: 24rpx;
-    color: #1882FC;
+    color: #1882fc;
     font-weight: 500;
   }
 
@@ -199,7 +200,7 @@ function goDetail() {
     align-items: center;
     background: rgba(255, 192, 155, 0.3);
     border-radius: 1rpx;
-    padding: 0 12rpx;
+    padding-right: 12rpx;
     height: 32rpx;
     gap: 8rpx;
   }
@@ -215,15 +216,15 @@ function goDetail() {
   }
 
   &__badge {
-    background: #FFF3E1;
+    background: #fff3e1;
     border-radius: 2rpx;
-    border: 1rpx solid #EFCE9C;
+    border: 1rpx solid #efce9c;
     padding: 0 10rpx;
     height: 32rpx;
     display: flex;
     align-items: center;
     font-size: 22rpx;
-    color: #B2823A;
+    color: #b2823a;
   }
 
   &__stats {
@@ -233,9 +234,15 @@ function goDetail() {
     margin-top: 20rpx;
   }
 
+  &__stats-item {
+    display: flex;
+    align-items: center;
+  }
+
   &__stats-icon {
     width: 32rpx;
     height: 32rpx;
+    margin-right: 12rpx;
   }
 
   &__stats-text {
@@ -249,30 +256,21 @@ function goDetail() {
     padding: 5rpx 10rpx;
 
     &--normal {
-      background: #EDF5FF;
-      border-color: #AFD3FF;
-
-      .merchant-card__status-text {
-        color: #1882FC;
-      }
+      background: #edf5ff;
+      border-color: #afd3ff;
+      color: #1882fc;
     }
 
     &--rectify {
-      background: #F1F1F1;
+      background: #f1f1f1;
       border-color: #999;
-
-      .merchant-card__status-text {
-        color: #666;
-      }
+      color: #666;
     }
 
     &--high {
-      background: #FFE9E5;
-      border-color: #F23212;
-
-      .merchant-card__status-text {
-        color: #F23212;
-      }
+      background: #ffe9e5;
+      border-color: #f23212;
+      color: #f23212;
     }
   }
 

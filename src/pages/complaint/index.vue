@@ -1,14 +1,7 @@
 <template>
   <view class="complaint">
-    <!-- 渐变背景 -->
-    <view class="complaint__hero-bg" />
-    <image class="complaint__hero-deco" src="/static/complaint/1.svg" mode="widthFix" />
-
-    <!-- 顶部导航 -->
-    <CustomNav title="投诉" :showBg="false" />
-
     <!-- 主滚动区 -->
-    <scroll-view class="complaint__scroll" scroll-y :style="{ paddingTop: statusBarHeight + navBarHeight + 'px' }">
+    <scroll-view class="complaint__scroll" scroll-y>
       <view class="complaint__content">
         <!-- 商家信息卡 -->
         <view class="complaint__section">
@@ -26,26 +19,23 @@
         <!-- 投诉内容 -->
         <view class="complaint__section">
           <text class="complaint__section-title">投诉信息</text>
-          <textarea
-            v-model="complaintContent"
-            class="complaint__textarea"
-            placeholder="请详细描述投诉内容，我们会保密该信息~"
-            placeholder-class="complaint__textarea-placeholder"
-            :maxlength="500"
-          />
+          <textarea v-model="form.complaintContent" class="complaint__textarea" placeholder="请详细描述投诉内容，我们会保密该信息~"
+            placeholder-class="complaint__textarea-placeholder" :maxlength="500" />
 
           <!-- 图片上传 -->
           <view class="complaint__upload-area">
-            <view class="complaint__upload-hint">
-              <text class="complaint__upload-hint-text">图片({{ uploadedImages.length }}/4)</text>
-            </view>
-            <view class="complaint__upload-btn" @tap="chooseImage">
-              <view class="complaint__upload-icon-wrap">
-                <image class="complaint__upload-icon" src="/static/complaint/9.svg" mode="aspectFit" />
-              </view>
-              <view v-for="(img, i) in uploadedImages" :key="i" class="complaint__upload-preview">
+            <view class="complaint__upload-list">
+              <!-- 已上传图片 -->
+              <view v-for="(img, i) in form.uploadedImages" :key="i" class="complaint__upload-preview"
+                @tap="previewImage(i)">
                 <image class="complaint__upload-preview-img" :src="img" mode="aspectFill" />
                 <view class="complaint__upload-del" @tap.stop="removeImage(i)">×</view>
+              </view>
+              <!-- 上传按钮（未满4张时显示） -->
+              <view v-if="form.uploadedImages.length < 4" class="complaint__upload-btn" @tap="chooseImage">
+                <image class="complaint__upload-icon" src="/static/images/svg/upload.svg" mode="aspectFit" />
+                <text class="complaint__upload-hint-text">图片({{ form.uploadedImages.length }}/4)</text>
+
               </view>
             </view>
           </view>
@@ -55,28 +45,18 @@
         <view class="complaint__section">
           <text class="complaint__section-title">联系方式</text>
           <text class="complaint__contact-hint">联系方式用于执法人员联系本人了解具体投诉内容，绝不外泄</text>
-          <input
-            v-model="phone"
-            class="complaint__input"
-            type="number"
-            placeholder="欢迎留下你的手机号"
-            placeholder-class="complaint__input-placeholder"
-            :maxlength="11"
-          />
+          <input v-model="form.phone" class="complaint__input" type="number" placeholder="欢迎留下你的手机号"
+            placeholder-class="complaint__input-placeholder" :maxlength="11" />
         </view>
 
         <!-- 间距 -->
-        <view style="height: 160rpx;" />
+        <view style="height: 160rpx" />
       </view>
     </scroll-view>
 
     <!-- 提交按钮 -->
     <view class="complaint__submit-bar">
-      <view
-        class="complaint__submit-btn"
-        :class="{ 'complaint__submit-btn--active': canSubmit }"
-        @tap="submit"
-      >
+      <view class="complaint__submit-btn" :class="{ 'complaint__submit-btn--active': canSubmit }" @tap="submit">
         <text class="complaint__submit-text">提交</text>
       </view>
     </view>
@@ -84,46 +64,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import CustomNav from '@/components/CustomNav.vue'
+import { computed, reactive } from 'vue'
 
-const statusBarHeight = ref(20)
-const navBarHeight = ref(44)
-
-const complaintContent = ref('')
-const phone = ref('')
-const uploadedImages = ref<string[]>([])
-
-const canSubmit = computed(() => complaintContent.value.trim().length > 0)
-
-onMounted(() => {
-  const sysInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = sysInfo.statusBarHeight || 20
-  try {
-    const menuBtn = uni.getMenuButtonBoundingClientRect()
-    navBarHeight.value = menuBtn.height + (menuBtn.top - statusBarHeight.value) * 2
-  } catch {
-    navBarHeight.value = 44
-  }
+const form = reactive({
+  complaintContent: '',
+  phone: '',
+  uploadedImages: [] as string[]
 })
 
+const canSubmit = computed(() => form.complaintContent.trim().length > 0)
+
 function chooseImage() {
-  if (uploadedImages.value.length >= 4) {
+  if (form.uploadedImages.length >= 4) {
     uni.showToast({ title: '最多上传4张图片', icon: 'none' })
     return
   }
   uni.chooseImage({
-    count: 4 - uploadedImages.value.length,
+    count: 4 - form.uploadedImages.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success(res) {
-      uploadedImages.value.push(...res.tempFilePaths)
+      // tempFilePaths 可能为 string | string[]，用 concat 安全合并
+      const paths = Array.isArray(res.tempFilePaths) ? res.tempFilePaths : [res.tempFilePaths]
+      form.uploadedImages.push(...paths)
     }
   })
 }
 
 function removeImage(index: number) {
-  uploadedImages.value.splice(index, 1)
+  form.uploadedImages.splice(index, 1)
+}
+
+function previewImage(index: number) {
+  uni.previewImage({
+    current: form.uploadedImages[index],
+    urls: form.uploadedImages
+  })
 }
 
 function submit() {
@@ -131,6 +107,8 @@ function submit() {
     uni.showToast({ title: '请填写投诉内容', icon: 'none' })
     return
   }
+  console.log('>>>>>', form);
+
   uni.showToast({ title: '提交成功', icon: 'success' })
   setTimeout(() => uni.navigateBack(), 1500)
 }
@@ -139,20 +117,24 @@ function submit() {
 <style lang="scss">
 .complaint {
   min-height: 100vh;
-  background: #F5F5F5;
+  background: #f5f5f5;
   position: relative;
 
   &__hero-bg {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 612rpx;
-    background: linear-gradient(180deg, #C3E9FF 0%, rgba(195,233,255,0) 100%);
+    background: linear-gradient(180deg, #c3e9ff 0%, rgba(195, 233, 255, 0) 100%);
     z-index: 0;
     pointer-events: none;
   }
+
   &__hero-deco {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     z-index: 1;
     opacity: 0.6;
@@ -161,10 +143,13 @@ function submit() {
 
   &__nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
     background: transparent;
   }
+
   &__nav-bar {
     display: flex;
     align-items: center;
@@ -172,6 +157,7 @@ function submit() {
     padding: 0 24rpx;
     position: relative;
   }
+
   &__nav-back {
     position: absolute;
     left: 24rpx;
@@ -181,16 +167,26 @@ function submit() {
     align-items: center;
     justify-content: center;
   }
-  &__nav-back-icon { width: 24rpx; height: 24rpx; }
+
+  &__nav-back-icon {
+    width: 24rpx;
+    height: 24rpx;
+  }
+
   &__nav-title {
     font-size: 34rpx;
     font-weight: 500;
     color: #000;
   }
 
-  &__scroll { position: relative; z-index: 2; }
+  &__scroll {
+    position: relative;
+    z-index: 2;
+  }
 
-  &__content { padding: 24rpx; }
+  &__content {
+    padding: 24rpx;
+  }
 
   &__section {
     background: #fff;
@@ -198,6 +194,7 @@ function submit() {
     padding: 24rpx;
     margin-bottom: 24rpx;
   }
+
   &__section-title {
     font-size: 30rpx;
     font-weight: 500;
@@ -213,8 +210,20 @@ function submit() {
     gap: 8rpx;
     margin-bottom: 16rpx;
   }
-  &__info-label { font-size: 24rpx; color: #333; white-space: nowrap; flex-shrink: 0; }
-  &__info-value { font-size: 24rpx; color: #333; flex: 1; line-height: 1.5; }
+
+  &__info-label {
+    font-size: 24rpx;
+    color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__info-value {
+    font-size: 24rpx;
+    color: #333;
+    flex: 1;
+    line-height: 1.5;
+  }
 
   /* 投诉内容 */
   &__textarea {
@@ -227,28 +236,48 @@ function submit() {
     padding: 0;
     box-sizing: border-box;
   }
-  &__textarea-placeholder { color: #999; font-size: 26rpx; }
+
+  &__textarea-placeholder {
+    color: #999;
+    font-size: 26rpx;
+  }
 
   /* 图片上传 */
-  &__upload-area { margin-top: 24rpx; }
-  &__upload-hint { margin-bottom: 12rpx; }
-  &__upload-hint-text { font-size: 24rpx; color: #666; }
-  &__upload-btn {
+  &__upload-area {
+    margin-top: 24rpx;
+  }
+
+  &__upload-hint-text {
+    font-size: 24rpx;
+    color: #666;
+    display: block;
+    margin-bottom: 12rpx;
+  }
+
+  &__upload-list {
     display: flex;
     gap: 16rpx;
     flex-wrap: wrap;
     align-items: center;
   }
-  &__upload-icon-wrap {
+
+  &__upload-btn {
     width: 152rpx;
     height: 152rpx;
-    background: #F0F0F0;
+    background: #f0f0f0;
     border-radius: 10rpx;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
-  &__upload-icon { width: 68rpx; height: 68rpx; }
+
+  &__upload-icon {
+    width: 68rpx;
+    height: 68rpx;
+  }
+
   &__upload-preview {
     width: 152rpx;
     height: 152rpx;
@@ -256,14 +285,19 @@ function submit() {
     border-radius: 10rpx;
     overflow: hidden;
   }
-  &__upload-preview-img { width: 100%; height: 100%; }
+
+  &__upload-preview-img {
+    width: 100%;
+    height: 100%;
+  }
+
   &__upload-del {
     position: absolute;
     top: 4rpx;
     right: 4rpx;
     width: 36rpx;
     height: 36rpx;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -281,38 +315,50 @@ function submit() {
     margin-bottom: 24rpx;
     line-height: 1.5;
   }
+
   &__input {
     width: 100%;
     height: 62rpx;
-    background: #F0F0F0;
+    background: #f0f0f0;
     border-radius: 10rpx;
     padding: 0 16rpx;
     font-size: 24rpx;
     color: #333;
     box-sizing: border-box;
   }
-  &__input-placeholder { color: #999; font-size: 24rpx; }
+
+  &__input-placeholder {
+    color: #999;
+    font-size: 24rpx;
+  }
 
   /* 提交栏 */
   &__submit-bar {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: transparent;
     padding: 24rpx 36rpx;
     padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
     z-index: 999;
   }
+
   &__submit-btn {
     width: 100%;
     height: 78rpx;
     border-radius: 51rpx;
-    background: #1882FC;
+    background: #1882fc;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0.5;
-    &--active { opacity: 1; }
+
+    &--active {
+      opacity: 1;
+    }
   }
+
   &__submit-text {
     font-size: 32rpx;
     color: #fff;
