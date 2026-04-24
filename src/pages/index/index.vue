@@ -139,7 +139,7 @@
       <view class="news-list">
         <view class="news-item" v-for="(item, index) in newsList" :key="index" @click="viewNews(item.id)">
           <text class="news-title">{{ item.title }}</text>
-          <uni-icons type="forward" size="20" color="#999" class="news-arrow shrink-0" />
+          <uni-icons type="forward" size="18" color="#999" class="news-arrow shrink-0" />
         </view>
       </view>
       <view class="view-more" @click="viewAllNews">
@@ -734,7 +734,7 @@ const viewAllNews = () => { }
 
   .news-title {
     flex: 1;
-    font-size: 24rpx;
+    font-size: 26rpx;
     color: #333;
     margin-left: 16rpx;
     overflow: hidden;
@@ -743,8 +743,8 @@ const viewAllNews = () => { }
   }
 
   .news-arrow {
-    width: 24rpx;
-    height: 24rpx;
+    // width: 24rpx;
+    // height: 24rpx;
     margin-left: 16rpx;
   }
 
