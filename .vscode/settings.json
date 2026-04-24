@@ -1,0 +1,27 @@
+{
+  // 保存时自动格式化
+  "editor.formatOnSave": true,
+  
+  // 保存时自动修复代码
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  
+  // 配置不同文件类型的格式化工具
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  
+  // 自动保存延迟（毫秒）
+  "editor.formatOnSaveTimeout": 3000
+}
