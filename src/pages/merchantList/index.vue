@@ -3,15 +3,8 @@
     <view class="merchant-page__search">
       <view class="merchant-page__search-wrap">
         <image class="merchant-page__search-icon" src="/static/images/svg/search.svg" mode="aspectFit" />
-        <input
-          v-model="keyword"
-          class="merchant-page__search-input"
-          type="text"
-          placeholder="李记饼店"
-          placeholder-class="merchant-page__search-placeholder"
-          confirm-type="search"
-          @confirm="handleSearch"
-        />
+        <input v-model="keyword" class="merchant-page__search-input" type="text" placeholder="李记饼店"
+          placeholder-class="merchant-page__search-placeholder" confirm-type="search" @confirm="handleSearch" />
         <view class="merchant-page__search-btn" @tap="handleSearch">
           <text>搜索</text>
         </view>
@@ -20,22 +13,16 @@
 
     <!-- Tab 标签 -->
     <view class="merchant-page__tabs">
-      <view v-for="tab in tabs" :key="tab.key" class="merchant-page__tab" :class="{ 'merchant-page__tab--active': activeTab === tab.key }" @tap="handleSwitchTab(tab.key)">
+      <view v-for="tab in tabs" :key="tab.key" class="merchant-page__tab"
+        :class="{ 'merchant-page__tab--active': activeTab === tab.key }" @tap="handleSwitchTab(tab.key)">
         <text>{{ tab.name }}</text>
         <text>{{ tab.count }}</text>
       </view>
     </view>
 
     <!-- 列表滚动区 -->
-    <scroll-view
-      refresher-enabled
-      :refresher-triggered="refreshing"
-      @refresherrefresh="onPullDownRefresh"
-      scroll-y
-      class="merchant-page__scroll"
-      :style="{ height: scrollHeight + 'px' }"
-      @scrolltolower="loadMore"
-    >
+    <scroll-view refresher-enabled :refresher-triggered="refreshing" @refresherrefresh="onPullDownRefresh" scroll-y
+      class="merchant-page__scroll" :style="{ height: scrollHeight + 'px' }" @scrolltolower="loadMore">
       <!-- 商家列表 -->
       <view class="merchant-page__list">
         <MerchantCard v-for="item in listData" :key="item.id" :data="item" @click="goDetail" />
@@ -343,7 +330,7 @@ function loadMore() {
  * 跳转详情页
  */
 function goDetail(id: string | number) {
-  uni.navigateTo({ url: `/pages/detail/index?id=${id}` })
+  uni.navigateTo({ url: `/pages/merchantDetail/index?id=${id}` })
 }
 
 // ==================== 生命周期 ====================
@@ -455,6 +442,7 @@ onMounted(() => {
       color: #333;
       font-weight: 400;
     }
+
     text:nth-child(2) {
       font-size: 28rpx;
       color: #999;
@@ -467,6 +455,7 @@ onMounted(() => {
         color: #1782fc;
         font-weight: 500;
       }
+
       text:nth-child(2) {
         color: #1782fc;
       }

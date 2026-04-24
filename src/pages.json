@@ -14,21 +14,7 @@
         "navigationBarTitleText": "登录"
       }
     },
-    {
-      "path": "pages/storeList/storeList",
-      "style": {
-        "navigationBarTitleText": "商家列表",
-        "enablePullDownRefresh": true,
-        "backgroundTextStyle": "dark",
-        "onReachBottomDistance": 50
-      }
-    },
-    {
-      "path": "pages/storeDetail/storeDetail",
-      "style": {
-        "navigationBarTitleText": "商家详情"
-      }
-    },
+
     {
       "path": "pages/check/index",
       "style": {
@@ -57,6 +43,24 @@
       "path": "pages/merchantList/index",
       "style": {
         "navigationBarTitleText": "商户列表"
+      }
+    },
+    {
+      "path": "pages/merchantDetail/index",
+      "style": {
+        "navigationBarTitleText": "商户详情"
+      }
+    },
+    {
+      "path": "pages/review/index",
+      "style": {
+        "navigationBarTitleText": "评论"
+      }
+    },
+    {
+      "path": "pages/complaint/index",
+      "style": {
+        "navigationBarTitleText": "投诉"
       }
     }
   ],

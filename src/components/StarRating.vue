@@ -1,64 +1,57 @@
 <template>
-  <view class="star-rating">
-    <view v-for="i in 5" :key="i" class="star-rating__item">
-      <image
-        :src="getStarIcon(i)"
-        class="star-rating__icon"
-        :style="{ width: `${size}rpx`, height: `${size}rpx` }"
-        mode="aspectFill"
-      />
+    <view class="star-rating">
+        <image
+            v-for="n in 5"
+            :key="n"
+            class="star-rating__star"
+            :src="n <= Math.floor(value) ? activeIcon : defaultIcon"
+            mode="aspectFit"
+        />
+        <!-- 半星 -->
+        <view v-if="value % 1 !== 0" class="star-rating__half-wrap">
+            <image
+                class="star-rating__star star-rating__star--half"
+                :src="activeIcon"
+                mode="aspectFit"
+            />
+        </view>
     </view>
-    <text v-if="showScore" class="star-rating__score">{{ score }}</text>
-  </view>
 </template>
 
 <script setup lang="ts">
-  interface Props {
-    score: number   // 原始评分（100分制）
-    size?: number   // 图标大小（rpx）
-    showScore?: boolean
-  }
-
-  const props = withDefaults(defineProps<Props>(), {
-    score: 0,
-    size: 28,
-    showScore: true,
-  })
-
-  // 将 100 分制转为 5 星制
-  const starsValue = (props.score / 100) * 5
-
-  function getStarIcon(index: number): string {
-    if (index <= Math.floor(starsValue)) {
-      return '/static/icons/star-full.png'
-    } else if (index - starsValue < 1 && starsValue % 1 >= 0.5) {
-      return '/static/icons/star-half.png'
-    } else {
-      return '/static/icons/star-empty.png'
-    }
-  }
+withDefaults(defineProps<{
+    /** 星级，支持小数（如 4.5） */
+    value: number
+    /** 激活状态图标路径 */
+    activeIcon?: string
+    /** 默认（未激活）图标路径 */
+    defaultIcon?: string
+    /** 单颗星尺寸（rpx），默认 28 */
+    size?: number
+}>(), {
+    activeIcon: '/static/images/svg/star-active.svg',
+    defaultIcon: '/static/images/svg/star-default.svg',
+    size: 28
+})
 </script>
 
 <style lang="scss" scoped>
-  .star-rating {
+.star-rating {
     display: flex;
     align-items: center;
-    gap: 4rpx;
+    gap: 2rpx;
 
-    &__item {
-      display: flex;
-      align-items: center;
+    &__star {
+        width: v-bind('size + "rpx"');
+        height: v-bind('size + "rpx"');
     }
 
-    &__icon {
-      display: block;
+    &__half-wrap {
+        overflow: hidden;
+        width: v-bind('Math.ceil(size / 2) + "rpx"');
+        height: v-bind('size + "rpx"');
     }
 
-    &__score {
-      margin-left: 8rpx;
-      font-size: $font-sm;
-      color: $text-regular;
-      font-weight: 500;
-    }
-  }
+    /* &__star--half 宽度仍是整颗星，通过父容器 overflow:hidden 截半 */
+}
 </style>
