@@ -28,6 +28,36 @@
       "style": {
         "navigationBarTitleText": "商家详情"
       }
+    },
+     {
+      "path": "pages/check/index",
+      "style": {
+        "navigationBarTitleText": "你点我查"
+      }
+    },
+        {
+      "path": "pages/checkDetail/index",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
+    },
+    {
+      "path": "pages/rank/index",
+      "style": {
+        "navigationBarTitleText": "红黑榜单"
+      }
+    },
+    {
+      "path": "pages/consult/index",
+      "style": {
+        "navigationBarTitleText": "资讯信息"
+      }
+    },
+    {
+      "path": "pages/merchantList/index",
+      "style": {
+        "navigationBarTitleText": "商户列表"
+      }
     }
   ],
   "globalStyle": {
@@ -54,7 +84,7 @@
         "selectedIconPath": "static/tabbar/home_hl.png"
       },
       {
-        "pagePath": "pages/storeList/storeList",
+        "pagePath": "pages/check/index",
         "text": "你点我查",
         "iconPath": "static/tabbar/search.png",
         "selectedIconPath": "static/tabbar/search_hl.png"

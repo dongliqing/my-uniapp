@@ -1,27 +1,11 @@
 {
-  // 保存时自动格式化
   "editor.formatOnSave": true,
-  
-  // 保存时自动修复代码
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
-  },
-  
-  // 配置不同文件类型的格式化工具
-  "[vue]": {
-    "editor.defaultFormatter": "Vue.volar"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "Vue.volar"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "Vue.volar"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
-  },
-  
-  // 自动保存延迟（毫秒）
-  "editor.formatOnSaveTimeout": 3000
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "files.associations": { "*.vue": "vue" }
 }

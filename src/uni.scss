@@ -74,3 +74,81 @@ $uni-color-subtitle: #555; // 二级标题颜色
 $uni-font-size-subtitle: 18px;
 $uni-color-paragraph: #3f536e; // 文章段落颜色
 $uni-font-size-paragraph: 15px;
+
+/* uni.scss - 全局 SCSS 变量（可在所有 .vue 文件中直接使用，无需导入） */
+
+// ===== 品牌色 =====
+$primary: #2196f3;
+$primary-light: #e3f2fd;
+$primary-dark: #1565c0;
+
+// ===== 语义色 =====
+$success: #4caf50;
+$warning: #ff9800;
+$danger: #f44336;
+$info: #9e9e9e;
+
+// ===== 状态色（商家状态）=====
+$status-normal: #4caf50;      // 正常经营
+$status-normal-bg: #e8f5e9;
+$status-reform: #ff9800;      // 整改中
+$status-reform-bg: #fff3e0;
+$status-risk: #f44336;        // 高风险
+$status-risk-bg: #ffebee;
+
+// ===== 文字色 =====
+$text-primary: #333333;
+$text-regular: #666666;
+$text-secondary: #999999;
+$text-placeholder: #bbbbbb;
+$text-disabled: #cccccc;
+$text-inverse: #ffffff;
+
+// ===== 背景色 =====
+$bg-page: #f5f6fa;
+$bg-white: #ffffff;
+$bg-light: #f8f9fa;
+$bg-gray: #eeeeee;
+
+// ===== 边框色 =====
+$border-base: #e8e8e8;
+$border-light: #f0f0f0;
+$border-dark: #d0d0d0;
+
+// ===== 间距 =====
+$spacing-xs: 8rpx;
+$spacing-sm: 16rpx;
+$spacing-md: 24rpx;
+$spacing-lg: 32rpx;
+$spacing-xl: 48rpx;
+$spacing-xxl: 64rpx;
+
+// ===== 圆角 =====
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+$radius-full: 9999rpx;
+
+// ===== 字体大小 =====
+$font-xs: 20rpx;
+$font-sm: 24rpx;
+$font-base: 28rpx;
+$font-md: 32rpx;
+$font-lg: 36rpx;
+$font-xl: 40rpx;
+$font-xxl: 48rpx;
+
+// ===== 阴影 =====
+$shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.12);
+
+// ===== 过渡动画 =====
+$transition-fast: 0.15s ease;
+$transition-base: 0.25s ease;
+$transition-slow: 0.35s ease;
+
+// ===== 安全区 =====
+$safe-area-top: constant(safe-area-inset-top);
+$safe-area-bottom: constant(safe-area-inset-bottom);

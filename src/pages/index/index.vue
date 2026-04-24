@@ -163,10 +163,10 @@
 import { useRouter } from 'uni-mini-router';
 import { ref } from 'vue';
 
-const router = useRouter();
+const router = useRouter()
 
 // 当前年份
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 // 品牌数据
 const brandList = [
@@ -175,59 +175,59 @@ const brandList = [
     yearStart: '1',
     yearEnd: '5',
     label: '年店铺',
-    medal: '/static/images/home-head-1.png',
+    medal: '/static/images/home-head-1.png'
   },
   {
     name: '缙云知味',
     yearStart: '6',
     yearEnd: '9',
     label: '年店铺',
-    medal: '/static/images/home-head-2.png',
+    medal: '/static/images/home-head-2.png'
   },
   {
     name: '缙云守味',
     yearStart: '10',
     yearEnd: '19',
     label: '年店铺',
-    medal: '/static/images/home-head-3.png',
+    medal: '/static/images/home-head-3.png'
   },
   {
     name: '缙云传味',
     yearStart: '20',
     yearEnd: '',
     label: '年以上店铺',
-    medal: '/static/images/home-head-4.png',
-  },
-];
+    medal: '/static/images/home-head-4.png'
+  }
+]
 
 // 星级数据
 const starList = [
   {
     label: '五星',
     active: 5,
-    percent: 100,
+    percent: 100
   },
   {
     label: '四星',
     active: 4,
-    percent: 80,
+    percent: 80
   },
   {
     label: '三星',
     active: 3,
-    percent: 66,
+    percent: 66
   },
   {
     label: '二星',
     active: 2,
-    percent: 32,
+    percent: 32
   },
   {
     label: '一星',
     active: 1,
-    percent: 10,
-  },
-];
+    percent: 10
+  }
+]
 
 // 商家信息卡片数据
 const storeInfoCards = [
@@ -235,9 +235,9 @@ const storeInfoCards = [
   { title: '外卖商家', count: '12345' },
   {
     title: '无堂食\n外卖商家',
-    count: '12345',
-  },
-];
+    count: '12345'
+  }
+]
 
 // 资讯列表数据
 const newsList = ref([
@@ -245,13 +245,13 @@ const newsList = ref([
   { id: 2, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 9, arrow: 10 },
   { id: 3, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 11, arrow: 12 },
   { id: 4, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 13, arrow: 14 },
-  { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 15, arrow: 16 },
-]);
+  { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符...', thumb: 15, arrow: 16 }
+])
 
 // 返回
 const goBack = () => {
-  router.back();
-};
+  router.back()
+}
 
 // 导航到指定页面
 const navigateTo = (page: string) => {
@@ -261,25 +261,29 @@ const navigateTo = (page: string) => {
     youDianWoCha: '/pages/search/index',
     banquet: '/pages/banquet/index',
     certificate: '/pages/certificate/index',
-    audit: '/pages/audit/index',
-  };
-  if (routes[page]) {
-    router.push(routes[page]);
+    audit: '/pages/audit/index'
   }
-};
+  if (routes[page]) {
+    router.push(routes[page])
+  }
+}
 
 // 查看资讯详情
 const viewNews = (id: number) => {
   router.push({
     name: 'newsDetail',
-    params: { id },
-  });
-};
+    params: { id }
+  })
+}
 
 // 查看全部资讯
 const viewAllNews = () => {
-  router.push({ name: 'newsList' });
-};
+  router.push({ name: 'newsList' })
+}
+
+const goMerchant = (item: any) => {
+  uni.navigateTo({ url: `/pages/merchantList/index?id=${item.id}` })
+}
 </script>
 
 <style lang="scss" scoped>
