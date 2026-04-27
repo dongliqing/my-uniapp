@@ -11,8 +11,8 @@ const routes = [
     name: 'login'
   },
   {
-    path: '/pages/storeList/storeList',
-    name: 'storeList',
+    path: '/pages/merchantList/index',
+    name: 'merchantList',
     meta: {
       title: '商家列表',
       keepAlive: true

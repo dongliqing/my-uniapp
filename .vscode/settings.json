@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -9,3 +10,16 @@
   "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "files.associations": { "*.vue": "vue" }
 }
+=======
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "files.associations": { "*.vue": "vue" }
+}
+>>>>>>> 4ef418e (feat: 文件优化)

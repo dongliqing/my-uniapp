@@ -7,7 +7,7 @@
 
     <!-- 品牌展示区 -->
     <view class="brand-showcase">
-      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('storeList')">
+      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('merchantList')">
         <view class="brand-item">
           <text class="brand-name">{{ brand.name }}</text>
           <image src="@/static/images/home-head-line.png" mode="aspectFit" class="line" />

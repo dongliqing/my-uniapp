@@ -6,7 +6,6 @@
       <view class="merchant-card__img-wrap">
         <image class="merchant-card__img" :src="data.img" mode="aspectFill" />
       </view>
-
       <!-- 商家信息 -->
       <view class="merchant-card__info">
         <text class="merchant-card__name">{{ data.name }}</text>

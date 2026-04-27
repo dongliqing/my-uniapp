@@ -14,60 +14,54 @@
         "navigationBarTitleText": "登录"
       }
     },
+
     {
       "path": "pages/check/index",
       "style": {
         "navigationBarTitleText": "你点我查"
       }
-    }
-  ],
-  "subPackages": [
+    },
     {
-      "root": "packageA",
-      "pages": [
-        {
-          "path": "pages/checkDetail/index",
-          "style": {
-            "navigationBarTitleText": "活动详情"
-          }
-        },
-        {
-          "path": "pages/rank/index",
-          "style": {
-            "navigationBarTitleText": "红黑榜单"
-          }
-        },
-        {
-          "path": "pages/consult/index",
-          "style": {
-            "navigationBarTitleText": "资讯信息"
-          }
-        },
-        {
-          "path": "pages/merchantList/index",
-          "style": {
-            "navigationBarTitleText": "商户列表"
-          }
-        },
-        {
-          "path": "pages/merchantDetail/index",
-          "style": {
-            "navigationBarTitleText": "商户详情"
-          }
-        },
-        {
-          "path": "pages/review/index",
-          "style": {
-            "navigationBarTitleText": "评论"
-          }
-        },
-        {
-          "path": "pages/complaint/index",
-          "style": {
-            "navigationBarTitleText": "投诉"
-          }
-        }
-      ]
+      "path": "pages/checkDetail/index",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
+    },
+    {
+      "path": "pages/rank/index",
+      "style": {
+        "navigationBarTitleText": "红黑榜单"
+      }
+    },
+    {
+      "path": "pages/consult/index",
+      "style": {
+        "navigationBarTitleText": "资讯信息"
+      }
+    },
+    {
+      "path": "pages/merchantList/index",
+      "style": {
+        "navigationBarTitleText": "商户列表"
+      }
+    },
+    {
+      "path": "pages/merchantDetail/index",
+      "style": {
+        "navigationBarTitleText": "商户详情"
+      }
+    },
+    {
+      "path": "pages/review/index",
+      "style": {
+        "navigationBarTitleText": "评论"
+      }
+    },
+    {
+      "path": "pages/complaint/index",
+      "style": {
+        "navigationBarTitleText": "投诉"
+      }
     }
   ],
   "globalStyle": {

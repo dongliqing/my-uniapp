@@ -1,11 +1,6 @@
 <template>
-  <scroll-view
-    class="dishes-panel"
-    scroll-y
-    :scroll-top="scrollTop"
-    @scrolltolower="loadMore"
-    style="height: calc(100vh - 500rpx)"
-  >
+  <scroll-view class="dishes-panel" scroll-y :scroll-top="scrollTop" @scrolltolower="loadMore"
+    style="height: calc(100vh - 500rpx)">
     <view class="dishes-panel__inner">
       <view v-for="(dish, idx) in dishes" :key="idx" class="dish-card" @tap="previewImage(dish.image)">
         <view class="dish-card__img-wrap">
@@ -78,12 +73,14 @@ function previewImage(url: string) {
     align-items: center;
     justify-content: center;
     padding: 40rpx 0;
+
     text {
       font-size: 26rpx;
       color: #999;
     }
   }
 }
+
 .dish-card {
   display: flex;
   gap: 20rpx;
@@ -100,10 +97,12 @@ function previewImage(url: string) {
     flex-shrink: 0;
     background: #d9d9d9;
   }
+
   &__img {
     width: 100%;
     height: 100%;
   }
+
   &__info {
     flex: 1;
     display: flex;
@@ -111,10 +110,12 @@ function previewImage(url: string) {
     justify-content: space-between;
     padding: 8rpx 0;
   }
+
   &__name {
     font-size: 28rpx;
     color: #000;
   }
+
   &__price {
     font-size: 28rpx;
     color: #000;
