@@ -43,6 +43,7 @@ const request = (options = {}) => {
       data: {
         datajson: {
           ...data,
+          mainTable: data.mainTable || {},
           header: {
             operator: 'sysadmin' //固定
           }

@@ -51,9 +51,6 @@ import StoreCard from './StoreCard.vue'
 
 const fetchRequest = async () => {
     const res = await getMessageInfo({
-        mainTable: {
-            // ks: ''
-        },
         pageInfo: {
             pageNo: '1',
             pageSize: '10'
