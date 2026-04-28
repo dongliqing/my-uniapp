@@ -1,6 +1,6 @@
 <template>
   <view class="page-container">
-    <view class="px-3 pt-3 fixed top-0 left-0 right-0 z-10 header">
+    <view class="px-3 pt-3 fixed left-0 right-0 z-10 header">
       <view class="search-box">
         <view class="search-wrap">
           <uni-icons type="search" size="34rpx" color="#333" />
@@ -179,7 +179,6 @@ const goToDetail = (id: number) => {
 
 <style lang="scss" scoped>
 .page-container {
-  min-height: 100vh;
   font-family: $font-family;
 }
 
@@ -194,10 +193,11 @@ const goToDetail = (id: number) => {
   background-color: #f5f5f5;
   //背景不随滚动滚动
   background-attachment: fixed;
+  min-height: calc(100vh - var(--status-bar-height) - var(--window-top) - var(--window-bottom));
+  box-sizing: border-box;
 }
 
 .search-box {
-  /* padding: 24rpx 0; */
   position: relative;
 
   .search-wrap {

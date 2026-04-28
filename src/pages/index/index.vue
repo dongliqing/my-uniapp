@@ -2,7 +2,7 @@
   <view class="home-page">
     <!-- 顶部渐变背景 -->
     <view class="top-gradient">
-      <image class="wave-decoration" src="@/static/images/home-bg.svg" mode="aspectFit" />
+      <image class="wave-decoration" src="@/static/images/home-bg.svg" mode="aspectFill" />
     </view>
 
     <!-- 品牌展示区 -->
@@ -135,12 +135,12 @@
       <view class="news-list">
         <view class="news-item" v-for="(item, index) in newsList" :key="index" @click="viewNews(item.id)">
           <text class="news-title">{{ item.title }}</text>
-          <uni-icons type="forward" size="18" color="#999" class="news-arrow shrink-0" />
+          <uni-icons type="forward" size="36rpx" color="#999" class="news-arrow shrink-0" />
         </view>
       </view>
       <view class="view-more" @click="viewAllNews">
         <text class="more-text">查看更多</text>
-        <uni-icons type="down" size="20" color="#1782fc" class="more-arrow" />
+        <uni-icons type="down" size="40rpx" color="#1782fc" class="more-arrow" />
       </view>
     </view>
 

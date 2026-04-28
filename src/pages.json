@@ -83,7 +83,7 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "缙云阳光厨房",
+    "navigationBarTitleText": "缙云餐饮综合管理平台",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F5F5F5",
     "app-plus": {
@@ -96,7 +96,7 @@
     "color": "#000",
     "selectedColor": "#000",
     "backgroundColor": "#FFFFFF",
-    "borderStyle": "#d2d2d2",
+    "borderStyle": "black",
     "height": "120rpx",
     "list": [
       {
