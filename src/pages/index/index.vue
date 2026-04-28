@@ -7,7 +7,7 @@
 
     <!-- 品牌展示区 -->
     <view class="brand-showcase">
-      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('storeList')">
+      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('/pages/storeList/storeList')">
         <view class="brand-item">
           <text class="brand-name">{{ brand.name }}</text>
           <image src="@/static/images/home-head-line.png" mode="aspectFit" class="line" />
@@ -23,7 +23,7 @@
     </view>
 
     <!-- 搜索栏 -->
-    <view class="search-bar" @click="navigateTo('storeList')">
+    <view class="search-bar" @click="navigateTo('/pages/storeList/storeList')">
       <view class="search-box">
         <uni-icons type="search" size="34rpx" color="#333" />
         <text class="search-placeholder">搜索店铺</text>
@@ -40,7 +40,7 @@
       </view>
       <view class="services-grid">
         <!-- 红黑榜单 -->
-        <view class="service-card" @click="navigateTo('redBlackRank')">
+        <view class="service-card" @click="navigateTo('/pages/rank/index')">
           <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">红黑榜单</text>
@@ -68,7 +68,7 @@
           </view>
         </view>
         <!-- 我要咨询 -->
-        <view class="service-card" @click="navigateTo('redBlackRank')">
+        <view class="service-card" @click="navigateTo('/pages/rank/index')">
           <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">我要咨询</text>
@@ -153,10 +153,7 @@
 
 <script setup lang="ts">
 // import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-import { useRouter } from 'uni-mini-router'
 import { ref } from 'vue'
-
-const router = useRouter()
 
 // 当前年份
 const currentYear = new Date().getFullYear()
@@ -241,15 +238,10 @@ const newsList = ref([
   { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' }
 ])
 
-// 返回
-const goBack = () => {
-  router.back()
-}
-
 // 导航到指定页面
-const navigateTo = (name: string) => {
-  router.push({
-    name: name
+const navigateTo = (path: string) => {
+  uni.navigateTo({
+    url: path
   })
 }
 

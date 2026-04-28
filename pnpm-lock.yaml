@@ -59,9 +59,6 @@ importers:
       '@dcloudio/uni-ui':
         specifier: ^1.5.12
         version: 1.5.12
-      uni-mini-router:
-        specifier: ^0.1.6
-        version: 0.1.6
       vue:
         specifier: ^3.4.21
         version: 3.5.32(typescript@4.9.5)
@@ -4064,9 +4061,6 @@ packages:
 
   undici-types@7.19.2:
     resolution: {integrity: sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==}
-
-  uni-mini-router@0.1.6:
-    resolution: {integrity: sha512-dgeEYCv00yTkiX3gVAQXrx4IAzAVtZv+2lVtVaixH6J/IHfZP7R3wqUwBvy4eFD0vP20p+QWNNE2c5LuHbPSiQ==}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}
@@ -9503,8 +9497,6 @@ snapshots:
       jiti: 1.21.7
 
   undici-types@7.19.2: {}
-
-  uni-mini-router@0.1.6: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 

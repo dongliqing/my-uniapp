@@ -72,6 +72,13 @@
       "style": {
         "navigationBarTitleText": "投诉"
       }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的"
+      }
     }
   ],
   "globalStyle": {
@@ -86,10 +93,11 @@
     }
   },
   "tabBar": {
-    "color": "#333333",
-    "selectedColor": "#1782FC",
+    "color": "#000",
+    "selectedColor": "#000",
     "backgroundColor": "#FFFFFF",
-    "borderStyle": "white",
+    "borderStyle": "#d2d2d2",
+    "height": "120rpx",
     "list": [
       {
         "pagePath": "pages/index/index",
@@ -104,7 +112,7 @@
         "selectedIconPath": "static/tabbar/search_hl.png"
       },
       {
-        "pagePath": "pages/login/login",
+        "pagePath": "pages/mine/mine",
         "text": "我的",
         "iconPath": "static/tabbar/my.png",
         "selectedIconPath": "static/tabbar/my_hl.png"
