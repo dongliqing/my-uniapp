@@ -4,19 +4,14 @@
     <scroll-view class="check-detail__scroll" scroll-y>
       <!-- 活动信息卡片 -->
       <view class="check-detail__info-card">
-        <text class="check-detail__info-title">活动详情</text>
-        <text class="check-detail__info-desc">{{ activity.desc }}</text>
+        <text class="check-detail__info-title">{{ activity.hdmc }}</text>
+        <text class="check-detail__info-desc">{{ activity.hdnr }}</text>
         <view class="check-detail__info-time">
-          <text class="check-detail__time-text">活动时间：{{ activity.time }}</text>
+          <text class="check-detail__time-text">活动时间：{{ activity.hdsj_0?.slice(0, 10) }}至{{ activity.hdsj_1?.slice(0, 10) }}</text>
         </view>
         <!-- 状态标签 -->
-        <view
-          class="check-detail__status"
-          :class="activity.ongoing ? 'check-detail__status--active' : 'check-detail__status--ended'"
-        >
-          <text class="check-detail__status-text">
-            {{ activity.ongoing ? '进行中' : '已结束' }}
-          </text>
+        <view class="check-detail__status" :class="statusClass(activity.hdzt)">
+          <text class="check-detail__status-text">{{ statusText(activity.hdzt) }}</text>
         </view>
       </view>
 
@@ -37,20 +32,8 @@
                 <text class="check-detail__comment-name">{{ comment.name }}</text>
 
                 <!-- 点赞按钮 -->
-                <view
-                  class="check-detail__like"
-                  :class="{ 'check-detail__like--active': comment.isLiked }"
-                  @tap="toggleLike(comment)"
-                >
-                  <image
-                    class="check-detail__like-icon"
-                    :src="
-                      comment.isLiked
-                        ? '/static/images/svg/like-active.svg'
-                        : '/static/images/svg/like.svg'
-                    "
-                    mode="aspectFit"
-                  />
+                <view class="check-detail__like" :class="{ 'check-detail__like--active': comment.isLiked }" @tap="toggleLike(comment)">
+                  <image class="check-detail__like-icon" :src="comment.isLiked ? '/static/images/svg/like-active.svg' : '/static/images/svg/like.svg'" mode="aspectFit" />
                   <text class="check-detail__like-count">{{ comment.likes }}</text>
                 </view>
               </view>
@@ -58,6 +41,11 @@
               <!-- 评论内容 -->
               <text class="check-detail__comment-content">{{ comment.content }}</text>
             </view>
+          </view>
+
+          <!-- 空状态 -->
+          <view v-if="comments.length === 0" class="check-detail__empty">
+            <text class="check-detail__empty-text">暂无评论，快来抢沙发吧~</text>
           </view>
         </view>
       </view>
@@ -67,7 +55,7 @@
     </scroll-view>
 
     <!-- 底部操作栏 - 仅进行中活动显示 -->
-    <view v-if="activity.ongoing" class="check-detail__bottom-bar">
+    <view v-if="activity.hdzt === '1'" class="check-detail__bottom-bar">
       <view class="check-detail__bottom-line" />
       <view class="check-detail__bottom-inner">
         <view class="check-detail__comment-btn" @tap="showCommentInput">
@@ -94,11 +82,7 @@
           :focus="showInput"
           :adjust-position="true"
         />
-        <view
-          class="check-detail__input-submit"
-          :class="{ 'check-detail__input-submit--active': newComment.trim().length > 0 }"
-          @tap="submitComment"
-        >
+        <view class="check-detail__input-submit" :class="{ 'check-detail__input-submit--active': newComment.trim().length > 0 }" @tap="submitComment">
           <text class="check-detail__input-submit-text">发布</text>
         </view>
       </view>
@@ -107,52 +91,63 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { getCheckList, addComment } from '@/api/check'
+
+interface ActivityItem {
+  id: number
+  hdmc: string
+  hdsj_0: string
+  hdsj_1: string
+  hdzt: string // 0 未开始 1 进行中 2 已结束
+  hdnr: string
+}
+
+const activity = ref<ActivityItem>({
+  id: 0,
+  hdmc: '',
+  hdsj_0: '',
+  hdsj_1: '',
+  hdzt: '',
+  hdnr: ''
+})
 
 const showInput = ref(false)
 const newComment = ref('')
-
-onMounted(() => {})
-
-// 活动信息
-const activity = ref({
-  id: 1,
-  title: '炎炎夏日 饮品安全我想查',
-  desc: '这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里是活动详情描述这里。',
-  time: '2025-07-01至2025-12-31',
-  ongoing: true
-})
+let pageId = ref('')
 
 // 评论列表
-const comments = ref([
-  {
-    id: 1,
-    name: 'habe乐',
-    avatar: '/static/detail/26.svg',
-    content: '我想要检查霸王茶姬',
-    date: '2026-01-05',
-    likes: 123,
-    isLiked: false
-  },
-  {
-    id: 2,
-    name: '李小小',
-    avatar: '/static/detail/26.svg',
-    content: '我想要检查霸王茶姬',
-    date: '2026-01-05',
-    likes: 123,
-    isLiked: false
-  },
-  {
-    id: 3,
-    name: 'habe乐',
-    avatar: '/static/detail/26.svg',
-    content: '我想要检查霸王茶姬',
-    date: '2026-01-05',
-    likes: 123,
-    isLiked: false
+const comments = ref<any[]>([])
+
+const statusTextMap: Record<string, string> = { '0': '未开始', '1': '进行中', '2': '已结束' }
+function statusText(hdzt: string) {
+  return statusTextMap[hdzt] ?? '未知'
+}
+function statusClass(hdzt: string) {
+  if (hdzt === '1') return 'check-detail__status--active'
+  if (hdzt === '0') return 'check-detail__status--pending'
+  return 'check-detail__status--ended'
+}
+
+onLoad(options => {
+  pageId.value = options?.id
+  fetchDetail()
+})
+
+async function fetchDetail() {
+  if (!pageId.value) {
+    uni.showToast({ title: '参数缺失', icon: 'none' })
+    return
   }
-])
+  try {
+    const res: any = await getCheckList({ mainTable: { id: pageId.value } })
+    const data = res?.datas?.[0]?.mainTable
+    if (data) activity.value = data as ActivityItem
+  } catch (e) {
+    uni.showToast({ title: '获取详情失败', icon: 'none' })
+  }
+}
 
 function showCommentInput() {
   showInput.value = true
@@ -163,25 +158,29 @@ function hideCommentInput() {
   newComment.value = ''
 }
 
-function submitComment() {
+async function submitComment() {
   if (!newComment.value.trim()) {
     uni.showToast({ title: '请输入评论内容', icon: 'none' })
     return
   }
-
-  const comment = {
-    id: Date.now(),
-    name: '我',
-    avatar: '/static/mine/15.svg',
-    content: newComment.value.trim(),
-    date: new Date().toISOString().split('T')[0],
-    likes: 0,
-    isLiked: false
+  try {
+    await addComment({
+      datas: [
+        {
+          mainTable: {
+            id: pageId.value
+          },
+          detail1: {
+            plnr: newComment.value.trim()
+          }
+        }
+      ]
+    })
+    // hideCommentInput()
+    // uni.showToast({ title: '发布成功', icon: 'success' })
+  } catch (e) {
+    uni.showToast({ title: '发布失败，请重试', icon: 'none' })
   }
-
-  comments.value.unshift(comment)
-  hideCommentInput()
-  uni.showToast({ title: '发布成功', icon: 'success' })
 }
 
 function toggleLike(comment: any) {
@@ -247,6 +246,12 @@ function toggleLike(comment: any) {
     position: absolute;
     right: 24rpx;
     top: 24rpx;
+    &--pending {
+      .check-detail__status-text {
+        color: #faad14;
+        font-weight: 500;
+      }
+    }
     &--active {
       .check-detail__status-text {
         color: #1782fc;
@@ -338,6 +343,18 @@ function toggleLike(comment: any) {
     overflow-wrap: break-word;
   }
 
+  /* 空状态 */
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80rpx 0;
+  }
+  &__empty-text {
+    font-size: 26rpx;
+    color: #999;
+  }
+
   /* 点赞按钮 */
   &__like {
     display: flex;
@@ -377,7 +394,6 @@ function toggleLike(comment: any) {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #fff;
     z-index: 999;
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -386,11 +402,11 @@ function toggleLike(comment: any) {
     background: #eee;
   }
   &__bottom-inner {
-    height: 100rpx;
+    min-height: 100rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 69rpx;
+    padding: 16rpx 69rpx 58rpx;
   }
   &__comment-btn {
     width: 612rpx;

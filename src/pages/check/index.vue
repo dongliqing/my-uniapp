@@ -1,24 +1,32 @@
 <template>
   <view class="check">
     <!-- 主滚动区 -->
-    <scroll-view class="check__scroll" scroll-y refresher-enabled :refresher-triggered="refreshing"
-      @refresherrefresh="onPullDownRefresh" @scrolltolower="onLoadMore" :lower-threshold="200">
+    <scroll-view
+      class="check__scroll"
+      scroll-y
+      refresher-enabled
+      :refresher-triggered="refreshing"
+      @refresherrefresh="onPullDownRefresh"
+      @scrolltolower="onLoadMore"
+      :lower-threshold="200"
+    >
       <view class="check__content">
         <!-- 活动列表 -->
         <view v-for="(item, idx) in activityList" :key="idx" class="check__card">
           <view class="check__card-header">
-            <text class="check__card-name">{{ item.title }}</text>
-            <text class="check__card-status"
-              :class="item.ongoing ? 'check__card-status--active' : 'check__card-status--ended'">
-              {{ item.ongoing ? '进行中' : '已结束' }}
+            <text class="check__card-name">{{ item.hdmc }}</text>
+            <text class="check__card-status" :class="statusClass(item.hdzt)">
+              {{ statusText(item.hdzt) }}
             </text>
           </view>
-          <text class="check__card-time">活动时间：{{ item.time }}</text>
           <view class="check__card-footer">
-            <view class="check__card-btn"
-              :class="item.ongoing ? 'check__card-btn--primary' : 'check__card-btn--outline'" @tap="goDetail(item)">
-              <text class="check__card-btn-text" :class="item.ongoing ? '' : 'check__card-btn-text--outline'">
-                {{ item.ongoing ? '去看看' : '查看详情' }}
+            <view>
+              <text class="check__card-time">活动时间：{{ item.hdsj_0.slice(0, 10) }}至{{ item.hdsj_1.slice(0, 10) }}</text>
+            </view>
+
+            <view class="check__card-btn" :class="btnClass(item.hdzt)" @tap="goDetail(item)">
+              <text class="check__card-btn-text" :class="btnTextClass(item.hdzt)">
+                {{ btnText(item.hdzt) }}
               </text>
             </view>
           </view>
@@ -45,15 +53,38 @@ import { getCheckList } from '@/api/check'
 
 interface ActivityItem {
   id: number
-  title: string
-  time: string
-  ongoing: boolean
+  hdmc: string
+  hdsj_0: string
+  hdsj_1: string
+  hdzt: string // 0 未开始 1 进行中 2 已结束
 }
 
 const activityList = ref<ActivityItem[]>([])
 const loading = ref(false)
 const refreshing = ref(false)
 const noMore = ref(false)
+
+// hdzt 枚举: 0 未开始 1 进行中 2 已结束
+const statusTextMap: Record<string, string> = { '0': '未开始', '1': '进行中', '2': '已结束' }
+const btnTextMap: Record<string, string> = { '0': '查看详情', '1': '去看看', '2': '查看详情' }
+
+function statusText(hdzt: string) {
+  return statusTextMap[hdzt] ?? '未知'
+}
+function statusClass(hdzt: string) {
+  if (hdzt === '1') return 'check__card-status--active'
+  if (hdzt === '0') return 'check__card-status--pending'
+  return 'check__card-status--ended'
+}
+function btnClass(hdzt: string) {
+  return hdzt === '1' ? 'check__card-btn--primary' : 'check__card-btn--outline'
+}
+function btnText(hdzt: string) {
+  return btnTextMap[hdzt] ?? '查看详情'
+}
+function btnTextClass(hdzt: string) {
+  return hdzt !== '1' ? 'check__card-btn-text--outline' : ''
+}
 
 // 分页参数
 const page = ref(1)
@@ -73,9 +104,15 @@ async function fetchData(reset: boolean = false) {
   try {
     const res: any = await getCheckList({
       page: page.value,
-      pageSize,
+      pageSize
     })
-    const list: ActivityItem[] = Array.isArray(res?.datas) ? res.datas : []
+    const list: ActivityItem[] = Array.isArray(res?.datas)
+      ? res.datas.map(item => {
+          return {
+            ...item.mainTable
+          }
+        })
+      : []
 
     if (reset) {
       activityList.value = list
@@ -99,8 +136,8 @@ async function fetchData(reset: boolean = false) {
 /** 下拉刷新 */
 function onPullDownRefresh() {
   refreshing.value = true
-  fetchData(true).then((res) => {
-    console.log('---rs', res);
+  fetchData(true).then(res => {
+    console.log('---rs', res)
 
     refreshing.value = false
   })
@@ -113,7 +150,7 @@ function onLoadMore() {
 
 /** 跳转详情 */
 const goDetail = (item: any) => {
-  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.id}` })
+  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.creator}` })
 }
 
 onShow(() => {
@@ -198,6 +235,10 @@ onShow(() => {
     font-weight: 500;
     white-space: nowrap;
 
+    &--pending {
+      color: #faad14;
+    }
+
     &--active {
       color: #1782fc;
     }
@@ -208,6 +249,7 @@ onShow(() => {
   }
 
   &__card-time {
+    flex: 1;
     font-size: 24rpx;
     color: #666;
     position: absolute;
@@ -217,7 +259,7 @@ onShow(() => {
 
   &__card-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-top: 60rpx;
   }
 
