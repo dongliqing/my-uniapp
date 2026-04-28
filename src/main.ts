@@ -1,16 +1,11 @@
-import 'uno.css';
-import { createSSRApp } from 'vue';
-import App from './App.vue';
-import router from './router/index';
+import 'uno.css'
+import { createSSRApp } from 'vue'
+import App from './App.vue'
 
 export function createApp() {
-  const app = createSSRApp(App);
-
-  // 使用路由
-  app.use(router);
+  const app = createSSRApp(App)
 
   return {
-    app,
-    router,
-  };
+    app
+  }
 }

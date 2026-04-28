@@ -10,7 +10,7 @@
         <!-- 商家信息卡片 -->
         <view class="detail-page__info">
           <!-- 商家名称 -->
-          <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg" />
+          <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg"></image>
           <text class="detail-page__name">{{ merchantInfo.name }}</text>
           <!-- 评分行：星级 + 分数 + 分类 + 区域 -->
           <view class="detail-page__rating-row">
@@ -149,13 +149,9 @@
             <!-- ============ 原材料看台 ============ -->
             <view class="manage__gallery-section">
               <text class="manage__gallery-title">原材料看台</text>
-              <scroll-view class="manage__gallery-scroll" scroll-x>
-                <view class="manage__gallery-list">
-                  <view v-for="(img, i) in rawImages" :key="i" class="manage__gallery-item" @tap="previewGallery(rawImages, i)">
-                    <image class="manage__gallery-img" :src="img" mode="aspectFill" />
-                  </view>
-                </view>
-              </scroll-view>
+              <view class="manage__gallery-list">
+                <image v-for="(img, i) in rawImages" :key="i" class="manage__gallery-img" :src="img" mode="aspectFill" @tap.stop="previewGallery(rawImages, i)" />
+              </view>
             </view>
           </view>
           <!-- 商家故事 -->
@@ -179,27 +175,21 @@
                 <text class="manage__section-title">商家荣誉</text>
               </view>
               <view v-for="honor in merchantInfo.honors" class="manage__card-item">
-                <image src="/static/images/svg/merchantDetail/honor.png" />
+                <image src="/static/images/svg/merchantDetail/honor.svg"></image>
                 <text>{{ honor }}</text>
               </view>
             </view>
           </view>
 
-          <!-- 特色菜品（支持滚动加载更多） -->
-          <DishesPanel v-show="activeTab === 'dishes'" :dishes="dishes" :loading="dishesLoading" :no-more="dishesNoMore" @load-more="loadMoreDishes" />
-          <!-- 互动（支持滚动加载更多） -->
-          <InteractPanel v-show="activeTab === 'interact'" :comments="comments" :loading="commentsLoading" :no-more="commentsNoMore" @load-more="loadMoreComments" />
+          <!-- 特色菜品 -->
+          <DishesPanel v-show="activeTab === 'dishes'" :dishes="dishes" />
+          <!-- 互动 -->
+          <InteractPanel v-show="activeTab === 'interact'" :comments="comments" />
           <!-- ============ 抽检信息 ============ -->
-          <view v-show="activeTab === 'inspection'" class="manage__gallery-section">
-            <image class="manage__gallery-bg" src="/static/images/svg/merchantDetail/39.svg" mode="aspectFill" />
-            <text class="manage__gallery-title">抽检信息</text>
-            <scroll-view class="manage__gallery-scroll" scroll-x>
-              <view class="manage__gallery-list">
-                <view v-for="(img, i) in inspectImages" :key="i" class="manage__gallery-item" @tap="previewGallery(inspectImages, i)">
-                  <image class="manage__gallery-img" :src="img" mode="aspectFill" />
-                </view>
-              </view>
-            </scroll-view>
+          <view v-show="activeTab === 'inspection'" class="manage__gallery-section manage__gallery-section--inspection">
+            <view class="manage__gallery-list">
+              <image v-for="(img, i) in inspectImages" :key="i" class="manage__gallery-img" :src="img" mode="aspectFill" @tap.stop="previewGallery(inspectImages, i)" />
+            </view>
           </view>
         </view>
       </view>
@@ -359,18 +349,6 @@ const dishes = ref<DishItem[]>([
   { name: '缙云烧饼（全瘦肉）', price: '\u00a58', image: '/static/images/svg/merchantDetail/40.png' },
   { name: '缙云烧饼（加蛋）', price: '\u00a510', image: '/static/images/svg/merchantDetail/41.png' }
 ])
-const dishesLoading = ref(false)
-const dishesNoMore = ref(false)
-
-async function loadMoreDishes() {
-  if (dishesLoading.value || dishesNoMore.value) return
-  dishesLoading.value = true
-  // TODO: 调用API加载更多特色菜品
-  setTimeout(() => {
-    dishesLoading.value = false
-    // dishesNoMore.value = true // 数据加载完毕后设置
-  }, 500)
-}
 
 // 评论列表（支持滚动加载）
 const comments = ref<CommentItem[]>([
@@ -393,19 +371,6 @@ const comments = ref<CommentItem[]>([
     time: '2026-01-05'
   }
 ])
-const commentsLoading = ref(false)
-const commentsNoMore = ref(false)
-
-async function loadMoreComments() {
-  if (commentsLoading.value || commentsNoMore.value) return
-  commentsLoading.value = true
-  // TODO: 调用API加载更多评论
-  setTimeout(() => {
-    commentsLoading.value = false
-    // commentsNoMore.value = true // 数据加载完毕后设置
-  }, 500)
-}
-
 // ==================== 计算属性 ====================
 const statusText = computed(() => {
   const map = { normal: '正常经营', rectify: '整改中', high: '高风险' }
@@ -468,6 +433,7 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
     border-radius: 25rpx;
     // 去掉 overflow: hidden，避免裁剪 canvas（type=2d canvas 可能溢出）
   }
+
   &__name-logo {
     position: absolute;
     top: -10rpx;
@@ -502,7 +468,7 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
     position: relative;
     margin-top: -10rpx;
     background: linear-gradient(180deg, #c3e9ff 0, #fff 25%);
-    border-radius: 36rpx;
+    border-radius: 36rpx 36rpx 0 0;
   }
 
   &__info-deco {
@@ -704,6 +670,7 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
   /* ====== Tab 内容 ====== */
   &__tab-content {
     padding-bottom: 60rpx;
+    background: #f5f5f5;
   }
 
   /* ====== 底部操作栏 ====== */
@@ -757,10 +724,13 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
     background: #fff;
     padding: 32rpx 24rpx 24rpx;
     margin-bottom: 20rpx;
+
     .manage__card-item {
       display: flex;
       align-items: center;
       margin-top: 24rpx;
+      font-size: 24rpx;
+
       image {
         width: 58rpx;
         height: 58rpx;
@@ -1012,17 +982,13 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
 
   // =================== 原材料看台 / 抽检信息 ===================
   &__gallery-section {
-    position: relative;
     margin-top: 24rpx;
     background-color: #fff;
   }
 
-  &__gallery-bg {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+  &__gallery-section--inspection {
+    padding: 24rpx;
+    margin-top: 0;
   }
 
   &__gallery-title {
@@ -1030,36 +996,21 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
     font-weight: 500;
     color: #000;
     display: block;
-    position: relative;
-    z-index: 1;
     margin-bottom: 20rpx;
-  }
-
-  &__gallery-scroll {
-    width: 100%;
-    position: relative;
-    z-index: 1;
   }
 
   &__gallery-list {
     display: flex;
+    align-items: center;
     gap: 16rpx;
-    padding-right: 8rpx;
-    width: max-content;
-  }
-
-  &__gallery-item {
-    width: 218rpx;
-    height: 218rpx;
-    border-radius: 16rpx;
-    overflow: hidden;
-    background: #d9d9d9;
-    flex-shrink: 0;
   }
 
   &__gallery-img {
-    width: 100%;
-    height: 100%;
+    width: calc((100% - 32rpx) / 3);
+    height: 220rpx;
+    border-radius: 16rpx;
+    background: #d9d9d9;
+    flex-shrink: 0;
   }
 }
 </style>

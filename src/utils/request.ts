@@ -56,7 +56,7 @@ const request = (options = {}) => {
         if (res.statusCode === 200) {
           // 这里可以根据后端返回的业务状态码做进一步处理
           // 例如：if (res.data.code === 10086) { 跳转登录 }
-          resolve(res.data)
+          resolve(res.data.datajson)
         } else if (res.statusCode === 401) {
           // 凭证失效，清除本地 token 并跳转登录页
           uni.removeStorageSync('token')
