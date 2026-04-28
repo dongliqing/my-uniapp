@@ -2,12 +2,12 @@
   <view class="home-page">
     <!-- 顶部渐变背景 -->
     <view class="top-gradient">
-      <image class="wave-decoration" src="@/static/images/home-bg.png" mode="aspectFit" />
+      <image class="wave-decoration" src="@/static/images/home-bg.svg" mode="aspectFit" />
     </view>
 
     <!-- 品牌展示区 -->
     <view class="brand-showcase">
-      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('merchantList')">
+      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('storeList')">
         <view class="brand-item">
           <text class="brand-name">{{ brand.name }}</text>
           <image src="@/static/images/home-head-line.png" mode="aspectFit" class="line" />
@@ -25,7 +25,7 @@
     <!-- 搜索栏 -->
     <view class="search-bar" @click="navigateTo('storeList')">
       <view class="search-box">
-        <image class="search-icon" src="@/static/images/search-icon.png" mode="aspectFit" />
+        <uni-icons type="search" size="34rpx" color="#333" />
         <text class="search-placeholder">搜索店铺</text>
       </view>
       <view class="search-btn">
@@ -41,12 +41,12 @@
       <view class="services-grid">
         <!-- 红黑榜单 -->
         <view class="service-card" @click="navigateTo('redBlackRank')">
-          <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
+          <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">红黑榜单</text>
             <view class="card-link">
               <text class="link-text">去看看</text>
-              <image class="link-arrow" src="@/static/images/arrow-right.png" mode="aspectFit" />
+              <uni-icons type="forward" size="22rpx" color="#333" />
             </view>
           </view>
           <view class="card-icon-wrap">
@@ -55,12 +55,12 @@
         </view>
         <!-- 你点我查 -->
         <view class="service-card" @click="switchTo">
-          <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
+          <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">你点我查</text>
             <view class="card-link">
               <text class="link-text">去看看</text>
-              <image class="link-arrow" src="@/static/images/arrow-right.png" mode="aspectFit" />
+              <uni-icons type="forward" size="22rpx" color="#333" />
             </view>
           </view>
           <view class="card-icon-wrap">
@@ -69,12 +69,12 @@
         </view>
         <!-- 我要咨询 -->
         <view class="service-card" @click="navigateTo('redBlackRank')">
-          <image class="card-bg" src="@/static/images/hot-services-bg.png" mode="aspectFill" />
+          <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">我要咨询</text>
             <view class="card-link">
               <text class="link-text">去看看</text>
-              <image class="link-arrow" src="@/static/images/arrow-right.png" mode="aspectFit" />
+              <uni-icons type="forward" size="22rpx" color="#333" />
             </view>
           </view>
           <view class="card-icon-wrap">
@@ -86,7 +86,7 @@
 
     <!-- 商家星级 -->
     <view class="section store-stars">
-      <image class="store-stars-bg" src="@/static/images/store-stars-bg.png" mode="aspectFill" />
+      <image class="store-stars-bg" src="@/static/images/store-stars-bg.svg" mode="aspectFill" />
       <view class="section-header">
         <text class="section-title">商家星级</text>
       </view>
@@ -95,20 +95,16 @@
           <text class="star-label">{{ star.label }}</text>
           <view class="star-icons">
             <template v-if="star.active > 1">
-              <image v-for="i in star.active" :key="'star-blue' + i" class="star-icon"
-                src="@/static/images/star-blue.png" mode="scaleToFill" />
+              <image v-for="i in star.active" :key="'star-blue' + i" class="star-icon" src="@/static/images/star-blue.png" mode="scaleToFill" />
             </template>
             <template v-else>
               <image class="star-icon" src="@/static/images/star-red.png" mode="scaleToFill" />
             </template>
-            <image v-for="i in index" :key="'star-gray' + i" class="star-icon" src="@/static/images/star-gray.png"
-              mode="scaleToFill" />
+            <image v-for="i in index" :key="'star-gray' + i" class="star-icon" src="@/static/images/star-gray.png" mode="scaleToFill" />
           </view>
           <view v-if="star.percent" class="star-percent" :class="{ danger: star.percent <= 10 }">
             <view class="progress-bar" :style="{ width: star.percent + '%' }" />
-            <text class="percent-num"
-              :class="{ blue: star.percent < 50 && star.percent > 10, red: star.percent <= 10 }">{{
-                star.percent + '%' }}</text>
+            <text class="percent-num" :class="{ blue: star.percent < 50 && star.percent > 10, red: star.percent <= 10 }">{{ star.percent + '%' }}</text>
           </view>
         </view>
       </view>
@@ -157,8 +153,8 @@
 
 <script setup lang="ts">
 // import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-import { useRouter } from 'uni-mini-router';
-import { ref } from 'vue';
+import { useRouter } from 'uni-mini-router'
+import { ref } from 'vue'
 
 const router = useRouter()
 
@@ -264,10 +260,10 @@ const switchTo = () => {
 }
 
 // 查看资讯详情
-const viewNews = (id: number) => { }
+const viewNews = (id: number) => {}
 
 // 查看全部资讯
-const viewAllNews = () => { }
+const viewAllNews = () => {}
 </script>
 
 <style lang="scss" scoped>

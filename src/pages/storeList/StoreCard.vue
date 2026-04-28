@@ -14,9 +14,8 @@
         <!-- 星级和评分 -->
         <view class="merchant-card__rating">
           <view class="merchant-card__stars">
-            <image v-for="n in 5" :key="n" class="merchant-card__star"
-              :src="n <= data.stars ? '/static/images/svg/star-active.svg' : '/static/images/svg/star-default.svg'"
-              mode="aspectFit" />
+            <image class="merchant-card__star" src="/static/images/svg/star-default.svg" mode="aspectFit" />
+            <image class="merchant-card__star" src="/static/images/svg/star-active.svg" mode="aspectFit" />
           </view>
           <text class="merchant-card__score">{{ data.score }}分</text>
           <text class="merchant-card__distance">{{ data.distance }}2.3km</text>
@@ -33,7 +32,7 @@
         <view class="merchant-card__tags">
           <view class="merchant-card__year-tag">
             <image class="merchant-card__year-icon" src="/static/images/icon-store.png" mode="aspectFit" />
-            <text class="merchant-card__year-text">{{ data.year }}100年店铺</text>
+            <text class="merchant-card__year-text">{{ data.year }}年店铺</text>
           </view>
           <view class="merchant-card__badge">{{ data.badge }}缙云传味</view>
           <view class="merchant-card__badge">{{ data.badge }}缙云传味</view>
@@ -63,11 +62,10 @@ interface MerchantData {
   id: string | number
   name: string
   img: string
-  stars: number
+  stars?: number
   score: number
   distance: string
-  category: string
-  area: string
+  category?: string
   year: number
   badge: string
   badge2?: string
@@ -94,11 +92,14 @@ const statusText = computed(() => {
 })
 
 function goDetail() {
-  emit('click', props.data.id)
+  // emit('click', props.data.id)
+  uni.navigateTo({
+    url: '/pages/merchantDetail/index?id=' + props.data.id
+  })
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .merchant-card {
   background: #fff;
   border-radius: 16rpx;

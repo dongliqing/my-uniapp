@@ -46,6 +46,16 @@
       }
     },
     {
+      "path": "pages/storeList/storeList",
+      "style": {
+        "navigationBarTitleText": "商家列表",
+        "enablePullDownRefresh": true,
+        "backgroundTextStyle": "dark",
+        "onReachBottomDistance": 50,
+        "navigationBarBackgroundColor": "#c3e9ff"
+      }
+    },
+    {
       "path": "pages/merchantDetail/index",
       "style": {
         "navigationBarTitleText": "商户详情"

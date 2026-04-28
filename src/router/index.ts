@@ -19,6 +19,14 @@ const routes = [
     }
   },
   {
+    path: '/pages/storeList/storeList',
+    name: 'storeList',
+    meta: {
+      title: '商家列表',
+      keepAlive: true
+    }
+  },
+  {
     path: '/pages/storeDetail/storeDetail',
     name: 'storeDetail'
   },

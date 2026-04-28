@@ -10,7 +10,7 @@
         <!-- 商家信息卡片 -->
         <view class="detail-page__info">
           <!-- 商家名称 -->
-          <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg"></image>
+          <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg" />
           <text class="detail-page__name">{{ merchantInfo.name }}</text>
           <!-- 评分行：星级 + 分数 + 分类 + 区域 -->
           <view class="detail-page__rating-row">
@@ -179,7 +179,7 @@
                 <text class="manage__section-title">商家荣誉</text>
               </view>
               <view v-for="honor in merchantInfo.honors" class="manage__card-item">
-                <image src="/static/images/svg/merchantDetail/honor.svg"></image>
+                <image src="/static/images/svg/merchantDetail/honor.png" />
                 <text>{{ honor }}</text>
               </view>
             </view>
