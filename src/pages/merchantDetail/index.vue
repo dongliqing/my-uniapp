@@ -219,6 +219,7 @@ import StarRating from '@/components/StarRating.vue'
 import ScoreRadarChart from '@/components/ScoreRadarChart.vue'
 import DishesPanel from './DishesPanel.vue'
 import InteractPanel from './InteractPanel.vue'
+import { getMerchantInfo } from '@/api/merchant'
 
 // ==================== 类型定义 ====================
 interface ScoreDimension {
@@ -316,7 +317,7 @@ const tabs = [
 
 // ==================== 商家详情数据 ====================
 const merchantInfo = ref<MerchantDetail>({
-  id: 1,
+  id: 1263017283388851286,
   name: '缙云烧饼东门老字号烧饼',
   heroImage: '/static/images/svg/merchantDetail/36.png',
   stars: 4,
@@ -402,9 +403,50 @@ function onShare() {
   // TODO: 实现分享逻辑
 }
 
-/** 加载商家详情 */
+/** 加载商家详情 - 调用 getMerchantInfo 整合接口 */
 async function loadMerchantDetail(id: string | number) {
-  console.log('加载商家详情:', id)
+  try {
+    const res = await getMerchantInfo({ id })
+
+    // 1. 商家基本信息
+    if (res.info) {
+      const d = res.info
+      merchantInfo.value = {
+        id: d.id ?? id,
+        name: d.name || merchantInfo.value.name,
+        heroImage: d.heroImage || d.coverImg || merchantInfo.value.heroImage,
+        stars: d.stars ?? merchantInfo.value.stars,
+        score: d.score ?? merchantInfo.value.score,
+        status: d.status || merchantInfo.value.status,
+        category: d.category || merchantInfo.value.category,
+        area: d.area || merchantInfo.value.area,
+        year: d.year ?? merchantInfo.value.year,
+        badges: d.badges || merchantInfo.value.badges,
+        businessHours: d.businessHours || merchantInfo.value.businessHours,
+        openYear: d.openYear || merchantInfo.value.openYear,
+        address: d.address || merchantInfo.value.address,
+        honors: d.honors || merchantInfo.value.honors
+      }
+    }
+
+    // 2. 商家得分（雷达图维度）
+    if (res.score) {
+      const dims = Array.isArray(res.score) ? res.score : []
+      if (dims.length > 0) {
+        radarDimensions.splice(0, radarDimensions.length, ...dims)
+      }
+    }
+
+    // 3. 年度处罚 + 投诉信息（警示信息）
+    if (res.penalty || res.complaint) {
+      const p = res.penalty || {}
+      const c = res.complaint || {}
+      warningItems[0].count = c.count ?? c.total ?? warningItems[0].count // 年度投诉
+      warningItems[1].count = p.count ?? p.total ?? warningItems[1].count // 年度处罚
+    }
+  } catch (err) {
+    console.error('加载商家详情失败', err)
+  }
 }
 
 /** 跳转投诉页 */

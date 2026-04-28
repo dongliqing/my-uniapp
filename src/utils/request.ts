@@ -42,8 +42,8 @@ const request = (options = {}) => {
       method: method.toUpperCase(),
       data: {
         datajson: {
+          mainTable: data?.mainTable ?? {},
           ...data,
-          mainTable: data.mainTable || {},
           header: {
             operator: 'sysadmin' //固定
           }

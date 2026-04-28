@@ -19,23 +19,26 @@
         <!-- 投诉内容 -->
         <view class="complaint__section">
           <text class="complaint__section-title">投诉信息</text>
-          <textarea v-model="form.complaintContent" class="complaint__textarea" placeholder="请详细描述投诉内容，我们会保密该信息~"
-            placeholder-class="complaint__textarea-placeholder" :maxlength="500" />
+          <textarea
+            v-model="form.tsnr"
+            class="complaint__textarea"
+            placeholder="请详细描述投诉内容，我们会保密该信息~"
+            placeholder-class="complaint__textarea-placeholder"
+            :maxlength="500"
+          />
 
           <!-- 图片上传 -->
           <view class="complaint__upload-area">
             <view class="complaint__upload-list">
               <!-- 已上传图片 -->
-              <view v-for="(img, i) in form.uploadedImages" :key="i" class="complaint__upload-preview"
-                @tap="previewImage(i)">
+              <view v-for="(img, i) in form.tp" :key="i" class="complaint__upload-preview" @tap="previewImage(i)">
                 <image class="complaint__upload-preview-img" :src="img" mode="aspectFill" />
                 <view class="complaint__upload-del" @tap.stop="removeImage(i)">×</view>
               </view>
               <!-- 上传按钮（未满4张时显示） -->
-              <view v-if="form.uploadedImages.length < 4" class="complaint__upload-btn" @tap="chooseImage">
+              <view v-if="form.tp.length < 4" class="complaint__upload-btn" @tap="chooseImage">
                 <image class="complaint__upload-icon" src="/static/images/svg/upload.svg" mode="aspectFit" />
-                <text class="complaint__upload-hint-text">图片({{ form.uploadedImages.length }}/4)</text>
-
+                <text class="complaint__upload-hint-text">图片({{ form.tp.length }}/4)</text>
               </view>
             </view>
           </view>
@@ -45,8 +48,7 @@
         <view class="complaint__section">
           <text class="complaint__section-title">联系方式</text>
           <text class="complaint__contact-hint">联系方式用于执法人员联系本人了解具体投诉内容，绝不外泄</text>
-          <input v-model="form.phone" class="complaint__input" type="number" placeholder="欢迎留下你的手机号"
-            placeholder-class="complaint__input-placeholder" :maxlength="11" />
+          <input v-model="form.tsrlxfs" class="complaint__input" type="number" placeholder="欢迎留下你的手机号" placeholder-class="complaint__input-placeholder" :maxlength="11" />
         </view>
 
         <!-- 间距 -->
@@ -64,53 +66,75 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { addComplaint } from '@/api/merchant'
+
+const pageId = ref('')
 
 const form = reactive({
-  complaintContent: '',
-  phone: '',
-  uploadedImages: [] as string[]
+  tsnr: '',
+  tsrlxfs: '',
+  tp: [] as string[]
 })
 
-const canSubmit = computed(() => form.complaintContent.trim().length > 0)
+onLoad(options => {
+  if (options?.id) {
+    pageId.value = options.id
+  }
+})
+
+const canSubmit = computed(() => form.tsnr.trim().length > 0)
 
 function chooseImage() {
-  if (form.uploadedImages.length >= 4) {
+  if (form.tp.length >= 4) {
     uni.showToast({ title: '最多上传4张图片', icon: 'none' })
     return
   }
   uni.chooseImage({
-    count: 4 - form.uploadedImages.length,
+    count: 4 - form.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success(res) {
       // tempFilePaths 可能为 string | string[]，用 concat 安全合并
       const paths = Array.isArray(res.tempFilePaths) ? res.tempFilePaths : [res.tempFilePaths]
-      form.uploadedImages.push(...paths)
+      form.tp.push(...paths)
     }
   })
 }
 
 function removeImage(index: number) {
-  form.uploadedImages.splice(index, 1)
+  form.tp.splice(index, 1)
 }
 
 function previewImage(index: number) {
   uni.previewImage({
-    current: form.uploadedImages[index],
-    urls: form.uploadedImages
+    current: form.tp[index],
+    urls: form.tp
   })
 }
 
-function submit() {
+async function submit() {
   if (!canSubmit.value) {
     uni.showToast({ title: '请填写投诉内容', icon: 'none' })
     return
   }
-  console.log('>>>>>', form);
-
-  uni.showToast({ title: '提交成功', icon: 'success' })
-  setTimeout(() => uni.navigateBack(), 1500)
+  if (!pageId.value) {
+    uni.showToast({ title: '页面参数缺失', icon: 'none' })
+    return
+  }
+  try {
+    await addComplaint({
+      datas: [
+        {
+          mainTable: { id: pageId.value, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), sjmc: '商家信息-sysadmin 2026-04-27 10:14:00' }
+        }
+      ]
+    })
+    uni.showToast({ title: '提交成功', icon: 'success' })
+    // setTimeout(() => uni.navigateBack(), 1500)
+  } catch (e) {
+    uni.showToast({ title: '提交失败，请重试', icon: 'none' })
+  }
 }
 </script>
 
