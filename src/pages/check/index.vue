@@ -15,8 +15,8 @@
         <view v-for="(item, idx) in activityList" :key="idx" class="check__card">
           <view class="check__card-header">
             <text class="check__card-name">{{ item.hdmc }}</text>
-            <text class="check__card-status" :class="statusClass(item.hdzt)">
-              {{ statusText(item.hdzt) }}
+            <text class="check__card-status" :class="statusConfig(item.hdzt).statusCls">
+              {{ statusConfig(item.hdzt).text }}
             </text>
           </view>
           <view class="check__card-footer">
@@ -24,9 +24,9 @@
               <text class="check__card-time">活动时间：{{ item.hdsj_0.slice(0, 10) }}至{{ item.hdsj_1.slice(0, 10) }}</text>
             </view>
 
-            <view class="check__card-btn" :class="btnClass(item.hdzt)" @tap="goDetail(item)">
-              <text class="check__card-btn-text" :class="btnTextClass(item.hdzt)">
-                {{ btnText(item.hdzt) }}
+            <view class="check__card-btn" :class="statusConfig(item.hdzt).btnCls" @tap="goDetail(item)">
+              <text class="check__card-btn-text" :class="statusConfig(item.hdzt).btnTextCls">
+                {{ statusConfig(item.hdzt).btnText }}
               </text>
             </view>
           </view>
@@ -64,26 +64,33 @@ const loading = ref(false)
 const refreshing = ref(false)
 const noMore = ref(false)
 
-// hdzt 枚举: 0 未开始 1 进行中 2 已结束
-const statusTextMap: Record<string, string> = { '0': '未开始', '1': '进行中', '2': '已结束' }
-const btnTextMap: Record<string, string> = { '0': '查看详情', '1': '去看看', '2': '查看详情' }
+// hdzt 枚举配置: 0 未开始 1 进行中 2 已结束
+const STATUS_CONFIG: Record<string, { text: string; statusCls: string; btnCls: string; btnText: string; btnTextCls: string }> = {
+  '0': {
+    text: '未开始',
+    statusCls: 'check__card-status--pending',
+    btnCls: 'check__card-btn--outline',
+    btnText: '查看详情',
+    btnTextCls: 'check__card-btn-text--outline'
+  },
+  '1': {
+    text: '进行中',
+    statusCls: 'check__card-status--active',
+    btnCls: 'check__card-btn--primary',
+    btnText: '去看看',
+    btnTextCls: ''
+  },
+  '2': {
+    text: '已结束',
+    statusCls: 'check__card-status--ended',
+    btnCls: 'check__card-btn--outline',
+    btnText: '查看详情',
+    btnTextCls: 'check__card-btn-text--outline'
+  }
+}
 
-function statusText(hdzt: string) {
-  return statusTextMap[hdzt] ?? '未知'
-}
-function statusClass(hdzt: string) {
-  if (hdzt === '1') return 'check__card-status--active'
-  if (hdzt === '0') return 'check__card-status--pending'
-  return 'check__card-status--ended'
-}
-function btnClass(hdzt: string) {
-  return hdzt === '1' ? 'check__card-btn--primary' : 'check__card-btn--outline'
-}
-function btnText(hdzt: string) {
-  return btnTextMap[hdzt] ?? '查看详情'
-}
-function btnTextClass(hdzt: string) {
-  return hdzt !== '1' ? 'check__card-btn-text--outline' : ''
+function statusConfig(hdzt: string) {
+  return STATUS_CONFIG[hdzt] ?? STATUS_CONFIG['2']
 }
 
 // 分页参数
