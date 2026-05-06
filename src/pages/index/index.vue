@@ -68,7 +68,7 @@
           </view>
         </view>
         <!-- 我要咨询 -->
-        <view class="service-card" @click="navigateTo('/pages/rank/index')">
+        <view class="service-card" @click="navigateTo('/pages/hotline/hotline')">
           <image class="card-bg" src="@/static/images/hot-services-bg.svg" mode="aspectFill" />
           <view class="card-content">
             <text class="card-title">我要咨询</text>
@@ -120,7 +120,7 @@
           <image class="card-icon" src="@/static/images/store-info-bg.png" mode="aspectFill" />
           <text class="info-title">{{ card.title }}</text>
           <view class="info-num">
-            <text class="num">{{ card.count }}</text>
+            <text class="num pb-[4rpx]">{{ card.count }}</text>
             <text class="unit">家</text>
           </view>
         </view>

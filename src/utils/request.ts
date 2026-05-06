@@ -31,7 +31,11 @@ const request = (options = {}) => {
     const token = uni.getStorageSync('token') || '5bebac6034384d79b48fcf097491374a'
     if (token) {
       //   defaultHeader['Authorization'] = token // 根据后端要求，也可能是 'Bearer ' + token
-      finalUrl = url + '?access_token=' + token
+      if (url.includes('?')) {
+        finalUrl = url + '&access_token=' + token
+      } else {
+        finalUrl = url + '?access_token=' + token
+      }
     }
   }
 

@@ -6,10 +6,11 @@
     </view>
     <view class="pt-[212rpx] flex items-center px-[36rpx] relative z-[9]">
       <!-- 头像用户名 -->
-      <image class="w-[120rpx] h-[120rpx] rounded-full" src="@/static/images/avatar.png" mode="aspectFill" @tap="editAvatar" />
+      <image v-if="avatarUrl" class="w-[120rpx] h-[120rpx] rounded-full" :src="avatarUrl" mode="aspectFill" @tap="editAvatar" />
+      <image v-else class="w-[120rpx] h-[120rpx] rounded-full" src="@/static/images/avatar.png" mode="aspectFill" @tap="editAvatar" />
       <view class="ml-[24rpx] flex items-center" @tap="editUserName">
         <!-- 颜色设置为黑色 -->
-        <text class="text-[30rpx] text-[#000] mr-[16rpx] username pb-[4rpx]">用户昵称</text>
+        <text class="text-[30rpx] text-[#000] mr-[16rpx] username pb-[4rpx]">{{ username || '用户昵称' }}</text>
         <uni-icons type="forward" size="34rpx" color="#333" class="" />
       </view>
     </view>
@@ -24,67 +25,48 @@
 </template>
 
 <script setup lang="ts">
-const editUserName = () => {}
+import { uploadFileApi, getFileApi } from '@/api/common.ts'
+
+const avatarUrl = ref('')
+const username = ref('')
+
+// const fileId = ref('')
+// const type = ref('')
+
+const editUserName = () => {
+  //弹出一个输入框
+  uni.showModal({
+    title: '修改用户名',
+    // content: '请输入用户名',
+    editable: true,
+    success: res => {
+      // 修改用户名
+      console.log(res)
+      username.value = res.content
+    }
+  })
+}
 const editAvatar = () => {
   // 选择图片
   uni.chooseImage({
     count: 1, // 最多选择几张
     sizeType: ['compressed'], // 指定是原图还是压缩图
     sourceType: ['camera', 'album'], // 指定来源是相机还是相册
-    success: res => {
+    success: async res => {
       const tempFilePath = res.tempFilePaths[0]
-      // 2. 上传到开发者服务器
-      uploadFile(tempFilePath)
+      const fileName = res.tempFiles[0].name
+      const type = res.tempFiles[0].type
+
+      // 上传到服务器
+      const fileid = await uploadFileApi(tempFilePath, fileName)
+      // console.log(fileid, type)
+      // fileId.value = fileid
+      // type.value = type
+
+      //下载图片资源
+      const url = await getFileApi(fileid, type)
+      avatarUrl.value = url
     }
-  })
-}
-
-// 执行上传
-function uploadFile(filePath: string) {
-  uni.uploadFile({
-    url: 'https://你的服务器地址/upload', // 你的上传接口
-    filePath: filePath,
-    name: 'file',
-    formData: {
-      // 附带的额外表单数据
-      userId: ''
-    },
-    success: uploadRes => {
-      console.log('上传成功', uploadRes.data)
-    },
-    fail: err => {
-      console.error('上传失败', err)
-    }
-  })
-}
-
-const fileList = ref([])
-const handleSelect = e => {
-  // 获取选中的图片本地临时路径数组
-  const tempFilePaths = e.tempFilePaths
-
-  // 遍历上传（如果是多图上传）
-  tempFilePaths.forEach(path => {
-    uni.uploadFile({
-      url: 'https://你的后端接口地址/upload', // 替换成你真实的接口地址
-      filePath: path, // 要上传的文件资源路径
-      name: 'file', // 后端接收文件的字段名（例如 'file', 'image' 等）
-      header: {
-        // 如果需要鉴权，可以在这里添加 token
-        Authorization: 'Bearer ' + uni.getStorageSync('token')
-      },
-      formData: {
-        // 附带的其他表单数据（如果后端需要）
-        userId: '12345'
-      },
-      success: uploadFileRes => {
-        console.log('上传成功', JSON.parse(uploadFileRes.data))
-        // 这里可以处理后端返回的图片URL，并更新 fileList 用于回显
-      },
-      fail: err => {
-        console.error('上传失败', err)
-      }
-    })
   })
 }
 </script>
