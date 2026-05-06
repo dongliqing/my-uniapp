@@ -20,8 +20,6 @@ export const getMerchantInfo = (data: Record<string, any>) => {
 
 // 提投诉
 export const addComplaint = (data: Record<string, any>) => {
-  console.log('----', data)
-
   return request.post(`${BASE_URL_SET}shsj_sjts`, data)
 }
 
