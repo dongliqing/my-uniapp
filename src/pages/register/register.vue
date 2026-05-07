@@ -1,10 +1,25 @@
 <template>
-  <view class="login-container flex items-center">
+  <view class="login-container pt-[30rpx]">
     <!-- 登录内容区域 -->
-    <view class="login-form pt-[40rpx] pb-[50rpx] flex flex-col items-center">
-      <text style="font-weight: 600" class="text-[34rpx]">欢迎使用本系统</text>
-      <text class="text-[#666] text-[26rpx] py-[8rpx]">快速登录，轻松使用</text>
-      <button class="login-btn" @click="handleGetPhone" :disabled="isLoading">手机号快捷登录</button>
+    <view class="login-form">
+      <view class="title flex flex-col items-center pt-[70rpx] pb-[40rpx]">
+        <view class="text-[#000] text-[40rpx]" style="font-weight: 600">用户注册</view>
+        <view class="text-[26rpx] text-[#999] pt-[4rpx]">请完善您的基本信息</view>
+      </view>
+      <view class="form-item">
+        <text>手机号码</text>
+        <input type="tel" v-model="formData.phone" placeholder="" maxlength="11" disabled class="disabled" />
+      </view>
+      <view class="form-item">
+        <text>是否商家</text>
+        <switch name="isBusiness" :checked="formData.isBusiness" style="transform: scale(0.9)" @change="businessChange" />
+      </view>
+      <view class="form-item">
+        <text>{{ nameLabel }}</text>
+        <input type="text" v-model="formData.name" :placeholder="`请输入${nameLabel}`" maxlength="50" />
+      </view>
+      <!-- 注册按钮 -->
+      <button class="submit-btn" @click="handleSubmit" :disabled="isLoading">确认注册</button>
     </view>
   </view>
 </template>
@@ -12,23 +27,19 @@
 <script setup lang="ts">
 import { appId, appSecret } from '@/pages/constant/constant'
 
-const redirectUrl = ref('')
-
-onLoad(options => {
-  // 从 options 中解构或直接获取参数
-  redirectUrl.value = options.redirect
-  console.log('接收到的redirectUrl：', redirectUrl.value)
-})
-
 // 表单数据
 const formData = reactive({
-  phone: '',
+  phone: '17788889999',
   isBusiness: false,
   name: ''
 })
 const isLoading = ref(false)
-const nameLabel = computed(() => (formData.isBusiness ? '商家名称' : '用户名称'))
+const nameLabel = computed(() => (formData.isBusiness ? '商家名称' : '姓名'))
 
+const businessChange = e => {
+  formData.isBusiness = e.detail.value
+  console.log('switch1 发生 change 事件，携带值为', e.detail.value)
+}
 const getOpenid = async () => {
   const loginRes = await uni.login({ provider: 'weixin' })
   console.log('loginRes', loginRes)
@@ -68,40 +79,23 @@ const getAccessToken = async () => {
 }
 // getAccessToken();
 
-async function handleGetPhone(e) {
-  console.log('e.detail', e.detail)
-  // 2. 检查用户是否同意授权
-  if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-    uni.showToast({ title: '用户拒绝授权', icon: 'none' })
+// 登录逻辑
+const handleSubmit = () => {
+  if (!formData.phone) {
+    uni.showToast({
+      title: '请获取手机号',
+      icon: 'none'
+    })
+    return
+  }
+  if (!formData.name) {
+    uni.showToast({
+      title: '请填写' + nameLabel.value,
+      icon: 'none'
+    })
     return
   }
 
-  await getAccessToken()
-  const sessionToken = uni.getStorageSync('access_token')
-  uni.request({
-    url: 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' + sessionToken,
-    method: 'POST',
-    data: {
-      code: e.detail.code // 登录凭证
-    },
-    success: res => {
-      if (res.data.errcode === 0) {
-        const { phoneNumber } = res.data.phone_info
-        formData.phone = phoneNumber
-        // uni.showToast({ title: `手机号: ${phoneNumber}`, icon: 'success' });
-        // 这里可以进行后续的登录或绑定操作
-        console.log('phoneNumber：', phoneNumber)
-        //登录
-        uni.setStorageSync('phone', phoneNumber)
-      } else {
-        uni.showToast({ title: '获取失败', icon: 'none' })
-      }
-    }
-  })
-}
-
-// 登录逻辑
-const handleLogin = () => {
   // 模拟登录成功
   uni.setStorageSync('user_token', 'bearer_login_success')
 
@@ -112,7 +106,6 @@ const handleLogin = () => {
   })
 
   // 登录成功后跳转
-  // 'http%3A%2F%2Flocalhost%3A5173%2Fpages%2Findex%2Findex'
   // setTimeout(() => {
   //   const redirect = router.currentRoute.value.query.redirect;
   //   if (redirect) {
@@ -134,22 +127,66 @@ const handleLogin = () => {
   box-sizing: border-box;
 }
 
+.bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  z-index: -1;
+  filter: hue-rotate(165deg);
+}
+
 .login-form {
-  // padding: 40rpx;
   color: #333;
   background: #ffffff;
   border-radius: 20rpx;
   margin: auto;
   width: 92%;
-  .login-btn {
-    // padding: 2rpx 0;
-    background: linear-gradient(237deg, #1782fc 0%, #46b2ff 100%);
+  padding-bottom: 100rpx;
+
+  .form-item {
+    display: flex;
+    align-items: center;
+    margin: 0 40rpx;
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #e3e3e3;
+    text {
+      width: 130rpx;
+      text-align-last: justify;
+      margin-right: 48rpx;
+    }
+    input {
+      flex: 1;
+      font-size: 32rpx;
+      padding: 10rpx 0;
+      &.disabled {
+        color: #999;
+      }
+    }
+  }
+
+  .get-phone-btn {
+    width: 160rpx !important;
+    color: #1882fc !important;
+    background: none !important;
+    font-size: 32rpx;
+    margin: 0 0 0 26rpx !important;
+    padding: 0 !important;
+    border: 0 !important;
+    line-height: 60rpx;
+    &::after {
+      border: none;
+    }
+  }
+  .submit-btn {
+    padding: 2rpx 0;
+    background: #1882fc;
     color: white;
-    font-size: 28rpx;
+    font-size: 32rpx;
     border-radius: 100rpx;
-    margin: 40rpx 0 0;
-    width: 90%;
-    letter-spacing: 2rpx;
+    margin: 80rpx 40rpx 0;
+    letter-spacing: 4rpx;
   }
 }
 </style>

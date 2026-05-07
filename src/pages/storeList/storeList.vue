@@ -37,21 +37,10 @@
 </template>
 
 <script setup lang="ts">
-import { getMessageInfo } from '@/api/home.ts'
 // import Storage from '@/utils/storage.ts'
 import { onHide, onPageScroll, onPullDownRefresh, onShow } from '@dcloudio/uni-app'
 import StoreCard from './StoreCard.vue'
-
-const fetchRequest = async () => {
-  const res = await getMessageInfo({
-    pageInfo: {
-      pageNo: '1',
-      pageSize: '10'
-    }
-  })
-  console.log('获取成功', res)
-}
-// fetchRequest()
+import { getStoreInfo, getScoreInfo } from '@/api/store.ts'
 
 interface Store {
   id: number
@@ -77,6 +66,31 @@ const pageParams = reactive({
   pageSize: 10
 })
 
+const getData = async () => {
+  const res = await getStoreInfo({
+    mainTable: {
+      sjxx: ''
+      // "tyshxydm":""
+    },
+    pageInfo: {
+      pageNum: 1,
+      pageSize: 1000
+    }
+  })
+  console.log(res)
+}
+getData()
+
+getScoreInfo({
+  mainTable: {
+    id: '1263017283388851285'
+    // "tyshxydm":""
+  },
+  pageInfo: {
+    pageNum: 1,
+    pageSize: 1000
+  }
+})
 const handleSearch = () => {}
 
 // Tab 配置
