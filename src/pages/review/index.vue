@@ -11,31 +11,37 @@
               v-for="n in 5"
               :key="n"
               class="review__star"
-              :src="n <= contentForm.rating ? '/static/images/svg/star-active.svg' : '/static/images/svg/star-default.svg'"
+              :src="n <= contentForm.xj ? '/static/images/svg/star-active.svg' : '/static/images/svg/star-default.svg'"
               mode="aspectFit"
               @tap="setRating(n)"
             />
           </view>
 
-          <text class="review__rating-text">{{ contentForm.rating }}星</text>
+          <text class="review__rating-text">{{ contentForm.xj }}星</text>
         </view>
 
         <!-- 评价内容 -->
         <view class="review__section">
-          <textarea v-model="content" class="review__textarea" placeholder="是一家不错的老店，味道不错！" placeholder-class="review__textarea-placeholder" :maxlength="500" />
+          <textarea
+            v-model="contentForm.pj"
+            class="review__textarea"
+            placeholder="是一家不错的老店，味道不错！"
+            placeholder-class="review__textarea-placeholder"
+            :maxlength="500"
+          />
 
           <!-- 图片上传 -->
           <view class="review__upload-area">
-            <view v-for="(img, i) in contentForm.uploadedImages" :key="i" class="review__upload-preview">
+            <view v-for="(img, i) in contentForm.tp" :key="i" class="review__upload-preview">
               <image class="review__upload-preview-img" :src="img" mode="aspectFill" />
               <view class="review__upload-del" @tap="removeImage(i)">×</view>
             </view>
-            <view v-if="contentForm.uploadedImages.length < 4" class="review__upload-btn" @tap="chooseImage">
+            <view v-if="contentForm.tp.length < 4" class="review__upload-btn" @tap="chooseImage">
               <view class="review__upload-icon-wrap">
                 <image class="review__upload-icon" src="/static/images/svg/upload.svg" mode="aspectFit" />
               </view>
-              <text v-if="contentForm.uploadedImages.length === 0" class="review__upload-text">图片(0/4)</text>
-              <text v-else class="review__upload-text">再加{{ 4 - contentForm.uploadedImages.length }}张</text>
+              <text v-if="contentForm.tp.length === 0" class="review__upload-text">图片(0/4)</text>
+              <text v-else class="review__upload-text">再加{{ 4 - contentForm.tp.length }}张</text>
             </view>
           </view>
         </view>
@@ -56,44 +62,49 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { addComment } from '@/api/merchant'
 
 const contentForm = reactive({
-  rating: 4,
-  content: '',
-  uploadedImages: []
+  xj: 4,
+  pj: '',
+  tp: ''
+})
+const pageId = ref('')
+onLoad(options => {
+  pageId.value = options?.id
 })
 
 // 判断是否可以提交（有评分且填写了内容）
 const canSubmit = computed(() => {
-  return contentForm.rating > 0 && contentForm.content.trim().length > 0
+  return contentForm.pj.trim().length > 0
 })
 
 function setRating(n: number) {
-  contentForm.rating = n
+  contentForm.xj = n
 }
 
 function chooseImage() {
-  if (contentForm.uploadedImages.length >= 4) {
+  if (contentForm.tp.length >= 4) {
     uni.showToast({ title: '最多上传4张图片', icon: 'none' })
     return
   }
   uni.chooseImage({
-    count: 4 - contentForm.uploadedImages.length,
+    count: 4 - contentForm.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success(res) {
-      contentForm.uploadedImages.push(...res.tempFilePaths)
+      contentForm.tp.push(...res.tempFilePaths)
     }
   })
 }
 
 function removeImage(index: number) {
-  contentForm.uploadedImages.splice(index, 1)
+  contentForm.tp.splice(index, 1)
 }
 
-function submit() {
+async function submit() {
   if (!canSubmit.value) {
-    if (contentForm.rating === 0) {
+    if (contentForm.xj === 0) {
       uni.showToast({ title: '请选择评分', icon: 'none' })
     } else {
       uni.showToast({ title: '请填写评价内容', icon: 'none' })
@@ -101,9 +112,31 @@ function submit() {
     return
   }
   console.log('>>>>', contentForm)
-
-  uni.showToast({ title: '发布成功', icon: 'success' })
-  setTimeout(() => uni.navigateBack(), 1500)
+  try {
+    await addComment({
+      datas: [
+        {
+          mainTable: {
+            id: pageId.value
+          },
+          detail3: {
+            ...contentForm,
+            rq: new Date()
+              .toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              })
+              .replace(/\//g, '-')
+          }
+        }
+      ]
+    })
+    uni.showToast({ title: '发布成功', icon: 'success' })
+    setTimeout(() => uni.navigateBack(), 1500)
+  } catch (e) {
+    uni.showToast({ title: '发布失败', icon: 'none' })
+  }
 }
 </script>
 

@@ -4,7 +4,7 @@
     <view scroll-y class="detail-page__scroll" @scroll="onScroll">
       <!-- 头部大图（支持预览） -->
       <view class="detail-page__hero" @tap="previewImage(merchantInfo.heroImage)">
-        <image class="detail-page__hero-img" :src="merchantInfo.heroImage" mode="aspectFill" />
+        <AImage class="detail-page__hero-img" :file-id="merchantInfo.sjfm"></AImage>
       </view>
       <view class="detail-page__content">
         <!-- 商家信息卡片 -->
@@ -174,8 +174,8 @@
                 <text class="manage__section-title">商家荣誉</text>
               </view>
               <view v-for="honor in merchantInfo.honors" class="manage__card-item">
-                <image src="/static/images/svg/merchantDetail/honor.svg"></image>
-                <text>{{ honor }}</text>
+                <image src="/static/images/svg/merchantDetail/honor.png"></image>
+                <text>{{ honor.rynr }}</text>
               </view>
             </view>
           </view>
@@ -335,10 +335,10 @@ async function loadMerchantDetail(id: string) {
 
     // 3. 年度处罚 + 投诉信息（警示信息）
     if (merchantInfo.value.penalty || merchantInfo.value.complaint) {
-      const p = merchantInfo.value.penalty || {}
-      const c = merchantInfo.value.complaint || {}
-      warningItems[0].count = c.count ?? c.total ?? warningItems[0].count // 年度投诉
-      warningItems[1].count = p.count ?? p.total ?? warningItems[1].count // 年度处罚
+      const p = merchantInfo.value.penalty || []
+      const c = merchantInfo.value.complaint || []
+      warningItems[0].count = c.length // 年度投诉
+      warningItems[1].count = p.length // 年度处罚
     }
   } catch (err) {
     console.error('加载商家详情失败', err)
