@@ -11,16 +11,15 @@
         <view class="detail-page__info">
           <!-- 商家名称 -->
           <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg"></image>
-          <text class="detail-page__name">{{ merchantInfo.name }}</text>
+          <text class="detail-page__name">{{ merchantInfo.sjxx }}</text>
           <!-- 评分行：星级 + 分数 + 分类 + 区域 -->
           <view class="detail-page__rating-row">
             <view class="detail-page__stars-row">
-              <StarRating :value="merchantInfo.stars" class="detail-page__stars" />
-              <text class="detail-page__score">{{ merchantInfo.score }}分</text>
+              <StarRating :value="+merchantInfo.sjxj || 5" class="detail-page__stars" />
+              <text class="detail-page__score">{{ merchantInfo.sjdf || 100 }}分</text>
             </view>
             <view class="detail-page__category-row">
-              <text class="detail-page__category">{{ merchantInfo.category }}</text>
-              <text class="detail-page__area">{{ merchantInfo.area }}</text>
+              <text class="detail-page__category" v-for="badge in merchantInfo.sjzs?.split(',')">{{ badge }}</text>
             </view>
           </view>
 
@@ -30,21 +29,21 @@
               <image class="detail-page__tag-icon" src="/static/images/svg/shop.svg" mode="aspectFit" />
               <text>{{ merchantInfo.year }}年店铺</text>
             </view>
-            <view v-for="(badge, idx) in merchantInfo.badges" :key="idx" class="detail-page__tag detail-page__tag--badge">
+            <view v-for="(badge, idx) in merchantInfo.sjbq?.split(',')" :key="idx" class="detail-page__tag detail-page__tag--badge">
               <text>{{ badge }}</text>
             </view>
           </view>
 
           <!-- 营业信息行 -->
           <view class="detail-page__info-row">
-            <text class="detail-page__info-text">营业时间：{{ merchantInfo.businessHours }}</text>
-            <text class="detail-page__info-text-right">开业时间：{{ merchantInfo.openYear }}</text>
+            <text class="detail-page__info-text">营业时间：{{ merchantInfo.yysjkm }} - {{ merchantInfo.yysjgm }}</text>
+            <text class="detail-page__info-text-right">开业时间：{{ merchantInfo.kysj }}</text>
           </view>
 
           <!-- 地址行 -->
           <view class="detail-page__info-row">
-            <text class="detail-page__info-text">{{ merchantInfo.address }}</text>
-            <image class="detail-page__info-arrow" src="/static/images/svg/merchantDetail/18.svg" mode="aspectFit" />
+            <text class="detail-page__info-text">{{ merchantInfo.sjdz }}</text>
+            <uni-icons type="forward" size="26rpx" color="#333" class="" />
           </view>
         </view>
 
@@ -65,10 +64,10 @@
             <view class="manage__score-header">
               <view class="manage__score-title">
                 <text style="margin-right: 12rpx">商家得分</text>
-                <StarRating :value="4" />
+                <StarRating :value="+merchantInfo.sjxj || 5" />
               </view>
               <view class="manage__score-stars-row">
-                <text class="manage__score-num-inline">86.9分</text>
+                <text class="manage__score-num-inline">{{ merchantInfo.sjdf || 100 }}分</text>
               </view>
             </view>
             <!-- 雷达图 -->
@@ -150,7 +149,7 @@
             <view class="manage__gallery-section">
               <text class="manage__gallery-title">原材料看台</text>
               <view class="manage__gallery-list">
-                <image v-for="(img, i) in rawImages" :key="i" class="manage__gallery-img" :src="img" mode="aspectFill" @tap.stop="previewGallery(rawImages, i)" />
+                <AImage v-for="(img, i) in merchantInfo?.yclkt?.split(',')" :key="i" class="manage__gallery-img" :file-id="img" />
               </view>
             </view>
           </view>
@@ -182,9 +181,9 @@
           </view>
 
           <!-- 特色菜品 -->
-          <DishesPanel v-show="activeTab === 'dishes'" :dishes="dishes" />
+          <DishesPanel v-show="activeTab === 'dishes'" :dishes="merchantInfo.dishes" />
           <!-- 互动 -->
-          <InteractPanel v-show="activeTab === 'interact'" :comments="comments" />
+          <InteractPanel v-show="activeTab === 'interact'" :comments="merchantInfo.comments" />
           <!-- ============ 抽检信息 ============ -->
           <view v-show="activeTab === 'inspection'" class="manage__gallery-section manage__gallery-section--inspection">
             <view class="manage__gallery-list">
@@ -220,51 +219,9 @@ import ScoreRadarChart from '@/components/ScoreRadarChart.vue'
 import DishesPanel from './DishesPanel.vue'
 import InteractPanel from './InteractPanel.vue'
 import { getMerchantInfo } from '@/api/merchant'
+import type { MerchantDetail, ScoreDimension } from './types'
+import AImage from '@/components/AImage.vue'
 
-// ==================== 类型定义 ====================
-interface ScoreDimension {
-  name: string
-  score: number
-}
-
-interface StoryItem {
-  title: string
-  content: string
-  images?: string[]
-}
-
-interface DishItem {
-  name: string
-  price: string
-  image: string
-}
-
-interface CommentItem {
-  id: number | string
-  avatar: string
-  nickname: string
-  rating: number
-  content: string
-  images?: string[]
-  time: string
-}
-
-interface MerchantDetail {
-  id: number | string
-  name: string
-  heroImage: string
-  stars: number
-  score: number
-  status: 'normal' | 'rectify' | 'high'
-  category: string
-  area: string
-  year: number
-  badges: string[]
-  businessHours: string
-  openYear: string
-  address: string
-  honors: string[]
-}
 const tabFixed = ref(false)
 
 // ==================== 雷达图数据 ====================
@@ -316,62 +273,17 @@ const tabs = [
 ]
 
 // ==================== 商家详情数据 ====================
-const merchantInfo = ref<MerchantDetail>({
-  id: 1263017283388851286,
-  name: '缙云烧饼东门老字号烧饼',
-  heroImage: '/static/images/svg/merchantDetail/36.png',
-  stars: 4,
-  score: 86.9,
-  status: 'normal',
-  category: '小吃简餐',
-  area: '老城',
-  year: 10,
-  badges: ['缙云传味', '标杆单位'],
-  businessHours: '06:30 - 18:00',
-  openYear: '2001年',
-  address: '缙云县鹿园巷1号',
-  honors: ['2025年1月荣获“XXXXX荣誉', '2025年1月荣获“XXXXX荣誉”']
-})
+const merchantInfo = ref<any>({})
 
 // 五维评分
 const scoreDimensions = ref<ScoreDimension[]>([
-  { name: '食品安全', score: 92 },
-  { name: '环境卫生', score: 85 },
-  { name: '服务态度', score: 88 },
-  { name: '诚信经营', score: 90 },
-  { name: '消费体验', score: 82 }
+  { key: 'spaqdf', name: '食品安全', score: 92 },
+  { key: 'wshjdf', name: '卫生环境', score: 85 },
+  { key: 'shzrdf', name: '社会责任', score: 88 },
+  { key: 'hgjydf', name: '合规经营', score: 90 },
+  { key: 'xfpjdf', name: '消费体验', score: 82 }
 ])
 
-// 商家故事
-
-// 特色菜品（支持滚动加载）
-const dishes = ref<DishItem[]>([
-  { name: '缙云烧饼（半肥半瘦）', price: '\u00a58', image: '/static/images/svg/merchantDetail/39.png' },
-  { name: '缙云烧饼（全瘦肉）', price: '\u00a58', image: '/static/images/svg/merchantDetail/40.png' },
-  { name: '缙云烧饼（加蛋）', price: '\u00a510', image: '/static/images/svg/merchantDetail/41.png' }
-])
-
-// 评论列表（支持滚动加载）
-const comments = ref<CommentItem[]>([
-  {
-    id: 1,
-    avatar: '/static/images/svg/merchantDetail/26.svg',
-    nickname: 'habe乐',
-    rating: 4,
-    content: '一如既往的不错，比较清淡，适合南方人口味，酱油小馄饨值得推荐。',
-    images: ['/static/images/svg/merchantDetail/37.png', '/static/images/svg/merchantDetail/39.png', '/static/images/svg/merchantDetail/40.png'],
-    time: '2026-01-05'
-  },
-  {
-    id: 2,
-    avatar: '/static/images/svg/merchantDetail/32.svg',
-    nickname: 'habe乐',
-    rating: 4,
-    content: '一如既往的不错，比较清淡，适合南方人口味，酱油小馄饨值得推荐。',
-    images: ['/static/images/svg/merchantDetail/38.png', '/static/images/svg/merchantDetail/40.png', '/static/images/svg/merchantDetail/42.png'],
-    time: '2026-01-05'
-  }
-])
 // ==================== 计算属性 ====================
 const statusText = computed(() => {
   const map = { normal: '正常经营', rectify: '整改中', high: '高风险' }
@@ -404,43 +316,27 @@ function onShare() {
 }
 
 /** 加载商家详情 - 调用 getMerchantInfo 整合接口 */
-async function loadMerchantDetail(id: string | number) {
+async function loadMerchantDetail(id: string) {
   try {
-    const res = await getMerchantInfo({ id })
+    const res = await getMerchantInfo({ mainTable: { id } })
 
     // 1. 商家基本信息
-    if (res.info) {
-      const d = res.info
-      merchantInfo.value = {
-        id: d.id ?? id,
-        name: d.name || merchantInfo.value.name,
-        heroImage: d.heroImage || d.coverImg || merchantInfo.value.heroImage,
-        stars: d.stars ?? merchantInfo.value.stars,
-        score: d.score ?? merchantInfo.value.score,
-        status: d.status || merchantInfo.value.status,
-        category: d.category || merchantInfo.value.category,
-        area: d.area || merchantInfo.value.area,
-        year: d.year ?? merchantInfo.value.year,
-        badges: d.badges || merchantInfo.value.badges,
-        businessHours: d.businessHours || merchantInfo.value.businessHours,
-        openYear: d.openYear || merchantInfo.value.openYear,
-        address: d.address || merchantInfo.value.address,
-        honors: d.honors || merchantInfo.value.honors
-      }
-    }
+    merchantInfo.value = res
+    console.log('-----', res)
 
     // 2. 商家得分（雷达图维度）
-    if (res.score) {
-      const dims = Array.isArray(res.score) ? res.score : []
-      if (dims.length > 0) {
-        radarDimensions.splice(0, radarDimensions.length, ...dims)
-      }
+    if (merchantInfo.value.score) {
+      scoreDimensions.value.forEach(item => {
+        item.score = merchantInfo.value.score[item.key]
+      })
     }
 
+    console.log('---scoreDimensions.value', scoreDimensions.value)
+
     // 3. 年度处罚 + 投诉信息（警示信息）
-    if (res.penalty || res.complaint) {
-      const p = res.penalty || {}
-      const c = res.complaint || {}
+    if (merchantInfo.value.penalty || merchantInfo.value.complaint) {
+      const p = merchantInfo.value.penalty || {}
+      const c = merchantInfo.value.complaint || {}
       warningItems[0].count = c.count ?? c.total ?? warningItems[0].count // 年度投诉
       warningItems[1].count = p.count ?? p.total ?? warningItems[1].count // 年度处罚
     }

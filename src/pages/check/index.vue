@@ -157,7 +157,7 @@ function onLoadMore() {
 
 /** 跳转详情 */
 const goDetail = (item: any) => {
-  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.creator}` })
+  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.id}` })
 }
 
 onShow(() => {

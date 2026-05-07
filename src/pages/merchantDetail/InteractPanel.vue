@@ -9,20 +9,16 @@
 
 <script setup lang="ts">
 import CommentCard from '@/components/CommentCard.vue'
+import type { CommentItem } from './types'
 
-interface CommentItem {
-  id: number | string
-  avatar: string
-  nickname: string
-  rating: number
-  content: string
-  images?: string[]
-  time: string
-}
-
-defineProps<{
-  comments: CommentItem[]
-}>()
+const props = withDefaults(
+  defineProps<{
+    comments: CommentItem[]
+  }>(),
+  {
+    comments: () => []
+  }
+)
 </script>
 
 <style lang="scss" scoped>

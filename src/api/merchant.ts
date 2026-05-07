@@ -11,10 +11,13 @@ export const getMerchantInfo = (data: Record<string, any>) => {
     request.post(`${BASE_URL_GET}shsj_sjdf`, data),
     request.post(`${BASE_URL_GET}shsj_tsxx`, data)
   ]).then((res: any[]) => ({
-    info: res[0]?.data,
-    penalty: res[1]?.data,
-    score: res[2]?.data,
-    complaint: res[3]?.data
+    ...res[0]?.datas[0].mainTable, // 商家信息
+    dishes: res[0]?.datas[0].detail2 ?? [], // 商家菜品
+    hornors: res[0]?.datas[0].detail1 ?? [], // 商家荣誉
+    comments: res[0]?.datas[0].detail3 ?? [], // 商家评论
+    penalty: res[1]?.datas[0].mainTable, // 年度处罚
+    score: res[2]?.datas[0].mainTable, // 得分信息
+    complaint: res[3]?.datas[0].mainTable // 投诉信息
   }))
 }
 

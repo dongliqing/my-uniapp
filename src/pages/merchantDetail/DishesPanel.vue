@@ -1,31 +1,33 @@
 <template>
   <view class="dishes-panel">
-    <view v-for="(dish, idx) in dishes" :key="idx" class="dish-card">
+    <view v-for="(dish, idx) in props.dishes" :key="idx" class="dish-card">
       <view class="dish-card__img-wrap">
-        <image class="dish-card__img" :src="dish.image" @tap="previewImage(dish.image)" mode="aspectFill" />
+        <AImage class="dish-card__img" :fileId="dish.tp" />
       </view>
       <view class="dish-card__info">
-        <text class="dish-card__name">{{ dish.name }}</text>
-        <text class="dish-card__price">{{ dish.price }}</text>
+        <text class="dish-card__name">{{ dish.cm }}</text>
+        <text class="dish-card__price">￥{{ dish.jg }}</text>
       </view>
     </view>
 
-    <view v-if="!dishes.length" class="dishes-panel__empty">
+    <view v-if="!props.dishes.length" class="dishes-panel__empty">
       <text>暂无特色菜品</text>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-interface DishItem {
-  name: string
-  price: string
-  image: string
-}
+import AImage from '@/components/AImage.vue'
+import type { DishItem } from './types'
 
-defineProps<{
-  dishes: DishItem[]
-}>()
+const props = withDefaults(
+  defineProps<{
+    dishes: DishItem[]
+  }>(),
+  {
+    dishes: () => []
+  }
+)
 
 function previewImage(url: string) {
   uni.previewImage({ current: url, urls: [url] })

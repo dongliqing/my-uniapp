@@ -171,7 +171,14 @@ async function submitComment() {
             id: pageId.value
           },
           detail1: {
-            plnr: newComment.value.trim()
+            plnr: newComment.value.trim(),
+            rq: new Date()
+              .toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              })
+              .replace(/\//g, '-')
           }
         }
       ]

@@ -7,8 +7,8 @@ import { getFileApi } from '@/api/common.ts'
 const props = withDefaults(
   defineProps<{
     fileId: string
-    mode: string
-    type: string //图片格式
+    mode?: string
+    type?: string //图片格式
   }>(),
   {
     fileId: '',
@@ -23,7 +23,11 @@ watch(
   () => props.fileId,
   async newValue => {
     //下载图片资源
+    console.log('>>>', newValue)
+
     const url = await getFileApi(newValue, props.type)
+    console.log('---', url)
+
     imageUrl.value = url
   }
 )
