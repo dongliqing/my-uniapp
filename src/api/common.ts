@@ -1,4 +1,16 @@
-import { token, userId } from '@/pages/constant/constant.ts'
+import { token, userId, API_BASE_URL } from '@/pages/constant/constant.ts'
+
+let baseUrl = ''
+// #ifdef H5
+baseUrl = '' // H5 端走本地代理
+// #endif
+// #ifdef MP-WEIXIN
+baseUrl = API_BASE_URL // MP 端走线上环境
+// #endif
+
+if (import.meta.env.NODE_ENV === 'production') {
+  baseUrl = API_BASE_URL
+}
 
 /**上传文件 */
 export const uploadFileApi = (filePath, fileName) => {
@@ -8,8 +20,9 @@ export const uploadFileApi = (filePath, fileName) => {
     mask: true
   })
   return new Promise((resolve, reject) => {
+    const url = '/file/v2/common/upload?access_token=' + token
     uni.uploadFile({
-      url: '/file/v2/common/upload?access_token=' + token, // 你的上传接口
+      url: baseUrl + url, // 你的上传接口
       filePath: filePath,
       name: 'file',
       formData: {
@@ -40,8 +53,9 @@ export const uploadFileApi = (filePath, fileName) => {
 
 export const getFileApi = (fileId: string, type?: string) => {
   return new Promise((resolve, reject) => {
+    const url = `/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`
     uni.request({
-      url: `/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`,
+      url: isProd ? import.meta.env.BASE_URL + url : url, // 你的上传接口
       method: 'GET',
       responseType: 'arraybuffer',
       success: res => {

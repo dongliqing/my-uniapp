@@ -309,6 +309,8 @@ const viewAllNews = () => {}
 .search-placeholder {
   font-size: 24rpx;
   color: #999;
+  margin-left: 14rpx;
+  margin-bottom: 4rpx;
 }
 
 .search-btn {

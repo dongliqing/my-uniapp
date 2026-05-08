@@ -1,5 +1,18 @@
 // 全局基础请求地址，可根据开发/生产环境动态切换
 // const BASE_URL =/ 'http://www.syncbase.cn:20600/papi/openapi/api/ebuilder/form/formdata/v2/getFormDataList'
+import { API_BASE_URL } from '@/pages/constant/constant.ts'
+
+let baseUrl = ''
+// #ifdef H5
+baseUrl = '' // H5 端走本地代理
+// #endif
+// #ifdef MP-WEIXIN
+baseUrl = API_BASE_URL // MP 端走线上环境
+// #endif
+
+if (import.meta.env.NODE_ENV === 'production') {
+  baseUrl = API_BASE_URL
+}
 
 /**
  * 通用请求封装
@@ -42,7 +55,7 @@ const request = (options = {}) => {
   // 4. 返回 Promise 对象
   return new Promise((resolve, reject) => {
     uni.request({
-      url: finalUrl,
+      url: baseUrl + finalUrl,
       method: method.toUpperCase(),
       data: {
         datajson: {
