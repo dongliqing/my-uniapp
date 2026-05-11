@@ -23,23 +23,22 @@
         <view class="check-detail__comment-list">
           <view v-for="comment in comments" :key="comment.id" class="check-detail__comment-item">
             <!-- 左侧头像 -->
-            <image class="check-detail__comment-avatar" :src="comment.avatar" mode="aspectFill" />
-
+            <AImage class="check-detail__comment-avatar" :fileId="comment.tx"></AImage>
             <!-- 右侧内容区 -->
             <view class="check-detail__comment-main">
               <!-- 头部：姓名 + 点赞 -->
               <view class="check-detail__comment-header">
-                <text class="check-detail__comment-name">{{ comment.name }}</text>
+                <text class="check-detail__comment-name">{{ comment.xm }}</text>
 
                 <!-- 点赞按钮 -->
                 <view class="check-detail__like" :class="{ 'check-detail__like--active': comment.isLiked }" @tap="toggleLike(comment)">
                   <image class="check-detail__like-icon" :src="comment.isLiked ? '/static/images/svg/like-active.svg' : '/static/images/svg/like.svg'" mode="aspectFit" />
-                  <text class="check-detail__like-count">{{ comment.likes }}</text>
+                  <text class="check-detail__like-count">{{ comment.dzcs || 0 }}</text>
                 </view>
               </view>
 
               <!-- 评论内容 -->
-              <text class="check-detail__comment-content">{{ comment.content }}</text>
+              <text class="check-detail__comment-content">{{ comment.plnr }}</text>
             </view>
           </view>
 
@@ -93,7 +92,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getCheckList, addComment } from '@/api/check'
+import { getCheckDetail, addComment } from '@/api/check'
+import AImage from '@/components/AImage.vue'
 
 interface ActivityItem {
   id: number
@@ -141,9 +141,10 @@ async function fetchDetail() {
     return
   }
   try {
-    const res: any = await getCheckList({ mainTable: { id: pageId.value } })
+    const res: any = await getCheckDetail({ mainTable: { id: pageId.value } })
     const data = res?.datas?.[0]?.mainTable
     if (data) activity.value = data as ActivityItem
+    comments.value = res?.datas?.[0]?.detail1
   } catch (e) {
     uni.showToast({ title: '获取详情失败', icon: 'none' })
   }
