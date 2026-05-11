@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
-const BASE_URL_GET = '/v2/getFormDataList/'
-const BASE_URL_SET = '/v2/saveFormData/'
+const BASE_URL_GET = '/api/ebuilder/form/formdata/v2/getFormDataList/'
+const BASE_URL_SET = '/api/ebuilder/form/formdata/v2/saveFormData/'
 
 /** 商家详情 - 整合年度处罚、商家得分、投诉信息 */
 export const getMerchantInfo = (data: Record<string, any>) => {

@@ -21,16 +21,11 @@ export default defineConfig({
     open: true,
     cors: true,
     proxy: {
-      '/file/v2': {
-        target: 'https://jysj.syncbase.cn/papi/openapi/api/',
+      '/api': {
+        target: 'https://jysj.syncbase.cn/papi/openapi/',
         changeOrigin: true,
         secure: false
-      },
-      '/v2': {
-        target: 'https://jysj.syncbase.cn/papi/openapi/api/ebuilder/form/formdata/',
-        changeOrigin: true,
-        secure: false
-        // rewrite: path => path.replace(/^\/v2/, '')
+        // rewrite: path => path.replace(/^\/api/, '')
       }
     }
   }

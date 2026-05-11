@@ -1,5 +1,4 @@
 // 全局基础请求地址，可根据开发/生产环境动态切换
-// const BASE_URL =/ 'http://www.syncbase.cn:20600/papi/openapi/api/ebuilder/form/formdata/v2/getFormDataList'
 import { API_BASE_URL } from '@/pages/constant/constant.ts'
 
 let baseUrl = ''

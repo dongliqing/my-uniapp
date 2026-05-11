@@ -20,7 +20,7 @@ export const uploadFileApi = (filePath, fileName) => {
     mask: true
   })
   return new Promise((resolve, reject) => {
-    const url = '/file/v2/common/upload?access_token=' + token
+    const url = '/api/file/v2/common/upload?access_token=' + token
     uni.uploadFile({
       url: baseUrl + url, // 你的上传接口
       filePath: filePath,
@@ -53,9 +53,9 @@ export const uploadFileApi = (filePath, fileName) => {
 
 export const getFileApi = (fileId: string, type?: string) => {
   return new Promise((resolve, reject) => {
-    const url = `/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`
+    const url = `/api/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`
     uni.request({
-      url: isProd ? import.meta.env.BASE_URL + url : url, // 你的上传接口
+      url: baseUrl + url, // 你的上传接口
       method: 'GET',
       responseType: 'arraybuffer',
       success: res => {

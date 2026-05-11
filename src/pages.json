@@ -91,6 +91,12 @@
         "navigationBarTitleText": "咨询信息",
         "navigationBarBackgroundColor": "#f5f5f5"
       }
+    },
+    {
+      "path": "pages/frame/frame",
+      "style": {
+        "navigationBarBackgroundColor": "#f5f5f5"
+      }
     }
   ],
   "globalStyle": {
