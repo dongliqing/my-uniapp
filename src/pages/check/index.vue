@@ -110,8 +110,7 @@ async function fetchData(reset: boolean = false) {
 
   try {
     const res: any = await getCheckList({
-      page: page.value,
-      pageSize
+      pageInfo: { pageNo: page.value, pageSize }
     })
     const list: ActivityItem[] = Array.isArray(res?.datas)
       ? res.datas.map(item => {

@@ -7,10 +7,20 @@ export const getCheckList = data => {
 
 // 获取详情
 export const getCheckDetail = data => {
-  return request.post('/v2/getFormDataByPk/shsj_hdxxsjxq', data)
+  return request.post('/api/ebuilder/form/formdata/v2/getFormDataByPk/shsj_hdxxsjxq', data)
 }
 
-// 提交活动评论
+// 提交活动评论点赞
 export const addComment = data => {
-  return request.post('/api/ebuilder/form/formdata/v2/saveFormData/shsj_hdpl', data)
+  return request.post('/api/ebuilder/form/formdata/v2/updateFormData/shsj_hdpl', data)
+}
+
+// 提交活动评论点赞
+export const addLike = data => {
+  return request.post('/api/ebuilder/form/formdata/v2/saveFormData/shsj_pldz', data)
+}
+
+// 点赞
+export const removelike = data => {
+  return request.post('/api/ebuilder/form/formdata/v2/deleteFormData/shsj_hdqxdz', data)
 }

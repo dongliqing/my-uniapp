@@ -19,15 +19,16 @@
               <text class="detail-page__score">{{ merchantInfo.sjdf || 100 }}分</text>
             </view>
             <view class="detail-page__category-row">
-              <text class="detail-page__category" v-for="badge in merchantInfo.sjzs?.split(',')">{{ badge }}</text>
+              <text class="detail-page__category">{{ SJLX[merchantInfo.sjlx || 0] }}</text>
             </view>
+            <image class="detail-page__status" :src="`/static/images/svg/merchantDetail/status-0.svg`" mode="scaleToFill" />
           </view>
 
           <!-- 标签行 -->
           <view class="detail-page__tags">
             <view class="detail-page__tag detail-page__tag--year">
               <image class="detail-page__tag-icon" src="/static/images/svg/shop.svg" mode="aspectFit" />
-              <text>{{ merchantInfo.year }}年店铺</text>
+              <text>{{ SJNF[merchantInfo.sjnf] }}年店铺</text>
             </view>
             <view v-for="(badge, idx) in merchantInfo.sjbq?.split(',')" :key="idx" class="detail-page__tag detail-page__tag--badge">
               <text>{{ badge }}</text>
@@ -162,9 +163,9 @@
               <view class="detail-page__tags">
                 <view class="detail-page__tag detail-page__tag--year">
                   <image class="detail-page__tag-icon" src="/static/images/svg/shop.svg" mode="aspectFit" />
-                  <text>{{ merchantInfo.year }}年店铺</text>
+                  <text>{{ SJNF[merchantInfo.sjnf] }}店铺</text>
                 </view>
-                <view v-for="(badge, idx) in merchantInfo.badges" :key="idx" class="detail-page__tag detail-page__tag--badge">
+                <view v-for="(badge, idx) in merchantInfo.sjbq?.split(',')" :key="idx" class="detail-page__tag detail-page__tag--badge">
                   <text>{{ badge }}</text>
                 </view>
               </view>
@@ -221,6 +222,7 @@ import InteractPanel from './InteractPanel.vue'
 import { getMerchantInfo } from '@/api/merchant'
 import type { MerchantDetail, ScoreDimension } from './types'
 import AImage from '@/components/AImage.vue'
+import { SJLX, SJZT, SJNF, TSWM } from './enum'
 
 const tabFixed = ref(false)
 
@@ -318,7 +320,7 @@ function onShare() {
 /** 加载商家详情 - 调用 getMerchantInfo 整合接口 */
 async function loadMerchantDetail(id: string) {
   try {
-    const res = await getMerchantInfo({ mainTable: { id } })
+    const res = await getMerchantInfo(id)
 
     // 1. 商家基本信息
     merchantInfo.value = res
@@ -348,7 +350,7 @@ async function loadMerchantDetail(id: string) {
 /** 跳转投诉页 */
 function goComplaint() {
   uni.navigateTo({
-    url: `/pages/complaint/index?id=${merchantInfo.value.id}&name=${encodeURIComponent(merchantInfo.value.name)}`
+    url: `/pages/complaint/index?id=${merchantInfo.value.id}&name=${merchantInfo.value.sjxx}`
   })
 }
 
@@ -424,6 +426,18 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
     font-weight: 500;
     color: #000;
     line-height: 1.3;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 35rpx;
+    top: -5rpx;
+    width: 85rpx;
+    height: 85rpx;
+    word-break: break-all;
   }
 
   /* 评分行 */

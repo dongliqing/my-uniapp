@@ -8,11 +8,11 @@
           <text class="complaint__section-title">商家信息</text>
           <view class="complaint__info-row">
             <text class="complaint__info-label">商家名称：</text>
-            <text class="complaint__info-value">缙云烧饼东门老字号烧饼鹿园巷店(胜利街店)</text>
+            <text class="complaint__info-value">{{ merchantInfo?.sjxx ?? '--' }}</text>
           </view>
           <view class="complaint__info-row">
             <text class="complaint__info-label">商家地址：</text>
-            <text class="complaint__info-value">缙云县鹿园巷1号</text>
+            <text class="complaint__info-value">{{ merchantInfo?.sjdz ?? '--' }}</text>
           </view>
         </view>
 
@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
-import { addComplaint } from '@/api/merchant'
+import { addComplaint, getMerchantDetail } from '@/api/merchant'
 
 const pageId = ref('')
 
@@ -77,9 +77,15 @@ const form = reactive({
   tp: [] as string[]
 })
 
+const merchantInfo = ref<any>(null)
+
 onLoad(options => {
   if (options?.id) {
     pageId.value = options.id
+    getMerchantDetail(pageId.value).then((res: any) => {
+      console.log(res)
+      merchantInfo.value = res.datas[0].mainTable
+    })
   }
 })
 
@@ -126,7 +132,7 @@ async function submit() {
     await addComplaint({
       datas: [
         {
-          mainTable: { id: pageId.value, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), sjmc: '商家信息-sysadmin 2026-04-27 10:14:00' }
+          mainTable: { sjmc: merchantInfo.value.sjxx, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), sjmc: '商家信息-sysadmin 2026-04-27 10:14:00' }
         }
       ]
     })

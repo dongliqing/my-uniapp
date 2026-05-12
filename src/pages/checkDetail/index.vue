@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getCheckDetail, addComment } from '@/api/check'
+import { getCheckDetail, addComment, removelike, addLike } from '@/api/check'
 import AImage from '@/components/AImage.vue'
 
 interface ActivityItem {
@@ -171,16 +171,11 @@ async function submitComment() {
           mainTable: {
             id: pageId.value
           },
-          detail1: {
-            plnr: newComment.value.trim(),
-            rq: new Date()
-              .toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-              })
-              .replace(/\//g, '-')
-          }
+          detail1: [
+            {
+              plnr: newComment.value.trim()
+            }
+          ]
         }
       ]
     })
@@ -192,11 +187,22 @@ async function submitComment() {
 }
 
 function toggleLike(comment: any) {
+  const func = comment.isLiked ? removelike : addLike
+  func({
+    datas: [
+      {
+        mainTable: {
+          plxx: comment.id,
+          dzryope: 'sss'
+        }
+      }
+    ]
+  })
   if (comment.isLiked) {
-    comment.likes--
+    comment.dzcs--
     comment.isLiked = false
   } else {
-    comment.likes++
+    comment.dzcs++
     comment.isLiked = true
   }
 }
