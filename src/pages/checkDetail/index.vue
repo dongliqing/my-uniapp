@@ -181,6 +181,7 @@ async function submitComment() {
     })
     hideCommentInput()
     uni.showToast({ title: '发布成功', icon: 'success' })
+    fetchDetail()
   } catch (e) {
     uni.showToast({ title: '发布失败，请重试', icon: 'none' })
   }
