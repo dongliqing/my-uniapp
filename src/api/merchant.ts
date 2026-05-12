@@ -7,7 +7,7 @@ const BASE_URL_SET = '/api/ebuilder/form/formdata/v2/saveFormData/'
 export const getMerchantInfo = (id: string) => {
   return Promise.all([
     request.post(`${BASE_URL_GET}shsj_sjxxsjxq`, { mainTable: { id } }),
-    request.post('/api/dw/publish/shsj_xypj', { mainTable: { id }, pageInfo: { pageNo: 1, pageSize: 10 } }),
+    request.post('/api/dw/publish/shsj_jsxx', { mainTable: { id }, pageInfo: { pageNo: 1, pageSize: 10 } }),
     request.post(`${BASE_URL_GET}shsj_sjdf`, { mainTable: { sjmc: id } })
   ]).then((res: any) => {
     console.log('res---', res)
