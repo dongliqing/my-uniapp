@@ -7,7 +7,7 @@
 
     <!-- 品牌展示区 -->
     <view class="brand-showcase">
-      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('/pages/storeList/storeList')">
+      <view v-for="(brand, index) in brandList" :key="index" class="brand-box" @click="navigateTo('/pages/storeList/storeList?yearType=' + index)">
         <view class="brand-item">
           <text class="brand-name">{{ brand.name }}</text>
           <image src="@/static/images/home-head-line.png" mode="aspectFit" class="line" />
@@ -102,9 +102,9 @@
             </template>
             <image v-for="i in index" :key="'star-gray' + i" class="star-icon" src="@/static/images/star-gray.png" mode="scaleToFill" />
           </view>
-          <view v-if="star.percent" class="star-percent" :class="{ danger: star.percent <= 10 }">
+          <view class="star-percent" :class="{ danger: star.active === 1 }">
             <view class="progress-bar" :style="{ width: star.percent + '%' }" />
-            <text class="percent-num" :class="{ blue: star.percent < 50 && star.percent > 10, red: star.percent <= 10 }">{{ star.percent + '%' }}</text>
+            <text class="percent-num" :class="{ blue: star.active > 1, red: star.active === 1 }">{{ star.percent + '%' }}</text>
           </view>
         </view>
       </view>
@@ -133,12 +133,12 @@
         <text class="section-title">最新资讯</text>
       </view>
       <view class="news-list">
-        <view class="news-item" v-for="(item, index) in newsList" :key="index" @click="viewNews(item.id)">
+        <view class="news-item" v-for="(item, index) in newsList" :key="index" @click="viewNews(item.link)">
           <text class="news-title">{{ item.title }}</text>
           <uni-icons type="forward" size="36rpx" color="#999" class="news-arrow shrink-0" />
         </view>
       </view>
-      <view class="view-more" @click="viewAllNews">
+      <view v-if="showMoreBtn" class="view-more" @click="viewAllNews">
         <text class="more-text">查看更多</text>
         <uni-icons type="down" size="40rpx" color="#1782fc" class="more-arrow" />
       </view>
@@ -153,10 +153,10 @@
 
 <script setup lang="ts">
 // import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-import { ref } from 'vue'
+import { getMessage, getTangShiStat, getStarStat } from '@/api/home.ts';
 
 // 当前年份
-const currentYear = new Date().getFullYear()
+const currentYear = new Date().getFullYear();
 
 // 品牌数据
 const brandList = [
@@ -188,74 +188,113 @@ const brandList = [
     label: '年以上店铺',
     medal: '/static/images/home-head-4.png'
   }
-]
+];
 
 // 星级数据
-const starList = [
+const starList = ref([
   {
     label: '五星',
     active: 5,
-    percent: 100
+    percent: 20
   },
   {
     label: '四星',
     active: 4,
-    percent: 80
+    percent: 0
   },
   {
     label: '三星',
     active: 3,
-    percent: 66
+    percent: 0
   },
   {
     label: '二星',
     active: 2,
-    percent: 32
+    percent: 0
   },
   {
     label: '一星',
     active: 1,
-    percent: 10
+    percent: 0
   }
-]
+]);
+getStarStat({ pageNo: 1, pageSize: 10 }).then(res => {
+  const result = (res.data || []).sort((a, b) => b['数据类型'] - a['数据类型']);
+  console.log(result);
+  result.forEach((item, index) => {
+    starList.value[index].percent = Number(item['占比百分比']);
+  });
+});
 
 // 商家信息卡片数据
-const storeInfoCards = [
-  { title: '平台内商家', count: '12345' },
-  { title: '外卖商家', count: '12345' },
+const storeInfoCards = ref([
+  { title: '平台内商家', count: '0' },
+  { title: '外卖商家', count: '0' },
   {
     title: '无堂食\n外卖商家',
-    count: '12345'
+    count: '0'
   }
-]
+]);
+getTangShiStat({ pageNo: 1, pageSize: 10 }).then(res => {
+  const result = (res.data || [])?.[0];
+  storeInfoCards.value[0].count = result['平台内商家'];
+  storeInfoCards.value[1].count = result['外卖商家'];
+  storeInfoCards.value[2].count = result['仅外卖商家'];
+});
 
 // 资讯列表数据
-const newsList = ref([
-  { id: 1, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
-  { id: 2, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
-  { id: 3, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
-  { id: 4, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' },
-  { id: 5, title: '最新资讯文案最新资讯文案最新资讯最多二十六个字符是客户打卡很多事阿是肯定会' }
-])
+const allNewsList = ref<any[]>([]);
+const displayNumber = 5;
+const showMoreBtn = ref(false);
+const newsList = ref<{ title: string; link: string }[]>([]);
+getMessage({
+  pageInfo: {
+    pageNo: '1',
+    pageSize: '10'
+  }
+}).then(res => {
+  // console.log(res)
+  allNewsList.value.push(
+    ...(res.datas || []).map(e => {
+      return {
+        title: e.mainTable.bt,
+        link: e.mainTable.lj
+      };
+    })
+  );
+  showMoreBtn.value = allNewsList.value.length > displayNumber;
+  if (allNewsList.value.length > displayNumber) {
+    newsList.value = allNewsList.value.slice(0, displayNumber);
+  } else {
+    newsList.value = allNewsList.value;
+  }
+});
 
 // 导航到指定页面
 const navigateTo = (path: string) => {
   uni.navigateTo({
     url: path
-  })
-}
+  });
+};
 
 const switchTo = () => {
   uni.switchTab({
     url: '/pages/check/index'
-  })
-}
+  });
+};
 
 // 查看资讯详情
-const viewNews = (id: number) => {}
+const viewNews = (link: string) => {
+  uni.navigateTo({
+    url: '/pages/frame/frame?link=' + encodeURIComponent(link) + '&title=咨询信息'
+  });
+};
 
 // 查看全部资讯
-const viewAllNews = () => {}
+const viewAllNews = () => {
+  newsList.value = allNewsList.value;
+  showMoreBtn.value = false;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -624,6 +663,11 @@ const viewAllNews = () => {}
       color: #fff;
       position: relative;
       z-index: 10;
+      text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
 
       &.blue {
         color: #1782fc;
