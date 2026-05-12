@@ -18,9 +18,9 @@
               <StarRating :value="+merchantInfo.sjxj || 5" class="detail-page__stars" />
               <text class="detail-page__score">{{ merchantInfo.sjdf || 100 }}分</text>
             </view>
-            <view class="detail-page__category-row">
+            <!-- <view class="detail-page__category-row">
               <text class="detail-page__category">{{ SJLX[merchantInfo.sjlx || 0] }}</text>
-            </view>
+            </view> -->
             <image class="detail-page__status" :src="`/static/images/svg/merchantDetail/status-0.svg`" mode="scaleToFill" />
           </view>
 
@@ -78,16 +78,16 @@
               <view class="manage__card-header">
                 <text class="manage__section-title">商家展示</text>
               </view>
-              <view class="manage__tags-row">
-                <view class="manage__badge-tag">
+              <!-- <view class="manage__tags-row"> -->
+              <!-- <view class="manage__badge-tag">
                   <image class="manage__badge-icon" src="/static/images/svg/merchantDetail/45.svg" mode="aspectFit" />
                   <text class="manage__badge-text">证件齐全</text>
                 </view>
                 <view class="manage__badge-tag">
                   <image class="manage__badge-icon" src="/static/images/svg/merchantDetail/46.svg" mode="aspectFit" />
                   <text class="manage__badge-text">阳光厨房直播</text>
-                </view>
-              </view>
+                </view> -->
+              <!-- </view> -->
               <!-- ============ 商家亮点 ============ -->
               <view class="manage__highlight-card">
                 <view class="manage__card-header">
@@ -947,17 +947,17 @@ const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/imag
   }
 
   &__gallery-list {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16rpx;
   }
 
   &__gallery-img {
-    width: calc((100% - 32rpx) / 3);
+    width: 100%;
     height: 220rpx;
     border-radius: 16rpx;
+    overflow: hidden;
     background: #d9d9d9;
-    flex-shrink: 0;
   }
 }
 </style>

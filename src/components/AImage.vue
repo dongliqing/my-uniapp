@@ -1,5 +1,5 @@
 <template>
-  <image :src="imageUrl" :mode="mode" />
+  <image :src="imageUrl" :mode="mode" class="a-image" />
 </template>
 <script lang="ts" setup>
 import { getFileApi } from '@/api/common.ts'
@@ -35,4 +35,9 @@ watch(
   { immediate: true }
 )
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.a-image {
+  width: 100%;
+  height: 100%;
+}
+</style>
