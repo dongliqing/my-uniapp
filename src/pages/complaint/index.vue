@@ -31,7 +31,7 @@
           <view class="complaint__upload-area">
             <view class="complaint__upload-list">
               <!-- 已上传图片 -->
-              <view v-for="(img, i) in form.tp" :key="i" class="complaint__upload-preview" @tap="previewImage(i)">
+              <view v-for="(img, i) in previewImgs" :key="i" class="complaint__upload-preview" @tap="previewImage(i)">
                 <image class="complaint__upload-preview-img" :src="img" mode="aspectFill" />
                 <view class="complaint__upload-del" @tap.stop="removeImage(i)">×</view>
               </view>
@@ -68,6 +68,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { addComplaint, getMerchantDetail } from '@/api/merchant'
+import { getFileApi, uploadFileApi } from '@/api/common'
+import AImage from '@/components/AImage'
 
 const pageId = ref('')
 
@@ -77,6 +79,7 @@ const form = reactive({
   tp: [] as string[]
 })
 
+const previewImgs = ref<string[]>([])
 const merchantInfo = ref<any>(null)
 
 onLoad(options => {
@@ -89,7 +92,7 @@ onLoad(options => {
   }
 })
 
-const canSubmit = computed(() => form.tsnr.trim().length > 0)
+const canSubmit = computed(() => form.tsnr.trim().length > 0 && form.tsrlxfs.trim().length > 0)
 
 function chooseImage() {
   if (form.tp.length >= 4) {
@@ -100,16 +103,29 @@ function chooseImage() {
     count: 4 - form.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
-    success(res) {
-      // tempFilePaths 可能为 string | string[]，用 concat 安全合并
-      const paths = Array.isArray(res.tempFilePaths) ? res.tempFilePaths : [res.tempFilePaths]
-      form.tp.push(...paths)
+    success: async function (res) {
+      console.log('...', res)
+      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles]
+
+      for (const file of files) {
+        try {
+          // 上传到服务器，获取文件ID
+          const fileid: any = await uploadFileApi(file.path, file.name)
+          // 获取图片资源URL（base64）
+          previewImgs.value.push(file.path)
+
+          form.tp.push(fileid)
+        } catch (e) {
+          console.error('图片上传失败:', e)
+        }
+      }
     }
   })
 }
 
 function removeImage(index: number) {
   form.tp.splice(index, 1)
+  previewImgs.value.splice(index, 1)
 }
 
 function previewImage(index: number) {
@@ -121,7 +137,7 @@ function previewImage(index: number) {
 
 async function submit() {
   if (!canSubmit.value) {
-    uni.showToast({ title: '请填写投诉内容', icon: 'none' })
+    uni.showToast({ title: '请填写投诉信息', icon: 'none' })
     return
   }
   if (!pageId.value) {
@@ -285,22 +301,19 @@ async function submit() {
   }
 
   &__upload-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 16rpx;
-    flex-wrap: wrap;
-    align-items: center;
   }
 
   &__upload-btn {
-    width: 152rpx;
-    height: 152rpx;
+    aspect-ratio: 1;
     background: #f0f0f0;
     border-radius: 10rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
   }
 
   &__upload-icon {
@@ -309,8 +322,7 @@ async function submit() {
   }
 
   &__upload-preview {
-    width: 152rpx;
-    height: 152rpx;
+    aspect-ratio: 1;
     position: relative;
     border-radius: 10rpx;
     overflow: hidden;

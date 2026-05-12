@@ -14,6 +14,7 @@ export const getMerchantInfo = (id: string) => {
     console.log('res---', res)
     return {
       ...res[0]?.datas[0].mainTable, // 商家信息
+      highlights: res[0]?.datas[0].detail3 ?? [],
       dishes: res[0]?.datas[0].detail2 ?? [], // 商家菜品
       honors: res[0]?.datas[0].detail1 ?? [], // 商家荣誉
       comments: res[0]?.datas[0].detail3 ?? [], // 商家评论

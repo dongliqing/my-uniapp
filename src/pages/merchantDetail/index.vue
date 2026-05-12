@@ -94,17 +94,12 @@
                   <image class="manage__section-bar" src="/static/images/svg/merchantDetail/title_line.svg" mode="aspectFit" />
                   <text class="manage__section-title">商家亮点</text>
                 </view>
-                <view class="manage__highlight-item">
+                <view v-for="hightlight in merchantInfo.highlights" :key="hightlight.id" class="manage__highlight-item">
                   <image class="manage__highlight-icon" src="/static/images/svg/merchantDetail/high_comment.svg" mode="aspectFit" />
-                  <text class="manage__highlight-label">维度名称</text>
-                  <text class="manage__highlight-content">这里是评分项目内容</text>
+                  <text class="manage__highlight-label">{{ hightlight.wdmc }}</text>
+                  <text class="manage__highlight-content">{{ hightlight.nr }}</text>
                 </view>
                 <view class="manage__highlight-divider" />
-                <view class="manage__highlight-item">
-                  <image class="manage__highlight-icon" src="/static/images/svg/merchantDetail/high_comment.svg" mode="aspectFit" />
-                  <text class="manage__highlight-label">维度名称</text>
-                  <text class="manage__highlight-content">这里是评分项目内容</text>
-                </view>
               </view>
               <!-- ============ 警示信息 ============ -->
               <view class="manage__highlight-card">
