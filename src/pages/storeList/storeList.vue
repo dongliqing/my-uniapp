@@ -5,28 +5,29 @@
         <view class="search-wrap">
           <uni-icons type="search" size="34rpx" color="#333" />
           <input
+            ref="searchInput"
             v-model="searchValue"
             class="search-input"
             type="text"
             placeholder="搜索店铺"
             placeholder-class="search-placeholder"
             confirm-type="search"
-            @confirm="handleSearch"
+            @confirm="getData"
           />
-          <view class="search-btn" @tap="handleSearch">
+          <view class="search-btn" @tap="getData">
             <text>搜索</text>
           </view>
         </view>
       </view>
       <view class="tabs-box">
-        <view v-for="tab in tabs" :key="tab.key" class="tab-item" :class="{ active: activeTab === tab.key }" @tap="handleSwitchTab(tab.key)">
+        <view v-for="tab in tabs" :key="tab.key" class="tab-item" :class="{ active: activeTab === tab.key }" @tap="handleSwitchTab(tab.key, tab.status)">
           <text>{{ tab.name }}</text>
           <text>{{ tab.count }}</text>
         </view>
       </view>
     </view>
     <!-- 商家列表 -->
-    <view class="px-3 pt-[208rpx] store-list">
+    <view class="px-3 pt-[208rpx] IStore-list">
       <StoreCard v-for="item in storeList" :key="item.id" :data="item" />
       <!-- 加载更多 -->
       <view class="text-center pt-3 pb-6 text-gray-400 text-sm">
@@ -38,157 +39,149 @@
 
 <script setup lang="ts">
 // import Storage from '@/utils/storage.ts'
-import { onHide, onPageScroll, onPullDownRefresh, onShow } from '@dcloudio/uni-app'
-import StoreCard from './StoreCard.vue'
-import { getStoreInfo, getScoreInfo } from '@/api/store.ts'
+import { onHide, onPageScroll, onPullDownRefresh, onShow } from '@dcloudio/uni-app';
+import StoreCard from './StoreCard.vue';
+import { getStoreInfo, getScoreInfo } from '@/api/store.ts';
+// import { IStore } from './constant.ts';
 
-interface Store {
-  id: number
-  name: string
-  address: string
-  avgPrice: number
-  sales: number
-  image: string
+interface IStore {
+  id: number;
+  storeName: string;
+  address: string;
+  image: string;
+  star: number;
+  yearType: string;
+  tags: string[];
+  statusNo: string;
+  statusLabel: string;
+  complaint: string;
+  caseHandle: string;
 }
 interface TabItem {
-  key: string
-  name: string
-  count: number
+  key: string;
+  name: string;
+  count: number;
+  status: string;
 }
 
-const searchValue = ref('')
-const storeList = ref([])
-const loading = ref(false)
-const scrollTop = ref(0)
-// 分页参数
-const pageParams = reactive({
-  pageNum: 1,
-  pageSize: 10
-})
+const searchInput = ref();
+const searchValue = ref('');
+const storeList = ref<IStore[]>([]);
+const loading = ref(false);
+// const scrollTop = ref(0);
+const yearType = ref(''); //年份类型
+const status = ref(''); //状态类型  0:正常经营1:整改中2:停业
+const tabs = ref<TabItem[]>([
+  { key: 'all', name: '全部', count: 0, status: '' },
+  { key: 'normal', name: '正常经营', count: 0, status: '0' },
+  { key: 'rectify', name: '整改中', count: 0, status: '1' },
+  { key: 'stop', name: '停业', count: 0, status: '2' }
+]);
+const activeTab = ref('all');
+
+onLoad(options => {
+  console.log(options);
+  yearType.value = options.yearType ?? '';
+  getData();
+
+  //光标定位到搜索框
+  // searchInput.value.focus();
+});
 
 const getData = async () => {
+  if (loading.value) return;
+  loading.value = true;
+
   const res = await getStoreInfo({
-    mainTable: {
-      sjxx: ''
-      // "tyshxydm":""
+    param: {
+      nf: yearType.value,
+      zt: status.value,
+      name: searchValue.value
     },
-    pageInfo: {
-      pageNum: 1,
-      pageSize: 1000
-    }
-  })
-  console.log(res)
-}
-getData()
-
-getScoreInfo({
-  mainTable: {
-    id: '1263017283388851285'
-    // "tyshxydm":""
-  },
-  pageInfo: {
-    pageNum: 1,
+    pageNo: 1,
     pageSize: 1000
-  }
-})
-const handleSearch = () => {}
+  });
 
-// Tab 配置
-const tabs = ref<TabItem[]>([
-  { key: 'all', name: '全部', count: 0 },
-  { key: 'normal', name: '正常经营', count: 0 },
-  { key: 'rectify', name: '整改中', count: 0 },
-  { key: 'high', name: '高风险', count: 0 }
-])
-const activeTab = ref('all')
+  console.log(res);
+
+  storeList.value = (res.data || []).map(item => {
+    return {
+      id: item['商家id'],
+      storeName: item['商家名称'],
+      image: item['商家封面'],
+      address: item['商家地址经度'] && item['商家地址纬度'] ? [item['商家地址经度'], item['商家地址纬度']] : [],
+      star: Number(item['商家星级']),
+      yearType: item['商家年份'],
+      tags: item['商家标签'].split(','),
+      statusNo: item['商家状态编码'],
+      statusLabel: item['商家状态'],
+      complaint: item['年度投诉'],
+      caseHandle: item['立案查处']
+    };
+  });
+  tabs.value.forEach((tab, index) => {
+    if (index > 0) {
+      tab.count = storeList.value.filter(item => item.statusNo === tab.status).length;
+    } else {
+      tab.count = storeList.value.length;
+    }
+  });
+
+  loading.value = false;
+  uni.stopPullDownRefresh();
+};
+
+// getScoreInfo({
+//   mainTable: {
+//     id: '1263017283388851285'
+//     // "tyshxydm":""
+//   },
+//   pageInfo: {
+//     pageNum: 1,
+//     pageSize: 1000
+//   }
+// });
+
+const handleSearch = () => {};
+
 /**
  * 切换 Tab（分页重置）
  */
-const handleSwitchTab = (key: string) => {
-  if (activeTab.value === key) return
-  activeTab.value = key
+const handleSwitchTab = (key: string, sta: string) => {
+  if (activeTab.value === key) return;
+  activeTab.value = key;
+  status.value = sta;
   // 重置分页并重新加载
-  //   resetAndReload()
-}
-
-// 获取数据
-const fetchData = async (isRefresh = false) => {
-  if (loading.value) return
-  loading.value = true
-
-  // 模拟接口请求延时
-  await new Promise(resolve => setTimeout(resolve, 800))
-
-  // 模拟数据
-  const mockData = Array.from({ length: 10 }).map((_, i) => ({
-    id: i + 1,
-    name: `缙云特色餐厅 ${i + 1}`,
-    img: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
-    score: 90,
-    distance: '1.5',
-    year: 10,
-    complaint: 2,
-    penalty: 1,
-    status: 'normal'
-  }))
-
-  storeList.value = isRefresh ? mockData : [...storeList.value, ...mockData]
-
-  // 缓存数据
-  //   Storage.set('STORE_LIST_CACHE', storeList.value)
-
-  loading.value = false
-  uni.stopPullDownRefresh()
-}
+  getData();
+};
 
 // 记录滚动位置
 onPageScroll(e => {
   //   scrollTop.value = e.scrollTop
-})
+});
 
 // 页面隐藏时保存位置
 onHide(() => {
   //   Storage.setSession('STORE_LIST_SCROLL_TOP', scrollTop.value)
-})
+});
 
-fetchData()
-onShow(() => {
-  // 1. 优先从缓存读取数据
-  // const cache = Storage.get<Store[]>('STORE_LIST_CACHE');
-  // if (cache && cache.length > 0) {
-  //   storeList.value = cache;
-  //   // 2. 恢复滚动位置
-  //   const savedScrollTop = Storage.getSession<number>('STORE_LIST_SCROLL_TOP');
-  //   if (savedScrollTop) {
-  //     nextTick(() => {
-  //       uni.pageScrollTo({
-  //         scrollTop: savedScrollTop,
-  //         duration: 0,
-  //       });
-  //     });
-  //   }
-  // } else {
-  //   // 3. 无缓存则请求数据
-  //   fetchData(true);
-  // }
-})
+onShow(() => {});
 
 // 监听页面滚动到底部
 onReachBottom(() => {
-  console.log('触底了，开始加载更多...')
-  // loadMoreData();
-})
+  // console.log('触底了，开始加载更多...');
+});
 
 // 下拉刷新
 onPullDownRefresh(() => {
-  fetchData(true)
-})
+  getData();
+});
 
 const goToDetail = (id: number) => {
   uni.navigateTo({
     url: `/pages/storeDetail/storeDetail?id=${id}`
-  })
-}
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -200,7 +193,7 @@ const goToDetail = (id: number) => {
   background-image: linear-gradient(180deg, #c3e9ff 0%, #e0f0f9 100%);
   background-size: 100% 100%;
 }
-.store-list {
+.IStore-list {
   background-image: linear-gradient(180deg, #c3e9ff 0%, #e0f0f9 212rpx, transparent 100%);
   background-size: 100% 650rpx;
   background-repeat: no-repeat;

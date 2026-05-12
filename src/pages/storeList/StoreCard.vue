@@ -4,38 +4,35 @@
       <!-- 商家图片 -->
 
       <view class="merchant-card__img-wrap">
-        <image class="merchant-card__img" :src="data.img" mode="aspectFill" />
+        <AImage class="merchant-card__img" :file-id="data.image" />
       </view>
 
       <!-- 商家信息 -->
       <view class="merchant-card__info">
-        <text class="merchant-card__name">{{ data.name }}</text>
+        <text class="merchant-card__name">{{ data.storeName }}</text>
 
         <!-- 星级和评分 -->
         <view class="merchant-card__rating">
           <view class="merchant-card__stars">
-            <image class="merchant-card__star" src="/static/images/svg/star-default.svg" mode="aspectFit" />
-            <image class="merchant-card__star" src="/static/images/svg/star-active.svg" mode="aspectFit" />
+            <image v-for="i in data.star" :key="i + 'active'" :mode="aspectFit" class="merchant-card__star" src="/static/images/svg/star-active.svg" mode="aspectFit" />
+            <image v-for="i in 5 - data.star" :key="i + 'gray'" class="merchant-card__star" src="/static/images/svg/star-default.svg" mode="aspectFit" />
           </view>
-          <text class="merchant-card__score">{{ data.score }}分</text>
-          <text class="merchant-card__distance">{{ data.distance }}2.3km</text>
+          <!-- <text class="merchant-card__score">90分</text> -->
+          <text class="merchant-card__distance">2.3km</text>
         </view>
 
         <!-- 分类和区域 -->
         <view class="merchant-card__meta">
-          <text class="merchant-card__area">222</text>
-          <text class="merchant-card__area">222</text>
-          <text class="merchant-card__area">222</text>
+          <text v-for="(item, index) in data.tags" :key="index + 'tag'" class="merchant-card__area">{{ item }}</text>
         </view>
 
         <!-- 标签 -->
         <view class="merchant-card__tags">
           <view class="merchant-card__year-tag">
             <image class="merchant-card__year-icon" src="/static/images/icon-store.png" mode="aspectFit" />
-            <text class="merchant-card__year-text">{{ data.year }}年店铺</text>
+            <text class="merchant-card__year-text">{{ YearTypeMap[Number(data.yearType)] }}</text>
           </view>
-          <view class="merchant-card__badge">{{ data.badge }}缙云传味</view>
-          <view class="merchant-card__badge">{{ data.badge }}缙云传味</view>
+          <!-- <view class="merchant-card__badge">缙云传味</view> -->
         </view>
       </view>
     </view>
@@ -44,58 +41,48 @@
       <view class="flex items-center">
         <image class="merchant-card__stats-icon" src="/static/images/warn-red.png" mode="aspectFit" />
         <text class="merchant-card__stats-text ml-[12rpx]">年度投诉{{ data.complaint || 0 }}件</text>
-        <text class="merchant-card__stats-text ml-[20rpx]">立案查处{{ data.penalty || 0 }}件</text>
+        <text class="merchant-card__stats-text ml-[20rpx]">立案查处{{ data.caseHandle || 0 }}件</text>
       </view>
 
       <!-- 状态标签 -->
-      <view class="merchant-card__status high" :class="data.status">
-        <text class="merchant-card__status-text">{{ statusText }}</text>
+      <view class="merchant-card__status" :class="`status_${data.statusNo}`">
+        <text class="merchant-card__status-text">{{ data.statusLabel }}</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { YearTypeMap, StatusMap } from './constant.ts';
+import AImage from '@/components/AImage.vue';
 
-interface MerchantData {
-  id: string | number
-  name: string
-  img: string
-  stars?: number
-  score: number
-  distance: string
-  category?: string
-  year: number
-  badge: string
-  badge2?: string
-  complaint: number
-  penalty: number
-  status: 'normal' | 'rectify' | 'high'
+interface IStore {
+  id: number;
+  storeName: string;
+  address: string;
+  image: string;
+  star: number;
+  yearType: string;
+  tags: string[];
+  statusNo: string;
+  statusLabel: string;
+  complaint: string;
+  caseHandle: string;
 }
 
 const props = defineProps<{
-  data: MerchantData
-}>()
+  data: IStore;
+}>();
 
 const emit = defineEmits<{
-  click: [id: string | number]
-}>()
-
-const statusText = computed(() => {
-  const map = {
-    normal: '正常经营',
-    rectify: '整改中',
-    high: '高风险'
-  }
-  return map[props.data.status] || '整改中'
-})
+  click: [id: string | number];
+}>();
 
 function goDetail() {
   // emit('click', props.data.id)
   uni.navigateTo({
     url: '/pages/merchantDetail/index?id=' + props.data.id
-  })
+  });
 }
 </script>
 
@@ -255,11 +242,11 @@ function goDetail() {
     border-radius: 2rpx;
     border: 1rpx solid #ccc;
     width: 115rpx;
-    height: 30rpx;
+    height: 38rpx;
     line-height: 30rpx;
     text-align: center;
 
-    &.normal {
+    &.status_0 {
       background: #edf5ff;
       border-color: #afd3ff;
 
@@ -268,7 +255,7 @@ function goDetail() {
       }
     }
 
-    &.rectify {
+    &.status_1 {
       background: #f1f1f1;
       border-color: #999;
 
@@ -277,7 +264,7 @@ function goDetail() {
       }
     }
 
-    &.high {
+    &.status_2 {
       background: #ffe9e5;
       border-color: #f23212;
 
