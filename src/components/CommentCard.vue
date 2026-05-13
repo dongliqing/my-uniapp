@@ -9,53 +9,39 @@
     <view class="comment-card__body">
       <!-- 第一行：昵称 + 日期 -->
       <view class="comment-card__header">
-        <text class="comment-card__nickname">{{ data.nickname }}</text>
-        <text class="comment-card__date">{{ data.time }}</text>
+        <text class="comment-card__nickname">{{ data.xm || '测试' }}</text>
+        <text class="comment-card__date">{{ data.pjrq }}</text>
       </view>
 
       <!-- 第二行：星级评分 + 评分文字 -->
       <view class="comment-card__rating-row">
         <view class="comment-card__stars">
-          <image
-            v-for="n in 5"
-            :key="n"
-            class="comment-card__star"
-            :src="n <= data.rating ? starActive : starEmpty"
-            mode="aspectFit"
-          />
+          <image v-for="n in 5" :key="n" class="comment-card__star" :src="n <= data.xj ? starActive : starEmpty" mode="aspectFit" />
         </view>
-        <text class="comment-card__rating-text">{{ data.rating }}星</text>
+        <text class="comment-card__rating-text">{{ data.xj }}星</text>
       </view>
 
       <!-- 评论内容 -->
-      <text class="comment-card__content">{{ data.content }}</text>
+      <text class="comment-card__content">{{ data.pj }}</text>
 
       <!-- 评论图片（3列） -->
-      <view v-if="data.images && data.images.length" class="comment-card__images">
-        <image
-          v-for="(img, i) in data.images.slice(0, 3)"
-          :key="i"
-          class="comment-card__img"
-          :src="img"
-          mode="aspectFill"
-          @tap.stop="onPreview(i)"
-        />
+      <view v-if="data.tp?.split(',') && data.tp.split(',').length" class="comment-card__images">
+        <AImage class="comment-card__img" v-for="(img, i) in data.tp.split(',')" :key="i" :file-id="img"></AImage>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-
-
+import AImage from './AImage.vue'
 interface CommentData {
   id: number | string
   avatar: string
-  nickname: string
-  rating: number
-  content: string
-  images?: string[]
-  time: string
+  xm: string
+  xj: number
+  pj: string
+  tp?: string
+  pjrq: string
 }
 
 const props = defineProps<{
@@ -67,13 +53,6 @@ const starActive = '/static/images/svg/merchantDetail/star-active.svg'
 const starEmpty = '/static/images/svg/merchantDetail/star-empty.svg'
 
 /** 图片预览 */
-function onPreview(index: number) {
-  if (!props.data.images || !props.data.images.length) return
-  uni.previewImage({
-    current: props.data.images[index],
-    urls: props.data.images,
-  })
-}
 </script>
 
 <style lang="scss" scoped>
@@ -94,7 +73,7 @@ function onPreview(index: number) {
     width: 74rpx;
     height: 74rpx;
     border-radius: 50%;
-    background: #CFDAE8;
+    background: #cfdae8;
   }
 
   /* 内容区 */
@@ -171,7 +150,7 @@ function onPreview(index: number) {
     width: calc((100% - 32rpx) / 3);
     height: 200rpx;
     border-radius: 10rpx;
-    background: #D9D9D9;
+    background: #d9d9d9;
     flex-shrink: 0;
   }
 }

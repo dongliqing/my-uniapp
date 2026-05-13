@@ -23,7 +23,8 @@
         <view class="check-detail__comment-list">
           <view v-for="comment in comments" :key="comment.id" class="check-detail__comment-item">
             <!-- 左侧头像 -->
-            <AImage class="check-detail__comment-avatar" :fileId="comment.tx"></AImage>
+            <AImage class="check-detail__comment-avatar" v-if="comment.tx" :fileId="comment.tx"></AImage>
+            <image v-else class="check-detail__comment-avatar" src="/src/static/images/avatar.png" mode="scaleToFill" />
             <!-- 右侧内容区 -->
             <view class="check-detail__comment-main">
               <!-- 头部：姓名 + 点赞 -->
@@ -173,7 +174,9 @@ async function submitComment() {
           },
           detail1: [
             {
-              plnr: newComment.value.trim()
+              plnr: newComment.value.trim(),
+              tx: '1263437120816267265',
+              xm: '测试123'
             }
           ]
         }
@@ -194,18 +197,24 @@ function toggleLike(comment: any) {
       {
         mainTable: {
           plxx: comment.id,
-          dzryope: 'sss'
+          dzryope: '1234567890'
         }
       }
     ]
+  }).then((res: any) => {
+    console.log('---res', res)
+    if (res.status) {
+      if (comment.isLiked) {
+        comment.dzcs--
+        comment.isLiked = false
+      } else {
+        comment.dzcs++
+        comment.isLiked = true
+      }
+    } else {
+      uni.showToast({ title: res.message, icon: 'none' })
+    }
   })
-  if (comment.isLiked) {
-    comment.dzcs--
-    comment.isLiked = false
-  } else {
-    comment.dzcs++
-    comment.isLiked = true
-  }
 }
 </script>
 

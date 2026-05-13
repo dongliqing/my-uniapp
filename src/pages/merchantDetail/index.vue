@@ -183,7 +183,7 @@
           <!-- ============ 抽检信息 ============ -->
           <view v-show="activeTab === 'inspection'" class="manage__gallery-section manage__gallery-section--inspection">
             <view class="manage__gallery-list">
-              <image v-for="(img, i) in inspectImages" :key="i" class="manage__gallery-img" :src="img" mode="aspectFill" @tap.stop="previewGallery(inspectImages, i)" />
+              <AImage class="manage__gallery-img" v-for="(img, i) in merchantInfo.inspectImages" :key="i" :fileId="img.tp"></AImage>
             </view>
           </view>
         </view>
@@ -233,7 +233,7 @@ const radarDimensions = [
 
 // ==================== 警示信息 ====================
 const warningItems = [
-  { label: '年度投诉', count: 12 },
+  { label: '年度投诉', count: 0 },
   { label: '年度处罚', count: 0 }
 ]
 
@@ -274,11 +274,11 @@ const merchantInfo = ref<any>({})
 
 // 五维评分
 const scoreDimensions = ref<ScoreDimension[]>([
-  { key: 'spaqdf', name: '食品安全', score: 92 },
-  { key: 'wshjdf', name: '卫生环境', score: 85 },
-  { key: 'shzrdf', name: '社会责任', score: 88 },
-  { key: 'hgjydf', name: '合规经营', score: 90 },
-  { key: 'xfpjdf', name: '消费体验', score: 82 }
+  { key: 'spaqdf', name: '食品安全', score: 0 },
+  { key: 'wshjdf', name: '卫生环境', score: 0 },
+  { key: 'shzrdf', name: '社会责任', score: 0 },
+  { key: 'hgjydf', name: '合规经营', score: 0 },
+  { key: 'xfpjdf', name: '消费体验', score: 0 }
 ])
 
 // ==================== 计算属性 ====================
@@ -332,10 +332,9 @@ async function loadMerchantDetail(id: string) {
 
     // 3. 年度处罚 + 投诉信息（警示信息）
     if (merchantInfo.value.penalty || merchantInfo.value.complaint) {
-      const p = merchantInfo.value.penalty || []
-      const c = merchantInfo.value.complaint || []
-      warningItems[0].count = c.length // 年度投诉
-      warningItems[1].count = p.length // 年度处罚
+      const p = merchantInfo.value.penalty
+      warningItems[0].count = p['年度投诉数量'] // 年度投诉
+      warningItems[1].count = p['年度处罚数量'] // 年度处罚
     }
   } catch (err) {
     console.error('加载商家详情失败', err)
@@ -345,17 +344,16 @@ async function loadMerchantDetail(id: string) {
 /** 跳转投诉页 */
 function goComplaint() {
   uni.navigateTo({
-    url: `/pages/complaint/index?id=${merchantInfo.value.id}&name=${merchantInfo.value.sjxx}`
+    url: `/pages/complaint/index?id=${merchantInfo.value.id}`
   })
 }
 
 /** 跳转评价页 */
 function goReview() {
   uni.navigateTo({
-    url: `/pages/review/index?id=${merchantInfo.value.id}&name=${encodeURIComponent(merchantInfo.value.name)}`
+    url: `/pages/review/index?id=${merchantInfo.value.id}`
   })
 }
-const inspectImages = ['/static/images/svg/merchantDetail/49.png', '/static/images/svg/merchantDetail/49.png', '/static/images/svg/merchantDetail/49.png']
 </script>
 
 <style lang="scss" scoped>

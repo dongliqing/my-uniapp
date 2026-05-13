@@ -69,7 +69,6 @@
 import { computed, reactive, ref } from 'vue'
 import { addComplaint, getMerchantDetail } from '@/api/merchant'
 import { getFileApi, uploadFileApi } from '@/api/common'
-import AImage from '@/components/AImage'
 
 const pageId = ref('')
 
@@ -148,12 +147,12 @@ async function submit() {
     await addComplaint({
       datas: [
         {
-          mainTable: { sjmc: merchantInfo.value.sjxx, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), sjmc: '商家信息-sysadmin 2026-04-27 10:14:00' }
+          mainTable: { sjmc: merchantInfo.value.id, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(',') }
         }
       ]
     })
     uni.showToast({ title: '提交成功', icon: 'success' })
-    // setTimeout(() => uni.navigateBack(), 1500)
+    setTimeout(() => uni.navigateBack(), 1500)
   } catch (e) {
     uni.showToast({ title: '提交失败，请重试', icon: 'none' })
   }

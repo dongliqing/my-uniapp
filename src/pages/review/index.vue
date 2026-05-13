@@ -32,7 +32,7 @@
 
           <!-- 图片上传 -->
           <view class="review__upload-area">
-            <view v-for="(img, i) in contentForm.tp" :key="i" class="review__upload-preview">
+            <view v-for="(img, i) in previewImgs" :key="i" class="review__upload-preview">
               <image class="review__upload-preview-img" :src="img" mode="aspectFill" />
               <view class="review__upload-del" @tap="removeImage(i)">×</view>
             </view>
@@ -63,12 +63,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { addComment } from '@/api/merchant'
+import { uploadFileApi } from '@/api/common'
 
 const contentForm = reactive({
   xj: 4,
   pj: '',
-  tp: ''
+  tp: []
 })
+
+const previewImgs = ref<string[]>([])
 const pageId = ref('')
 onLoad(options => {
   pageId.value = options?.id
@@ -92,8 +95,21 @@ function chooseImage() {
     count: 4 - contentForm.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
-    success(res) {
-      contentForm.tp.push(...res.tempFilePaths)
+    success: async function (res) {
+      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles]
+
+      for (const file of files) {
+        try {
+          // 上传到服务器，获取文件ID
+          const fileid: any = await uploadFileApi(file.path, file.name)
+          // 获取图片资源URL（base64）
+          previewImgs.value.push(file.path)
+
+          contentForm.tp.push(fileid)
+        } catch (e) {
+          console.error('图片上传失败:', e)
+        }
+      }
     }
   })
 }
@@ -111,7 +127,6 @@ async function submit() {
     }
     return
   }
-  console.log('>>>>', contentForm)
   try {
     await addComment({
       datas: [
@@ -121,6 +136,7 @@ async function submit() {
           },
           detail3: {
             ...contentForm,
+            tp: contentForm.tp.join(','),
             rq: new Date()
               .toLocaleDateString('zh-CN', {
                 year: 'numeric',
@@ -252,15 +268,14 @@ async function submit() {
 
   /* 图片上传 */
   &__upload-area {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 16rpx;
-    flex-wrap: wrap;
     margin-top: 24rpx;
   }
 
   &__upload-btn {
-    width: 152rpx;
-    height: 152rpx;
+    aspect-ratio: 1;
     background: #f6f6f6;
     border-radius: 10rpx;
     display: flex;
@@ -289,8 +304,7 @@ async function submit() {
   }
 
   &__upload-preview {
-    width: 152rpx;
-    height: 152rpx;
+    aspect-ratio: 1;
     position: relative;
     border-radius: 10rpx;
     overflow: hidden;
