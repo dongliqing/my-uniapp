@@ -141,17 +141,15 @@ const starEmpty = '/static/images/svg/merchantDetail/star-empty.svg'
 
   /* 图片列表（一行3张） */
   &__images {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16rpx;
   }
 
   &__img {
-    width: calc((100% - 32rpx) / 3);
-    height: 200rpx;
+    aspect-ratio: 1;
     border-radius: 10rpx;
     background: #d9d9d9;
-    flex-shrink: 0;
   }
 }
 </style>
