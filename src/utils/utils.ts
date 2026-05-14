@@ -36,10 +36,11 @@ export function getDistance(lat1: number | string, lng1: number | string, lat2: 
  * @param url
  */
 export function customNavigateTo(url: string) {
-  const tabBars = ['/pages/index/index', '/pages/check/check', '/pages/mine/mine'];
-  if (tabBars.includes(url)) {
+  const tabBars = ['/pages/index/index', '/pages/check/index', '/pages/mine/mine'];
+  console.log('customNavigateTo:', url);
+  if (tabBars.includes(url.split('?')[0])) {
     uni.switchTab({ url: url });
   } else {
-    uni.navigateTo({ url: url });
+    uni.reLaunch({ url: url });
   }
 }

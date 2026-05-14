@@ -153,10 +153,12 @@
 
 <script setup lang="ts">
 // import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-import { getMessage, getTangShiStat, getStarStat } from '@/api/home.ts';
+import { getMessage, getTangShiStat, getStarStat } from '@/api/home.ts'
+import { pageInterceptor } from '@/utils/interceptor.ts'
 
-// 当前年份
-const currentYear = new Date().getFullYear();
+onShow(() => {
+  pageInterceptor('/pages/index/index')
+})
 
 // 品牌数据
 const brandList = [
@@ -188,7 +190,7 @@ const brandList = [
     label: '年以上店铺',
     medal: '/static/images/home-head-4.png'
   }
-];
+]
 
 // 星级数据
 const starList = ref([
@@ -217,14 +219,14 @@ const starList = ref([
     active: 1,
     percent: 0
   }
-]);
+])
 getStarStat({ pageNo: 1, pageSize: 10 }).then(res => {
-  const result = (res.data || []).sort((a, b) => b['数据类型'] - a['数据类型']);
-  console.log(result);
+  const result = (res.data || []).sort((a, b) => b['数据类型'] - a['数据类型'])
+  console.log(result)
   result.forEach((item, index) => {
-    starList.value[index].percent = Number(item['占比百分比']);
-  });
-});
+    starList.value[index].percent = Number(item['占比百分比'])
+  })
+})
 
 // 商家信息卡片数据
 const storeInfoCards = ref([
@@ -234,19 +236,19 @@ const storeInfoCards = ref([
     title: '无堂食\n外卖商家',
     count: '0'
   }
-]);
+])
 getTangShiStat({ pageNo: 1, pageSize: 10 }).then(res => {
-  const result = (res.data || [])?.[0];
-  storeInfoCards.value[0].count = result['平台内商家'];
-  storeInfoCards.value[1].count = result['外卖商家'];
-  storeInfoCards.value[2].count = result['仅外卖商家'];
-});
+  const result = (res.data || [])?.[0]
+  storeInfoCards.value[0].count = result['平台内商家']
+  storeInfoCards.value[1].count = result['外卖商家']
+  storeInfoCards.value[2].count = result['仅外卖商家']
+})
 
 // 资讯列表数据
-const allNewsList = ref<any[]>([]);
-const displayNumber = 5;
-const showMoreBtn = ref(false);
-const newsList = ref<{ title: string; link: string }[]>([]);
+const allNewsList = ref<any[]>([])
+const displayNumber = 5
+const showMoreBtn = ref(false)
+const newsList = ref<{ title: string; link: string }[]>([])
 getMessage({
   pageInfo: {
     pageNo: '1',
@@ -259,42 +261,42 @@ getMessage({
       return {
         title: e.mainTable.bt,
         link: e.mainTable.lj
-      };
+      }
     })
-  );
-  showMoreBtn.value = allNewsList.value.length > displayNumber;
+  )
+  showMoreBtn.value = allNewsList.value.length > displayNumber
   if (allNewsList.value.length > displayNumber) {
-    newsList.value = allNewsList.value.slice(0, displayNumber);
+    newsList.value = allNewsList.value.slice(0, displayNumber)
   } else {
-    newsList.value = allNewsList.value;
+    newsList.value = allNewsList.value
   }
-});
+})
 
 // 导航到指定页面
 const navigateTo = (path: string) => {
   uni.navigateTo({
     url: path
-  });
-};
+  })
+}
 
 const switchTo = () => {
   uni.switchTab({
     url: '/pages/check/index'
-  });
-};
+  })
+}
 
 // 查看资讯详情
 const viewNews = (link: string) => {
   uni.navigateTo({
     url: '/pages/frame/frame?link=' + encodeURIComponent(link) + '&title=咨询信息'
-  });
-};
+  })
+}
 
 // 查看全部资讯
 const viewAllNews = () => {
-  newsList.value = allNewsList.value;
-  showMoreBtn.value = false;
-};
+  newsList.value = allNewsList.value
+  showMoreBtn.value = false
+}
 </script>
 
 <style lang="scss" scoped>

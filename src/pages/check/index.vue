@@ -47,22 +47,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
-import { getCheckList } from '@/api/check'
+import { pageInterceptor } from '@/utils/interceptor.ts';
+import { ref } from 'vue';
+import { onShow } from '@dcloudio/uni-app';
+import { getCheckList } from '@/api/check';
 
 interface ActivityItem {
-  id: number
-  hdmc: string
-  hdsj_0: string
-  hdsj_1: string
-  hdzt: string // 0 未开始 1 进行中 2 已结束
+  id: number;
+  hdmc: string;
+  hdsj_0: string;
+  hdsj_1: string;
+  hdzt: string; // 0 未开始 1 进行中 2 已结束
 }
 
-const activityList = ref<ActivityItem[]>([])
-const loading = ref(false)
-const refreshing = ref(false)
-const noMore = ref(false)
+const activityList = ref<ActivityItem[]>([]);
+const loading = ref(false);
+const refreshing = ref(false);
+const noMore = ref(false);
 
 // hdzt 枚举配置: 0 未开始 1 进行中 2 已结束
 const STATUS_CONFIG: Record<string, { text: string; statusCls: string; btnCls: string; btnText: string; btnTextCls: string }> = {
@@ -87,81 +88,83 @@ const STATUS_CONFIG: Record<string, { text: string; statusCls: string; btnCls: s
     btnText: '查看详情',
     btnTextCls: 'check__card-btn-text--outline'
   }
-}
+};
 
 function statusConfig(hdzt: string) {
-  return STATUS_CONFIG[hdzt] ?? STATUS_CONFIG['2']
+  return STATUS_CONFIG[hdzt] ?? STATUS_CONFIG['2'];
 }
 
 // 分页参数
-const page = ref(1)
-const pageSize = 10
+const page = ref(1);
+const pageSize = 10;
 
 /** 加载数据 */
 async function fetchData(reset: boolean = false) {
-  if (loading.value) return
-  if (!reset && noMore.value) return
+  if (loading.value) return;
+  if (!reset && noMore.value) return;
 
   if (reset) {
-    page.value = 1
-    noMore.value = false
+    page.value = 1;
+    noMore.value = false;
   }
-  loading.value = true
+  loading.value = true;
 
   try {
     const res: any = await getCheckList({
       pageInfo: { pageNo: page.value, pageSize }
-    })
+    });
     const list: ActivityItem[] = Array.isArray(res?.datas)
       ? res.datas.map(item => {
           return {
             ...item.mainTable
-          }
+          };
         })
-      : []
+      : [];
 
     if (reset) {
-      activityList.value = list
+      activityList.value = list;
     } else {
-      activityList.value.push(...list)
+      activityList.value.push(...list);
     }
 
     // 判断是否还有更多数据
     if (list.length < pageSize) {
-      noMore.value = true
+      noMore.value = true;
     } else {
-      page.value++
+      page.value++;
     }
   } catch (err) {
-    console.error('获取活动列表失败', err)
+    console.error('获取活动列表失败', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 /** 下拉刷新 */
 function onPullDownRefresh() {
-  refreshing.value = true
+  refreshing.value = true;
   fetchData(true).then(res => {
-    console.log('---rs', res)
+    console.log('---rs', res);
 
-    refreshing.value = false
-  })
+    refreshing.value = false;
+  });
 }
 
 /** 滚动加载更多 */
 function onLoadMore() {
-  fetchData()
+  fetchData();
 }
 
 /** 跳转详情 */
 const goDetail = (item: any) => {
-  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.id}` })
-}
+  uni.navigateTo({ url: `/pages/checkDetail/index?id=${item.id}` });
+};
 
 onShow(() => {
-  fetchData(true)
-})
+  pageInterceptor('/pages/check/index');
+
+  fetchData(true);
+});
 </script>
 
 <style lang="scss">

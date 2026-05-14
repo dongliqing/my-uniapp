@@ -10,119 +10,138 @@
 </template>
 
 <script setup lang="ts">
-import { appId, appSecret } from '@/pages/constant/constant'
+import { appId, appSecret } from '@/pages/constant/constant';
+import { getUserInfo } from '@/api/login.ts';
+import { customNavigateTo } from '@/utils/utils.ts';
 
-const redirectUrl = ref('')
+const redirectUrl = ref('');
 
 onLoad(options => {
   // 从 options 中解构或直接获取参数
-  redirectUrl.value = options.redirect
-  console.log('接收到的redirectUrl：', redirectUrl.value)
-})
+  redirectUrl.value = decodeURIComponent(options.redirect || '');
+  // console.log('接收到的redirectUrl：', redirectUrl.value);
+  getOpenid();
+});
 
 // 表单数据
 const formData = reactive({
   phone: '',
   isBusiness: false,
   name: ''
-})
-const isLoading = ref(false)
-const nameLabel = computed(() => (formData.isBusiness ? '商家名称' : '用户名称'))
+});
+const isLoading = ref(false);
 
 const getOpenid = async () => {
-  const loginRes = await uni.login({ provider: 'weixin' })
-  console.log('loginRes', loginRes)
+  uni.setStorageSync('openid', '1234567890');
+  // uni.setStorageSync('openid', '9234567890');
+  return;
+  const loginRes = await uni.login({ provider: 'weixin' });
+  console.log('loginRes', loginRes);
   if (loginRes.errMsg !== 'login:ok') {
-    uni.showToast({ title: '登录失败', icon: 'none' })
-    return
+    uni.showToast({ title: '登录失败', icon: 'none' });
+    return;
   }
-  const code = loginRes.code
-  console.log('获取到的 code:', code)
+  const code = loginRes.code;
+  console.log('获取到的 code:', code);
   const requestRes = await uni.request({
     url: `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&grant_type=authorization_code`,
     method: 'GET',
     data: { code: code }
-  })
-
+  });
+  console.log('requestRes', requestRes);
   // 3. 接收后端返回的 openid
-  const { openid } = requestRes.data
-  console.log('获取到的 openid:', openid)
-  uni.setStorageSync('openid', openid)
-  // uni.showToast({ title: '获取成功', icon: 'success' });
-}
-// getOpenid()
+  const { openid } = requestRes.data as { openid: string };
+  console.log('获取到的 openid:', openid);
+  uni.setStorageSync('openid', openid);
+};
+// getOpenid();
 
 const getAccessToken = async () => {
   const requestRes = await uni.request({
     url: `https://api.weixin.qq.com/cgi-bin/token?appid=${appId}&secret=${appSecret}&grant_type=client_credential`,
     method: 'GET'
-  })
-  const { access_token, expires_in } = requestRes.data
+  });
+  const { access_token, expires_in } = requestRes.data as { access_token: string; expires_in: number };
   //缓存access_token到本地
-  uni.setStorageSync('access_token', access_token)
-  const currentTime = Date.now() //获取当前时间戳
-  const expiresIn = currentTime + expires_in * 1000
-  uni.setStorageSync('access_token_expires_in', expiresIn)
-  console.log('获取到的 access_token:', access_token)
-  console.log('获取到的 expires_in:', expiresIn)
-}
+  uni.setStorageSync('access_token', access_token);
+  const currentTime = Date.now(); //获取当前时间戳
+  const expiresIn = currentTime + expires_in * 1000;
+  uni.setStorageSync('access_token_expires_in', expiresIn);
+  console.log('获取到的 access_token:', access_token);
+  console.log('获取到的 expires_in:', expiresIn);
+};
 // getAccessToken();
 
 async function handleGetPhone(e) {
-  console.log('e.detail', e.detail)
+  console.log('e.detail', e.detail);
   // 2. 检查用户是否同意授权
   if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-    uni.showToast({ title: '用户拒绝授权', icon: 'none' })
-    return
+    // uni.showToast({ title: '用户拒绝授权', icon: 'none' });
+    // return;
   }
 
-  await getAccessToken()
-  const sessionToken = uni.getStorageSync('access_token')
-  uni.request({
-    url: 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' + sessionToken,
-    method: 'POST',
-    data: {
-      code: e.detail.code // 登录凭证
-    },
-    success: res => {
-      if (res.data.errcode === 0) {
-        const { phoneNumber } = res.data.phone_info
-        formData.phone = phoneNumber
-        // uni.showToast({ title: `手机号: ${phoneNumber}`, icon: 'success' });
-        // 这里可以进行后续的登录或绑定操作
-        console.log('phoneNumber：', phoneNumber)
-        //登录
-        uni.setStorageSync('phone', phoneNumber)
-      } else {
-        uni.showToast({ title: '获取失败', icon: 'none' })
-      }
-    }
-  })
+  uni.setStorageSync('phone', '19900009999');
+  // uni.setStorageSync('phone', '19900007777');
+
+  getUserLoginInfo();
+
+  // await getAccessToken();
+  // const sessionToken = uni.getStorageSync('access_token');
+  // uni.request({
+  //   url: 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' + sessionToken,
+  //   method: 'POST',
+  //   data: {
+  //     code: e.detail.code // 登录凭证
+  //   },
+  //   success: res => {
+  //     if (res.data.errcode === 0) {
+  //       const { phoneNumber } = res.data.phone_info;
+  //       formData.phone = phoneNumber;
+  //       // uni.showToast({ title: `手机号: ${phoneNumber}`, icon: 'success' });
+  //       // 这里可以进行后续的登录或绑定操作
+  //       console.log('phoneNumber：', phoneNumber);
+  //       //登录
+  //       uni.setStorageSync('phone', phoneNumber);
+  //     } else {
+  //       uni.showToast({ title: '获取失败', icon: 'none' });
+  //     }
+  //   }
+  // });
 }
 
 // 登录逻辑
-const handleLogin = () => {
-  // 模拟登录成功
-  uni.setStorageSync('user_token', 'bearer_login_success')
+const getUserLoginInfo = async () => {
+  const openid = uni.getStorageSync('openid');
+  getUserInfo({
+    mainTable: {
+      openid: openid
+    }
+  }).then(res => {
+    console.log('查询用户信息', res);
+    const result = res?.datas?.[0]?.mainTable;
 
-  uni.showToast({
-    title: '登录成功',
-    icon: 'success',
-    duration: 1500
-  })
+    if (!result) {
+      // 用户不存在，跳转到注册页面
+      if (redirectUrl.value) {
+        uni.navigateTo({ url: '/pages/register/register?redirect=' + encodeURIComponent(redirectUrl.value) });
+      } else {
+        uni.navigateTo({ url: '/pages/register/register' });
+      }
+    } else {
+      //跳转到首页
+      const userInfo = {
+        phone: result.sjh,
+        name: result.xm,
+        isBusiness: result.zhlx === '1',
+        tyshxydm: result.tyshxydm,
+        dysj: result.dysj
+      };
+      uni.setStorageSync('userInfo', userInfo);
 
-  // 登录成功后跳转
-  // 'http%3A%2F%2Flocalhost%3A5173%2Fpages%2Findex%2Findex'
-  // setTimeout(() => {
-  //   const redirect = router.currentRoute.value.query.redirect;
-  //   if (redirect) {
-  //     const targetUrl = redirect.startsWith('/') ? redirect : '/' + redirect;
-  //     router.replace({ path: targetUrl });
-  //   } else {
-  //     router.replace({ name: 'home' });
-  //   }
-  // }, 1600);
-}
+      customNavigateTo(redirectUrl.value);
+    }
+  });
+};
 </script>
 
 <style scoped lang="scss">

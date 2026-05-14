@@ -24,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { uploadFileApi, getFileApi } from '@/api/common.ts';
+import { uploadFileApi } from '@/api/common.ts';
 import { saveUserInfo } from '@/api/login.ts';
 import AImage from '@/components/AImage.vue';
+import { pageInterceptor } from '@/utils/interceptor.ts';
 
 const userInfo = uni.getStorageSync('userInfo');
 
@@ -92,6 +93,10 @@ const updateUserInfo = async () => {
     }
   });
 };
+
+onShow(() => {
+  pageInterceptor('/pages/mine/mine');
+});
 </script>
 <style lang="scss" scoped>
 .mine-page {
