@@ -1,16 +1,16 @@
 // 全局基础请求地址，可根据开发/生产环境动态切换
-import { API_BASE_URL } from '@/pages/constant/constant.ts'
+import { API_BASE_URL } from '@/pages/constant/constant.ts';
 
-let baseUrl = ''
+let baseUrl = '';
 // #ifdef H5
-baseUrl = '' // H5 端走本地代理
+baseUrl = ''; // H5 端走本地代理
 // #endif
 // #ifdef MP-WEIXIN
-baseUrl = API_BASE_URL // MP 端走线上环境
+baseUrl = API_BASE_URL; // MP 端走线上环境
 // #endif
 
 if (import.meta.env.NODE_ENV === 'production') {
-  baseUrl = API_BASE_URL
+  baseUrl = API_BASE_URL;
 }
 
 /**
@@ -25,28 +25,28 @@ if (import.meta.env.NODE_ENV === 'production') {
  */
 const request = (options = {}) => {
   // 1. 默认配置与参数合并
-  const { url, method = 'GET', data = {}, needToken = true, needLoading = false, header = {} } = options
+  const { url, method = 'GET', data = {}, needToken = true, needLoading = false, header = {} } = options;
 
   // 2. 处理加载动画
   if (needLoading) {
-    uni.showLoading({ title: '加载中...', mask: true })
+    uni.showLoading({ title: '加载中...', mask: true });
   }
 
   // 3. 处理请求头（自动携带 Token）
   const defaultHeader = {
     'Content-Type': 'application/json',
     ...header
-  }
+  };
 
-  let finalUrl = url
+  let finalUrl = url;
   if (needToken) {
-    const token = uni.getStorageSync('token') || '5bebac6034384d79b48fcf097491374a'
+    const token = uni.getStorageSync('token') || '5bebac6034384d79b48fcf097491374a';
     if (token) {
       //   defaultHeader['Authorization'] = token // 根据后端要求，也可能是 'Bearer ' + token
       if (url.includes('?')) {
-        finalUrl = url + '&access_token=' + token
+        finalUrl = url + '&access_token=' + token;
       } else {
-        finalUrl = url + '?access_token=' + token
+        finalUrl = url + '?access_token=' + token;
       }
     }
   }
@@ -72,46 +72,46 @@ const request = (options = {}) => {
         if (res.statusCode === 200) {
           // 这里可以根据后端返回的业务状态码做进一步处理
           // 例如：if (res.data.code === 10086) { 跳转登录 }
-          resolve(res.data.datajson)
+          resolve(res.data.datajson);
         } else if (res.statusCode === 401) {
           // 凭证失效，清除本地 token 并跳转登录页
-          uni.removeStorageSync('token')
-          uni.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
+          uni.removeStorageSync('token');
+          uni.showToast({ title: '登录已过期，请重新登录', icon: 'none' });
           // setTimeout(() => {
           //   uni.navigateTo({ url: '/pages/login/login' })
           // }, 1500)
-          reject(res)
+          reject(res);
         } else {
-          uni.showToast({ title: '请求异常', icon: 'none' })
-          reject(res)
+          uni.showToast({ title: '请求异常', icon: 'none' });
+          reject(res);
         }
       },
       fail: err => {
-        uni.showToast({ title: '网络请求失败', icon: 'none' })
-        reject(err)
+        uni.showToast({ title: '网络请求失败', icon: 'none' });
+        reject(err);
       },
       complete: () => {
         // 无论成功失败，都关闭加载动画
         if (needLoading) {
-          uni.hideLoading()
+          uni.hideLoading();
         }
       }
-    })
-  })
-}
+    });
+  });
+};
 
 // 导出便捷的请求方法
 export default {
   get(url, data = {}, config = {}) {
-    return request({ url, method: 'GET', data, ...config })
+    return request({ url, method: 'GET', data, ...config });
   },
   post(url, data = {}, config = {}) {
-    return request({ url, method: 'POST', data, ...config })
+    return request({ url, method: 'POST', data, ...config });
   },
   put(url, data = {}, config = {}) {
-    return request({ url, method: 'PUT', data, ...config })
+    return request({ url, method: 'PUT', data, ...config });
   },
   delete(url, data = {}, config = {}) {
-    return request({ url, method: 'DELETE', data, ...config })
+    return request({ url, method: 'DELETE', data, ...config });
   }
-}
+};

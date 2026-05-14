@@ -6,11 +6,10 @@
     </view>
     <view class="pt-[212rpx] flex items-center px-[36rpx] relative z-[9]">
       <!-- 头像用户名 -->
-      <image v-if="avatarUrl" class="w-[120rpx] h-[120rpx] rounded-full" :src="avatarUrl" mode="aspectFill" @tap="editAvatar" />
+      <AImage v-if="avatarFileId" class="!w-[120rpx] !h-[120rpx] !rounded-full" :file-id="avatarFileId" @tap="editAvatar" />
       <image v-else class="w-[120rpx] h-[120rpx] rounded-full" src="@/static/images/avatar.png" mode="aspectFill" @tap="editAvatar" />
       <view class="ml-[24rpx] flex items-center" @tap="editUserName">
-        <!-- 颜色设置为黑色 -->
-        <text class="text-[30rpx] text-[#000] mr-[16rpx] username pb-[4rpx]">{{ username || '用户昵称' }}</text>
+        <text class="text-[30rpx] text-[#000] mr-[16rpx] username pb-[4rpx]">{{ username || '未设置用户名' }}</text>
         <uni-icons type="forward" size="34rpx" color="#333" class="" />
       </view>
     </view>
@@ -25,13 +24,14 @@
 </template>
 
 <script setup lang="ts">
-import { uploadFileApi, getFileApi } from '@/api/common.ts'
+import { uploadFileApi, getFileApi } from '@/api/common.ts';
+import { saveUserInfo } from '@/api/login.ts';
+import AImage from '@/components/AImage.vue';
 
-const avatarUrl = ref('')
-const username = ref('')
+const userInfo = uni.getStorageSync('userInfo');
 
-// const fileId = ref('')
-// const type = ref('')
+const username = ref(userInfo.name);
+const avatarFileId = ref(userInfo.avatarFileId || '');
 
 const editUserName = () => {
   //弹出一个输入框
@@ -41,11 +41,12 @@ const editUserName = () => {
     editable: true,
     success: res => {
       // 修改用户名
-      console.log(res)
-      username.value = res.content
+      // console.log(res);
+      username.value = res.content.trim() as string;
+      updateUserInfo();
     }
-  })
-}
+  });
+};
 const editAvatar = () => {
   // 选择图片
   uni.chooseImage({
@@ -53,22 +54,44 @@ const editAvatar = () => {
     sizeType: ['compressed'], // 指定是原图还是压缩图
     sourceType: ['camera', 'album'], // 指定来源是相机还是相册
     success: async res => {
-      const tempFilePath = res.tempFilePaths[0]
-      const fileName = res.tempFiles[0].name
-      const type = res.tempFiles[0].type
+      const tempFilePath = res.tempFilePaths[0];
+      const fileName = res.tempFiles[0].name;
+      // const type = res.tempFiles[0].type;
 
       // 上传到服务器
-      const fileid = await uploadFileApi(tempFilePath, fileName)
+      const fileid = await uploadFileApi(tempFilePath, fileName);
+      avatarFileId.value = fileid;
       // console.log(fileid, type)
-      // fileId.value = fileid
-      // type.value = type
-
-      //下载图片资源
-      const url = await getFileApi(fileid, type)
-      avatarUrl.value = url
+      updateUserInfo();
     }
-  })
-}
+  });
+};
+
+const updateUserInfo = async () => {
+  const params = {
+    openid: uni.getStorageSync('openid'),
+    tyshxydm: userInfo.tyshxydm,
+    dysj: userInfo.dysj,
+    zhlx: userInfo.isBusiness ? '1' : '0', //类型 1-商家，0-个人
+    sjh: userInfo.phone,
+    xm: username.value,
+    tx: avatarFileId.value
+  };
+  console.log('params:', params);
+  saveUserInfo({ datas: [{ mainTable: params }] }).then(res => {
+    if (res.status) {
+      userInfo.avatarFileId = avatarFileId.value;
+      userInfo.name = username.value;
+      uni.setStorageSync('userInfo', userInfo);
+    } else {
+      uni.showToast({
+        title: '更新失败，请刷新重试',
+        icon: 'success',
+        duration: 1500
+      });
+    }
+  });
+};
 </script>
 <style lang="scss" scoped>
 .mine-page {

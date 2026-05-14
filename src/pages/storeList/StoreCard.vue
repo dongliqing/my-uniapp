@@ -14,25 +14,25 @@
         <!-- 星级和评分 -->
         <view class="merchant-card__rating">
           <view class="merchant-card__stars">
-            <image v-for="i in data.star" :key="i + 'active'" :mode="aspectFit" class="merchant-card__star" src="/static/images/svg/star-active.svg" mode="aspectFit" />
+            <image v-for="i in data.star" :key="i + 'active'" class="merchant-card__star" src="/static/images/svg/star-active.svg" mode="aspectFit" />
             <image v-for="i in 5 - data.star" :key="i + 'gray'" class="merchant-card__star" src="/static/images/svg/star-default.svg" mode="aspectFit" />
           </view>
-          <!-- <text class="merchant-card__score">90分</text> -->
-          <text class="merchant-card__distance">2.3km</text>
+          <text v-if="data.score" class="merchant-card__score">{{ data.score || '' }}分</text>
+          <text class="merchant-card__distance" v-if="distance !== 0">{{ distance }}km</text>
         </view>
 
         <!-- 分类和区域 -->
-        <view class="merchant-card__meta">
+        <!-- <view class="merchant-card__meta">
           <text v-for="(item, index) in data.tags" :key="index + 'tag'" class="merchant-card__area">{{ item }}</text>
-        </view>
+        </view> -->
 
         <!-- 标签 -->
-        <view class="merchant-card__tags">
+        <view class="merchant-card__tags mt-auto">
           <view class="merchant-card__year-tag">
-            <image class="merchant-card__year-icon" src="/static/images/icon-store.png" mode="aspectFit" />
+            <image class="merchant-card__year-icon" src="/static/images/store-icon.svg" mode="aspectFit" />
             <text class="merchant-card__year-text">{{ YearTypeMap[Number(data.yearType)] }}</text>
           </view>
-          <!-- <view class="merchant-card__badge">缙云传味</view> -->
+          <view class="merchant-card__badge" v-for="(item, index) in data.tags" :key="index + 'tag'">{{ item }}</view>
         </view>
       </view>
     </view>
@@ -55,11 +55,12 @@
 <script setup lang="ts">
 import { YearTypeMap, StatusMap } from './constant.ts';
 import AImage from '@/components/AImage.vue';
+import { getDistance } from '@/utils/utils.ts';
 
 interface IStore {
   id: number;
   storeName: string;
-  address: string;
+  address: string[];
   image: string;
   star: number;
   yearType: string;
@@ -68,15 +69,16 @@ interface IStore {
   statusLabel: string;
   complaint: string;
   caseHandle: string;
+  score: string;
 }
 
 const props = defineProps<{
   data: IStore;
+  currentLat: number;
+  currentLon: number;
 }>();
 
-const emit = defineEmits<{
-  click: [id: string | number];
-}>();
+const { currentLat, currentLon } = toRefs(props);
 
 function goDetail() {
   // emit('click', props.data.id)
@@ -84,6 +86,16 @@ function goDetail() {
     url: '/pages/merchantDetail/index?id=' + props.data.id
   });
 }
+
+const distance = computed(() => {
+  // return getDistance(30.2741, 120.1551, 30.25, 120.16);
+  // return getDistance(30.24, 120.24, 30.23, 120.25);
+  if (props.data.address.length > 0 && currentLat.value && currentLon.value) {
+    return getDistance(props.data.address[0], props.data.address[1], currentLat.value, currentLon.value);
+  } else {
+    return 0;
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -121,7 +133,7 @@ function goDetail() {
     display: flex;
     flex-direction: column;
     gap: 8rpx;
-    justify-content: space-between;
+    // justify-content: space-between;
   }
 
   &__name {
@@ -185,27 +197,26 @@ function goDetail() {
     border-radius: 1rpx;
     // padding: 0 12rpx;
     height: 32rpx;
-    width: 155rpx;
+    min-width: 160rpx;
     // gap: 8rpx;
     position: relative;
     justify-content: center;
   }
 
   &__year-icon {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: 32rpx;
+    height: 32rpx;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
   }
 
   &__year-text {
-    position: relative;
-    z-index: 8;
     font-size: 22rpx;
     color: #823822;
-    text-indent: 32rpx;
+    // text-indent: 32rpx;
     text-align: center;
+    padding: 0 10rpx;
   }
 
   &__badge {

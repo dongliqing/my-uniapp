@@ -51,6 +51,13 @@
   /* 小程序特有相关 */
   "mp-weixin": {
     "appid": "wx2db378085b7d6e59",
+    "requiredPrivateInfos": ["getLocation", "chooseLocation"],
+    // 弹窗说明文字
+    "permission": {
+      "scope.userLocation": {
+        "desc": "您的位置信息将用于计算距离及展示附近服务"
+      }
+    },
     "setting": {
       "urlCheck": false
     },

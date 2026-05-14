@@ -25,7 +25,7 @@ watch(
     if (newValue) {
       //下载图片资源
       const url = await getFileApi(newValue, props.type)
-      console.log('----', url)
+      // console.log('----', url)
 
       imageUrl.value = url as string
     } else {

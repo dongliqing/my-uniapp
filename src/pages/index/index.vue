@@ -195,7 +195,7 @@ const starList = ref([
   {
     label: '五星',
     active: 5,
-    percent: 20
+    percent: 0
   },
   {
     label: '四星',
@@ -330,7 +330,7 @@ const viewAllNews = () => {
   border: 2rpx solid white;
   display: flex;
   align-items: center;
-  padding: 0 24rpx;
+  padding: 0 6rpx 0 24rpx;
 }
 
 .search-box {
@@ -663,18 +663,19 @@ const viewAllNews = () => {
       color: #fff;
       position: relative;
       z-index: 10;
-      text-shadow:
-        -1px -1px 0 #fff,
-        1px -1px 0 #fff,
-        -1px 1px 0 #fff,
-        1px 1px 0 #fff;
-
+      // text-shadow:
+      //   -1rpx -1rpx 0 #fff,
+      //   1rpx -1rpx 0 #fff,
+      //   -1rpx 1rpx 0 #fff,
+      //   1rpx 1rpx 0 #fff;
       &.blue {
-        color: #1782fc;
+        // color: #1782fc;
+        text-shadow: 0 0 4rpx #1782fc;
       }
 
       &.red {
-        color: #f23212;
+        // color: #f23212;
+        text-shadow: 0 0 4rpx #f23212;
       }
     }
   }

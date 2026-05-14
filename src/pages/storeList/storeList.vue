@@ -4,16 +4,9 @@
       <view class="search-box">
         <view class="search-wrap">
           <uni-icons type="search" size="34rpx" color="#333" />
-          <input
-            ref="searchInput"
-            v-model="searchValue"
-            class="search-input"
-            type="text"
-            placeholder="搜索店铺"
-            placeholder-class="search-placeholder"
-            confirm-type="search"
-            @confirm="getData"
-          />
+          <input v-model="searchValue" class="search-input" type="text" placeholder="搜索店铺" placeholder-class="search-placeholder" confirm-type="search" @confirm="getData" />
+          <!-- <text class="uni-icon" v-if="!!searchValue">&#xe434;</text> -->
+          <van-icon type="search" size="34rpx" class="!shrink-0" color="#333" />
           <view class="search-btn" @tap="getData">
             <text>搜索</text>
           </view>
@@ -28,7 +21,7 @@
     </view>
     <!-- 商家列表 -->
     <view class="px-3 pt-[208rpx] IStore-list">
-      <StoreCard v-for="item in storeList" :key="item.id" :data="item" />
+      <StoreCard v-for="item in storeList" :key="item.id" :data="item" :currentLat="currentLat" :currentLon="currentLon" />
       <!-- 加载更多 -->
       <view class="text-center pt-3 pb-6 text-gray-400 text-sm">
         {{ loading ? '加载中...' : '没有更多了' }}
@@ -41,13 +34,12 @@
 // import Storage from '@/utils/storage.ts'
 import { onHide, onPageScroll, onPullDownRefresh, onShow } from '@dcloudio/uni-app';
 import StoreCard from './StoreCard.vue';
-import { getStoreInfo, getScoreInfo } from '@/api/store.ts';
-// import { IStore } from './constant.ts';
+import { getStoreInfo } from '@/api/store.ts';
 
 interface IStore {
   id: number;
   storeName: string;
-  address: string;
+  address: string[];
   image: string;
   star: number;
   yearType: string;
@@ -56,6 +48,7 @@ interface IStore {
   statusLabel: string;
   complaint: string;
   caseHandle: string;
+  score: string;
 }
 interface TabItem {
   key: string;
@@ -64,7 +57,6 @@ interface TabItem {
   status: string;
 }
 
-const searchInput = ref();
 const searchValue = ref('');
 const storeList = ref<IStore[]>([]);
 const loading = ref(false);
@@ -78,6 +70,8 @@ const tabs = ref<TabItem[]>([
   { key: 'stop', name: '停业', count: 0, status: '2' }
 ]);
 const activeTab = ref('all');
+const currentLat = ref(0);
+const currentLon = ref(0);
 
 onLoad(options => {
   console.log(options);
@@ -88,9 +82,28 @@ onLoad(options => {
   // searchInput.value.focus();
 });
 
-const getData = async () => {
+uni.getLocation({
+  type: 'gcj02',
+  success: res => {
+    console.log('当前位置', res);
+    currentLat.value = res.latitude;
+    currentLon.value = res.longitude;
+  },
+  fail: err => {
+    console.error('获取位置失败，请检查是否授权', err);
+  }
+});
+
+const getData = async (action?: string) => {
   if (loading.value) return;
   loading.value = true;
+  if (action === 'refresh') {
+    uni.showToast({
+      title: '刷新成功',
+      icon: 'loading',
+      duration: 1500
+    });
+  }
 
   const res = await getStoreInfo({
     param: {
@@ -101,22 +114,30 @@ const getData = async () => {
     pageNo: 1,
     pageSize: 1000
   });
-
-  console.log(res);
+  if (!res.status) {
+    uni.showToast({
+      title: '刷新失败，请重试',
+      icon: 'none',
+      duration: 1500
+    });
+    return;
+  }
+  // console.log(res);
 
   storeList.value = (res.data || []).map(item => {
     return {
       id: item['商家id'],
       storeName: item['商家名称'],
       image: item['商家封面'],
-      address: item['商家地址经度'] && item['商家地址纬度'] ? [item['商家地址经度'], item['商家地址纬度']] : [],
+      address: item['商家地址经度'] && item['商家地址纬度'] ? [item['商家地址纬度'], item['商家地址经度']] : [],
       star: Number(item['商家星级']),
       yearType: item['商家年份'],
       tags: item['商家标签'].split(','),
       statusNo: item['商家状态编码'],
       statusLabel: item['商家状态'],
       complaint: item['年度投诉'],
-      caseHandle: item['立案查处']
+      caseHandle: item['立案查处'],
+      score: item['商家得分']
     };
   });
   tabs.value.forEach((tab, index) => {
@@ -127,22 +148,16 @@ const getData = async () => {
     }
   });
 
+  if (action === 'refresh') {
+    uni.showToast({
+      title: '刷新成功',
+      icon: 'success',
+      duration: 1500
+    });
+  }
   loading.value = false;
   uni.stopPullDownRefresh();
 };
-
-// getScoreInfo({
-//   mainTable: {
-//     id: '1263017283388851285'
-//     // "tyshxydm":""
-//   },
-//   pageInfo: {
-//     pageNum: 1,
-//     pageSize: 1000
-//   }
-// });
-
-const handleSearch = () => {};
 
 /**
  * 切换 Tab（分页重置）
@@ -174,14 +189,8 @@ onReachBottom(() => {
 
 // 下拉刷新
 onPullDownRefresh(() => {
-  getData();
+  getData('refresh');
 });
-
-const goToDetail = (id: number) => {
-  uni.navigateTo({
-    url: `/pages/storeDetail/storeDetail?id=${id}`
-  });
-};
 </script>
 
 <style lang="scss" scoped>
@@ -214,7 +223,7 @@ const goToDetail = (id: number) => {
     border: 2rpx solid rgba(23, 130, 252, 0.65);
     display: flex;
     align-items: center;
-    padding: 0 16rpx 0 24rpx;
+    padding: 0 6rpx 0 24rpx;
     gap: 12rpx;
   }
 
