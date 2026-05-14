@@ -28,7 +28,7 @@
           <view class="detail-page__tags">
             <view class="detail-page__tag detail-page__tag--year">
               <image class="detail-page__tag-icon" src="/static/images/svg/shop.svg" mode="aspectFit" />
-              <text>{{ SJNF[merchantInfo.sjnf] }}年店铺</text>
+              <text>{{ SJNF[merchantInfo.sjnf] }}店铺</text>
             </view>
             <view v-for="(badge, idx) in merchantInfo.sjbq?.split(',')" :key="idx" class="detail-page__tag detail-page__tag--badge">
               <text>{{ badge }}</text>
@@ -75,21 +75,8 @@
             <ScoreRadarChart :dimensions="radarDimensions" :size="radarSize" class="manage__radar-wrap" />
             <!-- ============ 商家展示 ============ -->
             <view class="manage__card">
-              <view class="manage__card-header">
-                <text class="manage__section-title">商家展示</text>
-              </view>
-              <!-- <view class="manage__tags-row"> -->
-              <!-- <view class="manage__badge-tag">
-                  <image class="manage__badge-icon" src="/static/images/svg/merchantDetail/45.svg" mode="aspectFit" />
-                  <text class="manage__badge-text">证件齐全</text>
-                </view>
-                <view class="manage__badge-tag">
-                  <image class="manage__badge-icon" src="/static/images/svg/merchantDetail/46.svg" mode="aspectFit" />
-                  <text class="manage__badge-text">阳光厨房直播</text>
-                </view> -->
-              <!-- </view> -->
               <!-- ============ 商家亮点 ============ -->
-              <view class="manage__highlight-card">
+              <view class="manage__highlight-card" v-if="merchantInfo?.highlights?.length">
                 <view class="manage__card-header">
                   <image class="manage__section-bar" src="/static/images/svg/merchantDetail/title_line.svg" mode="aspectFit" />
                   <text class="manage__section-title">商家亮点</text>
@@ -129,15 +116,18 @@
                 </view>
               </view>
               <!-- ============ 指标异常 ============ -->
-              <view class="manage__highlight-card">
+              <view class="manage__highlight-card" v-if="!isEmptyAbnormal">
                 <view class="manage__card-header">
                   <image class="manage__section-bar" src="/static/images/svg/merchantDetail/title_line.svg" mode="aspectFit" />
                   <text class="manage__section-title">指标异常</text>
                 </view>
-                <view class="manage__abnormal-row">
+                <view class="manage__abnormal-row" v-for="(error, index) of merchantInfo.erroInfo" :key="index">
                   <image class="manage__abnormal-icon" src="/static/images/svg/merchantDetail/exception.svg" mode="aspectFit" />
-                  <text class="manage__abnormal-text">社会责任指标得分较低</text>
+                  <text class="manage__abnormal-text">{{ error }}</text>
                 </view>
+                <!-- <view v-if="isEmptyAbnormal" class="manage__empty">
+                  <text class="manage__empty-text">暂无异常</text>
+                </view> -->
               </view>
             </view>
 
@@ -232,6 +222,11 @@ const radarDimensions = [
 ]
 
 // ==================== 警示信息 ====================
+const isEmptyAbnormal = computed(() => {
+  const info = merchantInfo.value?.erroInfo
+  return !info || Object.keys(info).length === 0
+})
+
 const warningItems = [
   { label: '年度投诉', count: 0 },
   { label: '年度处罚', count: 0 }
@@ -244,7 +239,7 @@ function previewGallery(urls: string[], current: number) {
   uni.previewImage({ current: urls[current], urls })
 }
 
-onMounted(() => {
+onShow(() => {
   // 雷达图自适应尺寸
   const sysInfo = uni.getSystemInfoSync()
   const rpxRatio = sysInfo.windowWidth / 750
@@ -333,8 +328,10 @@ async function loadMerchantDetail(id: string) {
     // 3. 年度处罚 + 投诉信息（警示信息）
     if (merchantInfo.value.penalty || merchantInfo.value.complaint) {
       const p = merchantInfo.value.penalty
-      warningItems[0].count = p['年度投诉数量'] // 年度投诉
-      warningItems[1].count = p['年度处罚数量'] // 年度处罚
+      const KEY_COMPLAINT = '年度投诉数量'
+      const KEY_PENALTY = '年度处罚数量'
+      warningItems[0].count = p[KEY_COMPLAINT] ?? 0
+      warningItems[1].count = p[KEY_PENALTY] ?? 0
     }
   } catch (err) {
     console.error('加载商家详情失败', err)
@@ -923,6 +920,16 @@ function goReview() {
   &__abnormal-text {
     font-size: 24rpx;
     color: #333;
+  }
+
+  &__empty {
+    padding: 32rpx 0;
+    text-align: center;
+  }
+
+  &__empty-text {
+    font-size: 26rpx;
+    color: #999;
   }
 
   // =================== 原材料看台 / 抽检信息 ===================

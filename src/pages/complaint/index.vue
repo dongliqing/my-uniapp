@@ -103,7 +103,6 @@ function chooseImage() {
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success: async function (res) {
-      console.log('...', res)
       const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles]
 
       for (const file of files) {
@@ -134,6 +133,12 @@ function previewImage(index: number) {
   })
 }
 
+/** 格式化日期为 yyyy-MM-dd HH:mm */
+function formatDate(date: Date) {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 async function submit() {
   if (!canSubmit.value) {
     uni.showToast({ title: '请填写投诉信息', icon: 'none' })
@@ -143,16 +148,24 @@ async function submit() {
     uni.showToast({ title: '页面参数缺失', icon: 'none' })
     return
   }
+  if (form.tsrlxfs && !/^1[3-9]\d{9}$/.test(form.tsrlxfs)) {
+    uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
+    return
+  }
   try {
-    await addComplaint({
+    let res: any = await addComplaint({
       datas: [
         {
-          mainTable: { sjmc: merchantInfo.value.id, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(',') }
+          mainTable: { sjmc: merchantInfo.value.id, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), tssj: formatDate(new Date()) }
         }
       ]
     })
-    uni.showToast({ title: '提交成功', icon: 'success' })
-    setTimeout(() => uni.navigateBack(), 1500)
+    if (res.status) {
+      uni.showToast({ title: '提交成功', icon: 'success' })
+      setTimeout(() => uni.navigateBack(), 1500)
+    } else {
+      uni.showToast({ title: '提交失败，请重试', icon: 'none' })
+    }
   } catch (e) {
     uni.showToast({ title: '提交失败，请重试', icon: 'none' })
   }

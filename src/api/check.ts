@@ -1,4 +1,5 @@
 import request from '@/utils/request.ts'
+import request2 from '@/utils/request-2'
 
 // 获取活动信息
 export const getCheckList = data => {
@@ -23,4 +24,9 @@ export const addLike = data => {
 // 点赞
 export const removelike = data => {
   return request.post('/api/ebuilder/form/formdata/v2/deleteFormData/shsj_hdqxdz', data)
+}
+
+// 获取详情
+export const getCheckLikes = data => {
+  return request2.post('/api/dw/publish/shsj_hdsjxq', data)
 }

@@ -128,16 +128,17 @@ async function submit() {
     return
   }
   try {
-    await addComment({
+    let res = await addComment({
       datas: [
         {
           mainTable: {
             id: pageId.value
           },
-          detail3: {
+          detail5: {
             ...contentForm,
             tp: contentForm.tp.join(','),
-            rq: new Date()
+            xj: String(contentForm.xj),
+            pjrq: new Date()
               .toLocaleDateString('zh-CN', {
                 year: 'numeric',
                 month: '2-digit',
@@ -148,8 +149,13 @@ async function submit() {
         }
       ]
     })
-    uni.showToast({ title: '发布成功', icon: 'success' })
-    setTimeout(() => uni.navigateBack(), 1500)
+    console.log('>>>>', res)
+    if (res.status) {
+      uni.showToast({ title: '发布成功', icon: 'success' })
+      setTimeout(() => uni.navigateBack(), 1500)
+    } else {
+      uni.showToast({ title: '发布失败', icon: 'none' })
+    }
   } catch (e) {
     uni.showToast({ title: '发布失败', icon: 'none' })
   }

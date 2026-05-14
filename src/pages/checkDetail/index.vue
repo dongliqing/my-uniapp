@@ -29,7 +29,7 @@
             <view class="check-detail__comment-main">
               <!-- 头部：姓名 + 点赞 -->
               <view class="check-detail__comment-header">
-                <text class="check-detail__comment-name">{{ comment.xm }}</text>
+                <text class="check-detail__comment-name">{{ comment.xm || '匿名' }}</text>
 
                 <!-- 点赞按钮 -->
                 <view class="check-detail__like" :class="{ 'check-detail__like--active': comment.isLiked }" @tap="toggleLike(comment)">
@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getCheckDetail, addComment, removelike, addLike } from '@/api/check'
+import { getCheckDetail, addComment, removelike, addLike, getCheckLikes } from '@/api/check'
 import AImage from '@/components/AImage.vue'
 
 interface ActivityItem {
@@ -146,9 +146,23 @@ async function fetchDetail() {
     const data = res?.datas?.[0]?.mainTable
     if (data) activity.value = data as ActivityItem
     comments.value = res?.datas?.[0]?.detail1
+    handleGetLikes()
   } catch (e) {
     uni.showToast({ title: '获取详情失败', icon: 'none' })
   }
+}
+
+const handleGetLikes = () => {
+  getCheckLikes({ param: { openid: '1234567890', hdid: pageId.value }, pageNo: 1, pageSize: 10 }).then(res => {
+    console.log('-----res', res)
+    const data = JSON.parse(res?.data[0].detail1)
+    console.log('---data', data)
+
+    comments.value.forEach(item => {
+      const findItem = data.find((v: any) => v.id == item.id)
+      item.isLiked = Boolean(findItem?.zt)
+    })
+  })
 }
 
 function showCommentInput() {
@@ -204,13 +218,7 @@ function toggleLike(comment: any) {
   }).then((res: any) => {
     console.log('---res', res)
     if (res.status) {
-      if (comment.isLiked) {
-        comment.dzcs--
-        comment.isLiked = false
-      } else {
-        comment.dzcs++
-        comment.isLiked = true
-      }
+      handleGetLikes()
     } else {
       uni.showToast({ title: res.message, icon: 'none' })
     }
