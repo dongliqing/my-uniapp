@@ -2,27 +2,27 @@
   <view class="comment-card">
     <!-- 左侧头像 -->
     <view class="comment-card__avatar-wrap">
-      <image class="comment-card__avatar" :src="data.avatar" mode="aspectFill" />
+      <image class="comment-card__avatar" :src="data.tx" mode="aspectFill" />
     </view>
 
     <!-- 右侧内容区 -->
     <view class="comment-card__body">
       <!-- 第一行：昵称 + 日期 -->
       <view class="comment-card__header">
-        <text class="comment-card__nickname">{{ data.xm || '测试' }}</text>
+        <text class="comment-card__nickname">{{ data.xm || '匿名' }}</text>
         <text class="comment-card__date">{{ data.pjrq }}</text>
       </view>
 
       <!-- 第二行：星级评分 + 评分文字 -->
       <view class="comment-card__rating-row">
         <view class="comment-card__stars">
-          <image v-for="n in 5" :key="n" class="comment-card__star" :src="n <= data.xj ? starActive : starEmpty" mode="aspectFit" />
+          <image v-for="n in 5" :key="n" class="comment-card__star" :src="n <= (data.xj || 0) ? starActive : starEmpty" mode="aspectFit" />
         </view>
-        <text class="comment-card__rating-text">{{ data.xj }}星</text>
+        <text class="comment-card__rating-text">{{ data.xj || 0 }}星</text>
       </view>
 
       <!-- 评论内容 -->
-      <text class="comment-card__content">{{ data.pj }}</text>
+      <text class="comment-card__content">{{ data.pj || '用户没有任何评价' }}</text>
 
       <!-- 评论图片（3列） -->
       <PreviewImage v-if="data.tp?.split(',') && data.tp.split(',').length" :file-ids="data.tp.split(',')"></PreviewImage>
