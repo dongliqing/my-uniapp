@@ -96,6 +96,7 @@ function chooseImage() {
     count: 4 - contentForm.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
+    extension: ['.jpg', '.jpeg', '.png'],
     success: async function (res) {
       const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
 

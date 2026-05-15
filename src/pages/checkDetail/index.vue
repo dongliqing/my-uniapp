@@ -56,7 +56,6 @@
 
     <!-- 底部操作栏 - 仅进行中活动显示 -->
     <view v-if="activity.hdzt === '1'" class="check-detail__bottom-bar">
-      <view class="check-detail__bottom-line" />
       <view class="check-detail__bottom-inner">
         <view class="check-detail__comment-btn" @tap="showCommentInput">
           <text class="check-detail__comment-btn-text">我要评论</text>

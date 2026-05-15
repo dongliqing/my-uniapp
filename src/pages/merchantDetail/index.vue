@@ -181,7 +181,6 @@
 
     <!-- 底部操作栏 -->
     <view class="detail-page__bottom-bar">
-      <image class="detail-page__bottom-line" src="/static/images/svg/merchantDetail/35.svg" mode="aspectFit" />
       <view class="detail-page__bottom-btn" @tap="goComplaint">
         <image class="detail-page__bottom-icon" src="/static/images/svg/merchantDetail/complaint.svg" mode="aspectFit" />
         <text>提投诉</text>
@@ -250,8 +249,8 @@ const tabs = [
   { key: 'manage', name: '商家管理' },
   { key: 'story', name: '商家故事' },
   { key: 'dishes', name: '特色菜品' },
+  { key: 'inspection', name: '抽检信息' },
   { key: 'interact', name: '互动' },
-  { key: 'inspection', name: '抽检信息' }
 ];
 
 // ==================== 商家详情数据 ====================

@@ -54,6 +54,7 @@ const editAvatar = () => {
     count: 1, // 最多选择几张
     sizeType: ['compressed'], // 指定是原图还是压缩图
     sourceType: ['camera', 'album'], // 指定来源是相机还是相册
+    extension: ['.jpg', '.jpeg', '.png'],
     success: async res => {
       const tempFilePath = res.tempFilePaths[0];
       const fileName = res.tempFiles[0].name;
