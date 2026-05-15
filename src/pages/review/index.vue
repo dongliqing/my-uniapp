@@ -170,7 +170,7 @@ async function submit() {
 
 <style lang="scss">
 .review {
-  min-height: 100vh;
+  min-height: 100%;
   padding-top: 46rpx;
   background: linear-gradient(180deg, #c3e9ff 0%, rgba(195, 233, 255, 0) 100%);
   position: relative;
