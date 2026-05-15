@@ -1,15 +1,15 @@
-import { token, userId, API_BASE_URL } from '@/pages/constant/constant.ts'
+import { token, userId, API_BASE_URL } from '@/pages/constant/constant.ts';
 
-let baseUrl = ''
+let baseUrl = '';
 // #ifdef H5
-baseUrl = '' // H5 端走本地代理
+baseUrl = ''; // H5 端走本地代理
 // #endif
 // #ifdef MP-WEIXIN
-baseUrl = API_BASE_URL // MP 端走线上环境
+baseUrl = API_BASE_URL; // MP 端走线上环境
 // #endif
 
 if (import.meta.env.NODE_ENV === 'production') {
-  baseUrl = API_BASE_URL
+  baseUrl = API_BASE_URL;
 }
 
 /**上传文件 */
@@ -18,9 +18,9 @@ export const uploadFileApi = (filePath, fileName) => {
   uni.showLoading({
     title: '上传中',
     mask: true
-  })
+  });
   return new Promise((resolve, reject) => {
-    const url = '/api/file/v2/common/upload?access_token=' + token
+    const url = '/api/file/v2/common/upload?access_token=' + token;
     uni.uploadFile({
       url: baseUrl + url, // 你的上传接口
       filePath: filePath,
@@ -32,28 +32,28 @@ export const uploadFileApi = (filePath, fileName) => {
         userid: userId //固定
       },
       success: ({ data }) => {
-        console.log('uploadFile====::', JSON.parse(data))
-        const result = JSON.parse(data)
+        console.log('uploadFile====::', JSON.parse(data));
+        const result = JSON.parse(data);
         if (result.message.errcode === '0') {
-          resolve(result.data.fileid)
+          resolve(result.data.fileid);
         } else {
-          reject(result.message.errmsg)
+          reject(result.message.errmsg);
         }
       },
       fail: err => {
-        reject(err)
-        console.error('上传失败', err)
+        reject(err);
+        console.error('上传失败', err);
       },
       complete: () => {
-        uni.hideLoading()
+        uni.hideLoading();
       }
-    })
-  })
-}
+    });
+  });
+};
 
-export const getFileApi = (fileId: string, type?: string) => {
+export const getFileApi = (fileId: string) => {
   return new Promise((resolve, reject) => {
-    const url = `/api/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`
+    const url = `/api/file/v2/common/download/${fileId}?userid=${userId}&access_token=${token}`;
     uni.request({
       url: baseUrl + url, // 你的上传接口
       method: 'GET',
@@ -61,18 +61,15 @@ export const getFileApi = (fileId: string, type?: string) => {
       success: res => {
         if (res.statusCode === 200) {
           // console.log('222', res)
-          // 将 ArrayBuffer 转换为 Base64 字符串
-          const base64Data = uni.arrayBufferToBase64(res.data)
-          const url = `data:${type || 'image/jpeg'};base64,${base64Data}`
-          resolve(url)
+          resolve(res.data);
         } else {
-          reject(res.errMsg)
+          reject(res.errMsg);
         }
       },
       fail: err => {
-        reject(err)
-        console.error('下载失败', err)
+        reject(err);
+        console.error('下载失败', err);
       }
-    })
-  })
-}
+    });
+  });
+};

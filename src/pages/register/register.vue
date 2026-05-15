@@ -52,7 +52,6 @@ const formData = reactive({
   dysj: ''
 });
 const isLoading = ref(false);
-const nameLabel = computed(() => (formData.isBusiness ? '商家名称' : '姓名'));
 const redirectUrl = ref('');
 
 // 选项数据源
@@ -64,7 +63,7 @@ getStorePickerOptions({
     pageSize: '10'
   }
 }).then(res => {
-  console.log('pickerOptions:', res);
+  // console.log('pickerOptions:', res);
   pickerOptions.value = (res.datas || []).map(e => {
     return {
       label: e.mainTable.sjxx,
@@ -138,7 +137,8 @@ const handleSubmit = () => {
         name: formData.name,
         isBusiness: formData.isBusiness,
         tyshxydm: formData.tyshxydm,
-        dysj: formData.dysj
+        dysj: formData.dysj,
+        avatarFileId: ''
       };
       uni.setStorageSync('userInfo', userInfo);
       if (redirectUrl.value) {

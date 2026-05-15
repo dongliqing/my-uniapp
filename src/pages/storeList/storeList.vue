@@ -5,8 +5,7 @@
         <view class="search-wrap">
           <uni-icons type="search" size="34rpx" color="#333" />
           <input v-model="searchValue" class="search-input" type="text" placeholder="搜索店铺" placeholder-class="search-placeholder" confirm-type="search" @confirm="getData" />
-          <!-- <text class="uni-icon" v-if="!!searchValue">&#xe434;</text> -->
-          <van-icon type="search" size="34rpx" class="!shrink-0" color="#333" />
+          <uni-icons v-if="!!searchValue" type="close" size="34rpx" color="#999" @click="clearSearch" />
           <view class="search-btn" @tap="getData">
             <text>搜索</text>
           </view>
@@ -20,7 +19,8 @@
       </view>
     </view>
     <!-- 商家列表 -->
-    <view class="px-3 pt-[208rpx] IStore-list">
+    <view class="px-3 pt-[208rpx] store-list">
+      <uni-icons type="spinner-cycle" size="50rpx" color="#999" class="animate-icon" />
       <StoreCard v-for="item in storeList" :key="item.id" :data="item" :currentLat="currentLat" :currentLon="currentLon" />
       <!-- 加载更多 -->
       <view class="text-center pt-3 pb-6 text-gray-400 text-sm">
@@ -170,6 +170,11 @@ const handleSwitchTab = (key: string, sta: string) => {
   getData();
 };
 
+const clearSearch = () => {
+  searchValue.value = '';
+  getData();
+};
+
 // 记录滚动位置
 onPageScroll(e => {
   //   scrollTop.value = e.scrollTop
@@ -202,7 +207,7 @@ onPullDownRefresh(() => {
   background-image: linear-gradient(180deg, #c3e9ff 0%, #e0f0f9 100%);
   background-size: 100% 100%;
 }
-.IStore-list {
+.store-list {
   background-image: linear-gradient(180deg, #c3e9ff 0%, #e0f0f9 212rpx, transparent 100%);
   background-size: 100% 650rpx;
   background-repeat: no-repeat;
@@ -211,6 +216,25 @@ onPullDownRefresh(() => {
   background-attachment: fixed;
   min-height: calc(100vh - var(--status-bar-height) - var(--window-top) - var(--window-bottom));
   box-sizing: border-box;
+  position: relative;
+  .animate-icon {
+    animation: rotate 2s linear infinite;
+    position: absolute;
+    top: 138rpx;
+    margin: auto;
+    display: block;
+    left: 50%;
+    margin-left: -25rpx;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .search-box {

@@ -134,7 +134,8 @@ const getUserLoginInfo = async () => {
         name: result.xm,
         isBusiness: result.zhlx === '1',
         tyshxydm: result.tyshxydm,
-        dysj: result.dysj
+        dysj: result.dysj,
+        avatarFileId: result.tx || ''
       };
       uni.setStorageSync('userInfo', userInfo);
 

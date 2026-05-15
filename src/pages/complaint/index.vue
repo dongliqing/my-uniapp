@@ -66,91 +66,91 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import { addComplaint, getMerchantDetail } from '@/api/merchant'
-import { getFileApi, uploadFileApi } from '@/api/common'
+import { computed, reactive, ref } from 'vue';
+import { addComplaint, getMerchantDetail } from '@/api/merchant';
+import { uploadFileApi } from '@/api/common';
 
-const pageId = ref('')
+const pageId = ref('');
 
 const form = reactive({
   tsnr: '',
   tsrlxfs: '',
   tp: [] as string[]
-})
+});
 
-const previewImgs = ref<string[]>([])
-const merchantInfo = ref<any>(null)
+const previewImgs = ref<string[]>([]);
+const merchantInfo = ref<any>(null);
 
 onLoad(options => {
   if (options?.id) {
-    pageId.value = options.id
+    pageId.value = options.id;
     getMerchantDetail(pageId.value).then((res: any) => {
-      console.log(res)
-      merchantInfo.value = res.datas[0].mainTable
-    })
+      console.log(res);
+      merchantInfo.value = res.datas[0].mainTable;
+    });
   }
-})
+});
 
-const canSubmit = computed(() => form.tsnr.trim().length > 0 && form.tsrlxfs.trim().length > 0)
+const canSubmit = computed(() => form.tsnr.trim().length > 0 && form.tsrlxfs.trim().length > 0);
 
 function chooseImage() {
   if (form.tp.length >= 4) {
-    uni.showToast({ title: '最多上传4张图片', icon: 'none' })
-    return
+    uni.showToast({ title: '最多上传4张图片', icon: 'none' });
+    return;
   }
   uni.chooseImage({
     count: 4 - form.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success: async function (res) {
-      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles]
+      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
 
       for (const file of files) {
         try {
           // 上传到服务器，获取文件ID
-          const fileid: any = await uploadFileApi(file.path, file.name)
+          const fileid: any = await uploadFileApi(file.path, file.name);
           // 获取图片资源URL（base64）
-          previewImgs.value.push(file.path)
+          previewImgs.value.push(file.path);
 
-          form.tp.push(fileid)
+          form.tp.push(fileid);
         } catch (e) {
-          console.error('图片上传失败:', e)
+          console.error('图片上传失败:', e);
         }
       }
     }
-  })
+  });
 }
 
 function removeImage(index: number) {
-  form.tp.splice(index, 1)
-  previewImgs.value.splice(index, 1)
+  form.tp.splice(index, 1);
+  previewImgs.value.splice(index, 1);
 }
 
 function previewImage(index: number) {
   uni.previewImage({
     current: form.tp[index],
     urls: form.tp
-  })
+  });
 }
 
 /** 格式化日期为 yyyy-MM-dd HH:mm */
 function formatDate(date: Date) {
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 async function submit() {
   if (!canSubmit.value) {
-    uni.showToast({ title: '请填写投诉信息', icon: 'none' })
-    return
+    uni.showToast({ title: '请填写投诉信息', icon: 'none' });
+    return;
   }
   if (!pageId.value) {
-    uni.showToast({ title: '页面参数缺失', icon: 'none' })
-    return
+    uni.showToast({ title: '页面参数缺失', icon: 'none' });
+    return;
   }
   if (form.tsrlxfs && !/^1[3-9]\d{9}$/.test(form.tsrlxfs)) {
-    uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
-    return
+    uni.showToast({ title: '请输入正确的手机号', icon: 'none' });
+    return;
   }
   try {
     let res: any = await addComplaint({
@@ -159,15 +159,15 @@ async function submit() {
           mainTable: { sjmc: merchantInfo.value.id, tsnr: form.tsnr, tsrlxfs: form.tsrlxfs, tp: form.tp.join(','), tssj: formatDate(new Date()) }
         }
       ]
-    })
+    });
     if (res.status) {
-      uni.showToast({ title: '提交成功', icon: 'success' })
-      setTimeout(() => uni.navigateBack(), 1500)
+      uni.showToast({ title: '提交成功', icon: 'success' });
+      setTimeout(() => uni.navigateBack(), 1500);
     } else {
-      uni.showToast({ title: '提交失败，请重试', icon: 'none' })
+      uni.showToast({ title: '提交失败，请重试', icon: 'none' });
     }
   } catch (e) {
-    uni.showToast({ title: '提交失败，请重试', icon: 'none' })
+    uni.showToast({ title: '提交失败，请重试', icon: 'none' });
   }
 }
 </script>
