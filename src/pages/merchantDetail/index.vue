@@ -134,9 +134,7 @@
             <!-- ============ 原材料看台 ============ -->
             <view class="manage__gallery-section">
               <text class="manage__gallery-title">原材料看台</text>
-              <view class="manage__gallery-list">
-                <AImage v-for="(img, i) in merchantInfo?.yclkt?.split(',')" :key="i" class="manage__gallery-img" :file-id="img" />
-              </view>
+              <PreviewImage v-if="merchantInfo?.yclkt?.split(',') && merchantInfo?.yclkt?.split(',')" :file-ids="merchantInfo?.yclkt?.split(',')"></PreviewImage>
             </view>
           </view>
           <!-- 商家故事 -->
@@ -172,9 +170,7 @@
           <InteractPanel v-show="activeTab === 'interact'" :comments="merchantInfo.comments" />
           <!-- ============ 抽检信息 ============ -->
           <view v-show="activeTab === 'inspection'" class="manage__gallery-section manage__gallery-section--inspection">
-            <view class="manage__gallery-list">
-              <AImage class="manage__gallery-img" v-for="(img, i) in merchantInfo.inspectImages" :key="i" :fileId="img.tp"></AImage>
-            </view>
+            <PreviewImage v-if="merchantInfo?.inspectImages?.length" :file-ids="merchantInfo?.inspectImages?.map((img) => img.tp)"</PreviewImage>
           </view>
         </view>
       </view>
@@ -207,6 +203,7 @@ import InteractPanel from './InteractPanel.vue';
 import { getMerchantInfo } from '@/api/merchant';
 import type { MerchantDetail, ScoreDimension } from './types';
 import AImage from '@/components/AImage.vue';
+import PreviewImage from '@/components/PreviewImage.vue';
 import { SJLX, SJZT, SJNF, TSWM } from './enum';
 
 const tabFixed = ref(false);

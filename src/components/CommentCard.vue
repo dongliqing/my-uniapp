@@ -25,32 +25,31 @@
       <text class="comment-card__content">{{ data.pj }}</text>
 
       <!-- 评论图片（3列） -->
-      <view v-if="data.tp?.split(',') && data.tp.split(',').length" class="comment-card__images">
-        <AImage class="comment-card__img" v-for="(img, i) in data.tp.split(',')" :key="i" :file-id="img"></AImage>
-      </view>
+      <PreviewImage v-if="data.tp?.split(',') && data.tp.split(',').length" :file-ids="data.tp.split(',')"></PreviewImage>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import AImage from './AImage.vue'
+import AImage from './AImage.vue';
+import PreviewImage from './PreviewImage.vue';
 interface CommentData {
-  id: number | string
-  avatar: string
-  xm: string
-  xj: number
-  pj: string
-  tp?: string
-  pjrq: string
+  id: number | string;
+  avatar: string;
+  xm: string;
+  xj: number;
+  pj: string;
+  tp?: string;
+  pjrq: string;
 }
 
 const props = defineProps<{
-  data: CommentData
-}>()
+  data: CommentData;
+}>();
 
 // 星级图标 - 蓝色方角星
-const starActive = '/static/images/svg/merchantDetail/star-active.svg'
-const starEmpty = '/static/images/svg/merchantDetail/star-empty.svg'
+const starActive = '/static/images/svg/merchantDetail/star-active.svg';
+const starEmpty = '/static/images/svg/merchantDetail/star-empty.svg';
 
 /** 图片预览 */
 </script>
