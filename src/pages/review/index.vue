@@ -61,71 +61,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { addComment } from '@/api/merchant'
-import { uploadFileApi } from '@/api/common'
+import { ref, computed } from 'vue';
+import { addComment } from '@/api/merchant';
+import { uploadFileApi } from '@/api/common';
 
 const contentForm = reactive({
-  xj: 4,
+  xj: 5,
   pj: '',
   tp: []
-})
+});
 
-const previewImgs = ref<string[]>([])
-const pageId = ref('')
+const previewImgs = ref<string[]>([]);
+const pageId = ref('');
 onLoad(options => {
-  pageId.value = options?.id
-})
+  pageId.value = options?.id;
+});
+const userInfo = uni.getStorageSync('userInfo');
 
 // 判断是否可以提交（有评分且填写了内容）
 const canSubmit = computed(() => {
-  return contentForm.pj.trim().length > 0
-})
+  return contentForm.pj.trim().length > 0;
+});
 
 function setRating(n: number) {
-  contentForm.xj = n
+  contentForm.xj = n;
 }
 
 function chooseImage() {
   if (contentForm.tp.length >= 4) {
-    uni.showToast({ title: '最多上传4张图片', icon: 'none' })
-    return
+    uni.showToast({ title: '最多上传4张图片', icon: 'none' });
+    return;
   }
   uni.chooseImage({
     count: 4 - contentForm.tp.length,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success: async function (res) {
-      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles]
+      const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
 
       for (const file of files) {
         try {
           // 上传到服务器，获取文件ID
-          const fileid: any = await uploadFileApi(file.path, file.name)
+          const fileid: any = await uploadFileApi(file.path, file.name);
           // 获取图片资源URL（base64）
-          previewImgs.value.push(file.path)
+          previewImgs.value.push(file.path);
 
-          contentForm.tp.push(fileid)
+          contentForm.tp.push(fileid);
         } catch (e) {
-          console.error('图片上传失败:', e)
+          console.error('图片上传失败:', e);
         }
       }
     }
-  })
+  });
 }
 
 function removeImage(index: number) {
-  contentForm.tp.splice(index, 1)
+  contentForm.tp.splice(index, 1);
 }
 
 async function submit() {
   if (!canSubmit.value) {
     if (contentForm.xj === 0) {
-      uni.showToast({ title: '请选择评分', icon: 'none' })
+      uni.showToast({ title: '请选择评分', icon: 'none' });
     } else {
-      uni.showToast({ title: '请填写评价内容', icon: 'none' })
+      uni.showToast({ title: '请填写评价内容', icon: 'none' });
     }
-    return
+    return;
   }
   try {
     let res = await addComment({
@@ -134,30 +135,34 @@ async function submit() {
           mainTable: {
             id: pageId.value
           },
-          detail5: {
-            ...contentForm,
-            tp: contentForm.tp.join(','),
-            xj: String(contentForm.xj),
-            pjrq: new Date()
-              .toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-              })
-              .replace(/\//g, '-')
-          }
+          detail5: [
+            {
+              ...contentForm,
+              tx: userInfo.avatarFileId ?? '',
+              yhm: userInfo.name ?? '匿名',
+              tp: contentForm.tp.join(','),
+              xj: String(contentForm.xj),
+              pjrq: new Date()
+                .toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                })
+                .replace(/\//g, '-')
+            }
+          ]
         }
       ]
-    })
-    console.log('>>>>', res)
+    });
+    console.log('>>>>', res);
     if (res.status) {
-      uni.showToast({ title: '发布成功', icon: 'success' })
-      setTimeout(() => uni.navigateBack(), 1500)
+      uni.showToast({ title: '发布成功', icon: 'success' });
+      setTimeout(() => uni.navigateBack(), 1500);
     } else {
-      uni.showToast({ title: '发布失败', icon: 'none' })
+      uni.showToast({ title: '发布失败', icon: 'none' });
     }
   } catch (e) {
-    uni.showToast({ title: '发布失败', icon: 'none' })
+    uni.showToast({ title: '发布失败', icon: 'none' });
   }
 }
 </script>

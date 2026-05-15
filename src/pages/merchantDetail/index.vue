@@ -199,62 +199,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import StarRating from '@/components/StarRating.vue'
-import ScoreRadarChart from '@/components/ScoreRadarChart.vue'
-import DishesPanel from './DishesPanel.vue'
-import InteractPanel from './InteractPanel.vue'
-import { getMerchantInfo } from '@/api/merchant'
-import type { MerchantDetail, ScoreDimension } from './types'
-import AImage from '@/components/AImage.vue'
-import { SJLX, SJZT, SJNF, TSWM } from './enum'
+import { ref, computed, onMounted } from 'vue';
+import StarRating from '@/components/StarRating.vue';
+import ScoreRadarChart from '@/components/ScoreRadarChart.vue';
+import DishesPanel from './DishesPanel.vue';
+import InteractPanel from './InteractPanel.vue';
+import { getMerchantInfo } from '@/api/merchant';
+import type { MerchantDetail, ScoreDimension } from './types';
+import AImage from '@/components/AImage.vue';
+import { SJLX, SJZT, SJNF, TSWM } from './enum';
 
-const tabFixed = ref(false)
+const tabFixed = ref(false);
 
 // ==================== 雷达图数据 ====================
-const radarSize = ref(600)
+const radarSize = ref(600);
 const radarDimensions = [
-  { name: '食品安全', score: 92 },
-  { name: '社会责任', score: 60 },
-  { name: '消费评价', score: 90 },
-  { name: '合规经营', score: 88 },
-  { name: '卫生环境', score: 75 }
-]
+  { name: '食品安全', score: 100 },
+  { name: '社会责任', score: 100 },
+  { name: '消费评价', score: 100 },
+  { name: '合规经营', score: 100 },
+  { name: '卫生环境', score: 100 }
+];
 
 // ==================== 警示信息 ====================
 const isEmptyAbnormal = computed(() => {
-  const info = merchantInfo.value?.erroInfo
-  return !info || Object.keys(info).length === 0
-})
+  const info = merchantInfo.value?.erroInfo;
+  return !info || Object.keys(info).length === 0;
+});
 
 const warningItems = [
   { label: '年度投诉', count: 0 },
   { label: '年度处罚', count: 0 }
-]
-
-// ==================== 图片数据 ====================
-const rawImages = ['/static/images/svg/merchantDetail/48.png', '/static/images/svg/merchantDetail/48.png', '/static/images/svg/merchantDetail/48.png']
-
-function previewGallery(urls: string[], current: number) {
-  uni.previewImage({ current: urls[current], urls })
-}
+];
 
 onShow(() => {
   // 雷达图自适应尺寸
-  const sysInfo = uni.getSystemInfoSync()
-  const rpxRatio = sysInfo.windowWidth / 750
-  radarSize.value = Math.round(375 * rpxRatio)
+  const sysInfo = uni.getSystemInfoSync();
+  const rpxRatio = sysInfo.windowWidth / 750;
+  radarSize.value = Math.round(375 * rpxRatio);
 
   // 获取页面参数
-  const pages = getCurrentPages()
-  const currentPage = pages[pages.length - 1] as any
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
   if (currentPage?.options?.id) {
-    loadMerchantDetail(currentPage.options.id)
+    loadMerchantDetail(currentPage.options.id);
   }
-})
+});
 
 // ==================== 页面参数 ====================
-const activeTab = ref('manage')
+const activeTab = ref('manage');
 
 const tabs = [
   { key: 'manage', name: '商家管理' },
@@ -262,10 +255,10 @@ const tabs = [
   { key: 'dishes', name: '特色菜品' },
   { key: 'interact', name: '互动' },
   { key: 'inspection', name: '抽检信息' }
-]
+];
 
 // ==================== 商家详情数据 ====================
-const merchantInfo = ref<any>({})
+const merchantInfo = ref<any>({});
 
 // 五维评分
 const scoreDimensions = ref<ScoreDimension[]>([
@@ -274,32 +267,26 @@ const scoreDimensions = ref<ScoreDimension[]>([
   { key: 'shzrdf', name: '社会责任', score: 0 },
   { key: 'hgjydf', name: '合规经营', score: 0 },
   { key: 'xfpjdf', name: '消费体验', score: 0 }
-])
-
-// ==================== 计算属性 ====================
-const statusText = computed(() => {
-  const map = { normal: '正常经营', rectify: '整改中', high: '高风险' }
-  return map[merchantInfo.value.status]
-})
+]);
 
 // ==================== 方法 ====================
 function onScroll(e: any) {
-  const scrollTop = e.detail.scrollTop
-  tabFixed.value = scrollTop > 380
+  const scrollTop = e.detail.scrollTop;
+  tabFixed.value = scrollTop > 380;
 }
 
 function switchTab(key: string) {
-  activeTab.value = key
+  activeTab.value = key;
 }
 
 /** 单张图片预览 */
 function previewImage(url: string) {
-  uni.previewImage({ current: url, urls: [url] })
+  uni.previewImage({ current: url, urls: [url] });
 }
 
 /** 返回上一页 */
 function goBack() {
-  uni.navigateBack()
+  uni.navigateBack();
 }
 
 /** 分享 */
@@ -310,31 +297,31 @@ function onShare() {
 /** 加载商家详情 - 调用 getMerchantInfo 整合接口 */
 async function loadMerchantDetail(id: string) {
   try {
-    const res = await getMerchantInfo(id)
+    const res = await getMerchantInfo(id);
 
     // 1. 商家基本信息
-    merchantInfo.value = res
-    console.log('-----', res)
+    merchantInfo.value = res;
+    console.log('-----', res);
 
     // 2. 商家得分（雷达图维度）
     if (merchantInfo.value.score) {
       scoreDimensions.value.forEach(item => {
-        item.score = merchantInfo.value.score[item.key]
-      })
+        item.score = merchantInfo.value.score[item.key];
+      });
     }
 
-    console.log('---scoreDimensions.value', scoreDimensions.value)
+    console.log('---scoreDimensions.value', scoreDimensions.value);
 
     // 3. 年度处罚 + 投诉信息（警示信息）
     if (merchantInfo.value.penalty || merchantInfo.value.complaint) {
-      const p = merchantInfo.value.penalty
-      const KEY_COMPLAINT = '年度投诉数量'
-      const KEY_PENALTY = '年度处罚数量'
-      warningItems[0].count = p[KEY_COMPLAINT] ?? 0
-      warningItems[1].count = p[KEY_PENALTY] ?? 0
+      const p = merchantInfo.value.penalty;
+      const KEY_COMPLAINT = '年度投诉数量';
+      const KEY_PENALTY = '年度处罚数量';
+      warningItems[0].count = p[KEY_COMPLAINT] ?? 0;
+      warningItems[1].count = p[KEY_PENALTY] ?? 0;
     }
   } catch (err) {
-    console.error('加载商家详情失败', err)
+    console.error('加载商家详情失败', err);
   }
 }
 
@@ -342,14 +329,14 @@ async function loadMerchantDetail(id: string) {
 function goComplaint() {
   uni.navigateTo({
     url: `/pages/complaint/index?id=${merchantInfo.value.id}`
-  })
+  });
 }
 
 /** 跳转评价页 */
 function goReview() {
   uni.navigateTo({
     url: `/pages/review/index?id=${merchantInfo.value.id}`
-  })
+  });
 }
 </script>
 

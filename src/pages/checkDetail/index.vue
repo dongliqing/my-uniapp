@@ -51,7 +51,7 @@
       </view>
 
       <!-- 底部间距 -->
-      <view style="height: 160rpx" />
+      <view style="height: 230rpx" />
     </scroll-view>
 
     <!-- 底部操作栏 - 仅进行中活动显示 -->
@@ -91,18 +91,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { getCheckDetail, addComment, removelike, addLike, getCheckLikes } from '@/api/check'
-import AImage from '@/components/AImage.vue'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { getCheckDetail, addComment, removelike, addLike, getCheckLikes } from '@/api/check';
+import AImage from '@/components/AImage.vue';
 
 interface ActivityItem {
-  id: number
-  hdmc: string
-  hdsj_0: string
-  hdsj_1: string
-  hdzt: string // 0 未开始 1 进行中 2 已结束
-  hdnr: string
+  id: number;
+  hdmc: string;
+  hdsj_0: string;
+  hdsj_1: string;
+  hdzt: string; // 0 未开始 1 进行中 2 已结束
+  hdnr: string;
 }
 
 const activity = ref<ActivityItem>({
@@ -112,72 +112,79 @@ const activity = ref<ActivityItem>({
   hdsj_1: '',
   hdzt: '',
   hdnr: ''
-})
+});
 
-const showInput = ref(false)
-const newComment = ref('')
-let pageId = ref('')
+const showInput = ref(false);
+const newComment = ref('');
+let pageId = ref('');
+const openid = uni.getStorageSync('openid');
 
 // 评论列表
-const comments = ref<any[]>([])
+const comments = ref<any[]>([]);
 
-const statusTextMap: Record<string, string> = { '0': '未开始', '1': '进行中', '2': '已结束' }
+const statusTextMap: Record<string, string> = { '0': '未开始', '1': '进行中', '2': '已结束' };
 function statusText(hdzt: string) {
-  return statusTextMap[hdzt] ?? '未知'
+  return statusTextMap[hdzt] ?? '未知';
 }
 function statusClass(hdzt: string) {
-  if (hdzt === '1') return 'check-detail__status--active'
-  if (hdzt === '0') return 'check-detail__status--pending'
-  return 'check-detail__status--ended'
+  if (hdzt === '1') return 'check-detail__status--active';
+  if (hdzt === '0') return 'check-detail__status--pending';
+  return 'check-detail__status--ended';
 }
 
 onLoad(options => {
-  pageId.value = options?.id
-  fetchDetail()
-})
+  pageId.value = options?.id;
+  fetchDetail();
+});
 
 async function fetchDetail() {
   if (!pageId.value) {
-    uni.showToast({ title: '参数缺失', icon: 'none' })
-    return
+    uni.showToast({ title: '参数缺失', icon: 'none' });
+    return;
   }
   try {
-    const res: any = await getCheckDetail({ mainTable: { id: pageId.value } })
-    const data = res?.datas?.[0]?.mainTable
-    if (data) activity.value = data as ActivityItem
-    comments.value = res?.datas?.[0]?.detail1
-    handleGetLikes()
+    const res: any = await getCheckDetail({ mainTable: { id: pageId.value } });
+    const data = res?.datas?.[0]?.mainTable;
+    if (data) activity.value = data as ActivityItem;
+    comments.value = res?.datas?.[0]?.detail1;
+    handleGetLikes();
   } catch (e) {
-    uni.showToast({ title: '获取详情失败', icon: 'none' })
+    uni.showToast({ title: '获取详情失败', icon: 'none' });
   }
 }
 
 const handleGetLikes = () => {
-  getCheckLikes({ param: { openid: '1234567890', hdid: pageId.value }, pageNo: 1, pageSize: 10 }).then(res => {
-    console.log('-----res', res)
-    const data = JSON.parse(res?.data[0].detail1)
-    console.log('---data', data)
+  const userInfo = uni.getStorageSync('userInfo');
+  console.log(userInfo, ' use----');
+
+  getCheckLikes({ param: { openid, hdid: pageId.value }, pageNo: 1, pageSize: 10 }).then(res => {
+    console.log('-----res', res);
+    const data = JSON.parse(res?.data[0].detail1);
+    console.log('---data', data);
 
     comments.value.forEach(item => {
-      const findItem = data.find((v: any) => v.id == item.id)
-      item.isLiked = Boolean(findItem?.zt)
-    })
-  })
-}
+      const findItem = data.find((v: any) => v.id == item.id);
+      item.isLiked = Boolean(findItem?.zt);
+    });
+  });
+};
 
 function showCommentInput() {
-  showInput.value = true
+  showInput.value = true;
 }
 
 function hideCommentInput() {
-  showInput.value = false
-  newComment.value = ''
+  showInput.value = false;
+  newComment.value = '';
 }
+
+const userInfo = uni.getStorageSync('userInfo');
+console.log('---userInfo', userInfo);
 
 async function submitComment() {
   if (!newComment.value.trim()) {
-    uni.showToast({ title: '请输入评论内容', icon: 'none' })
-    return
+    uni.showToast({ title: '请输入评论内容', icon: 'none' });
+    return;
   }
   try {
     await addComment({
@@ -189,40 +196,41 @@ async function submitComment() {
           detail1: [
             {
               plnr: newComment.value.trim(),
-              tx: '1263437120816267265',
-              xm: '测试123'
+              tx: userInfo.avatarFileId || '',
+              xm: userInfo.name || '匿名'
             }
           ]
         }
       ]
-    })
-    hideCommentInput()
-    uni.showToast({ title: '发布成功', icon: 'success' })
-    fetchDetail()
+    });
+    hideCommentInput();
+    uni.showToast({ title: '发布成功', icon: 'success' });
+    fetchDetail();
   } catch (e) {
-    uni.showToast({ title: '发布失败，请重试', icon: 'none' })
+    uni.showToast({ title: '发布失败，请重试', icon: 'none' });
   }
 }
 
 function toggleLike(comment: any) {
-  const func = comment.isLiked ? removelike : addLike
+  const func = comment.isLiked ? removelike : addLike;
   func({
     datas: [
       {
         mainTable: {
           plxx: comment.id,
-          dzryope: '1234567890'
+          dzryope: openid
         }
       }
     ]
   }).then((res: any) => {
-    console.log('---res', res)
+    console.log('---res', res);
     if (res.status) {
-      handleGetLikes()
+      uni.showToast({ title: '操作成功', icon: 'success' });
+      fetchDetail();
     } else {
-      uni.showToast({ title: res.message, icon: 'none' })
+      uni.showToast({ title: res.message, icon: 'none' });
     }
-  })
+  });
 }
 </script>
 
@@ -341,6 +349,7 @@ function toggleLike(comment: any) {
     flex-shrink: 0;
     background: #f5f5f5;
     border: 1rpx solid #f0f0f0;
+    overflow: hidden;
   }
   /* 评论主内容区 */
   &__comment-main {
