@@ -6,7 +6,7 @@
     </view>
     <view class="pt-[212rpx] flex items-center px-[36rpx] relative z-[9]">
       <!-- 头像用户名 -->
-      <AImage v-if="avatarFileId" class="!w-[120rpx] !h-[120rpx] !rounded-full" :file-id="avatarFileId" @tap="editAvatar" />
+      <AImage v-if="avatarFileId" class="!w-[120rpx] !h-[120rpx] !rounded-full overflow-hidden" :file-id="avatarFileId" @tap="editAvatar" />
       <image v-else class="w-[120rpx] h-[120rpx] rounded-full" src="@/static/images/avatar.png" mode="aspectFill" @tap="editAvatar" />
       <view class="ml-[24rpx] flex items-center" @tap="editUserName">
         <text class="text-[30rpx] text-[#000] mr-[16rpx] username pb-[4rpx]">{{ username || '未设置用户名' }}</text>
@@ -57,12 +57,13 @@ const editAvatar = () => {
     sizeType: ['compressed'], // 指定是原图还是压缩图
     sourceType: ['camera', 'album'], // 指定来源是相机还是相册
     success: async res => {
+      // console.log(res);
       const tempFilePath = res.tempFilePaths[0];
-      const fileName = res.tempFiles[0].name;
-      const type = res.tempFiles[0].type;
+      // const fileName = res.tempFiles[0].name;
+      // const type = res.tempFiles[0].type;
 
       // 上传到服务器
-      const fileid = await uploadFileApi(tempFilePath, fileName);
+      const fileid = await uploadFileApi(tempFilePath);
       avatarFileId.value = fileid;
       // console.log(fileid, type)
       updateUserInfo();

@@ -13,8 +13,8 @@ if (import.meta.env.NODE_ENV === 'production') {
 }
 
 /**上传文件 */
-export const uploadFileApi = (filePath, fileName) => {
-  const extension = fileName.split('.').pop().toLowerCase();
+export const uploadFileApi = (filePath: string) => {
+  const extension = filePath.split('.').pop().toLowerCase();
   const allowTypes = ['jpg', 'jpeg', 'png'];
 
   return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ export const uploadFileApi = (filePath, fileName) => {
       formData: {
         // 附带的额外表单数据
         module: 'document', //固定
-        name: fileName,
+        name: filePath,
         userid: userId //固定
       },
       success: ({ data }) => {
