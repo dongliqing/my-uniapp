@@ -212,9 +212,6 @@ async function submitComment() {
 
 function toggleLike(comment: any) {
   const isLikedBefore = comment.isLiked;
-  // 乐观更新：先改 UI，失败时回滚
-  comment.isLiked = !isLikedBefore;
-  comment.dzcs = (Number(comment.dzcs) || 0) + (isLikedBefore ? -1 : 1);
 
   const func = isLikedBefore ? removelike : addLike;
   func({
@@ -230,6 +227,9 @@ function toggleLike(comment: any) {
     .then((res: any) => {
       if (res.status) {
         uni.showToast({ title: '操作成功', icon: 'success' });
+        // 乐观更新：先改 UI，失败时回滚
+        comment.isLiked = !isLikedBefore;
+        comment.dzcs = (Number(comment.dzcs) || 0) + (isLikedBefore ? -1 : 1);
       } else {
         // 接口返回失败，回滚状态
         comment.isLiked = isLikedBefore;
