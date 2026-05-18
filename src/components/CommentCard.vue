@@ -2,7 +2,8 @@
   <view class="comment-card">
     <!-- 左侧头像 -->
     <view class="comment-card__avatar-wrap">
-      <image class="comment-card__avatar" :src="data.tx" mode="aspectFill" />
+      <AImage v-if="data.tx" class="comment-card__avatar" :fileId="data.tx"></AImage>
+      <image v-else class="comment-card__avatar" src="/src/static/images/avatar.png" mode="scaleToFill" />
     </view>
 
     <!-- 右侧内容区 -->
@@ -40,6 +41,7 @@ interface CommentData {
   xj: number;
   pj: string;
   tp?: string;
+  tx?: string;
   pjrq: string;
 }
 
