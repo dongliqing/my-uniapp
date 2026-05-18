@@ -211,7 +211,12 @@ async function submitComment() {
 }
 
 function toggleLike(comment: any) {
-  const func = comment.isLiked ? removelike : addLike;
+  const isLikedBefore = comment.isLiked;
+  // 乐观更新：先改 UI，失败时回滚
+  comment.isLiked = !isLikedBefore;
+  comment.dzcs = (Number(comment.dzcs) || 0) + (isLikedBefore ? -1 : 1);
+
+  const func = isLikedBefore ? removelike : addLike;
   func({
     datas: [
       {
@@ -221,15 +226,22 @@ function toggleLike(comment: any) {
         }
       }
     ]
-  }).then((res: any) => {
-    console.log('---res', res);
-    if (res.status) {
-      uni.showToast({ title: '操作成功', icon: 'success' });
-      fetchDetail();
-    } else {
-      uni.showToast({ title: res.message, icon: 'none' });
-    }
-  });
+  })
+    .then((res: any) => {
+      if (res.status) {
+        uni.showToast({ title: '操作成功', icon: 'success' });
+      } else {
+        // 接口返回失败，回滚状态
+        comment.isLiked = isLikedBefore;
+        comment.dzcs = Number(comment.dzcs) || 0;
+        uni.showToast({ title: res.message, icon: 'none' });
+      }
+    })
+    .catch(() => {
+      // 请求异常，回滚状态
+      comment.isLiked = isLikedBefore;
+      comment.dzcs = (Number(comment.dzcs) || 0) + (isLikedBefore ? 1 : -1);
+    });
 }
 </script>
 
