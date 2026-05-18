@@ -5,17 +5,17 @@
 </template>
 
 <script setup lang="ts">
-const externalLink = ref('')
+const externalLink = ref('');
 
 onLoad(options => {
-  console.log(options)
-  externalLink.value = decodeURIComponent(options.link)
+  externalLink.value = decodeURIComponent(options.link);
+  console.log(externalLink.value);
 
   //设置页面标题
   if (options.title) {
     uni.setNavigationBarTitle({
       title: options.title
-    })
+    });
   }
-})
+});
 </script>

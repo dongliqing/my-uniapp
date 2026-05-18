@@ -16,7 +16,7 @@
       </view>
       <view v-if="!formData.isBusiness" class="form-item">
         <text>姓名</text>
-        <input type="text" v-model="formData.name" placeholder="请输入姓名" maxlength="50" />
+        <input type="nickname" v-model="formData.name" placeholder="请输入姓名" maxlength="50" />
       </view>
       <view v-else class="form-item">
         <text>对应商家</text>
@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { appId, appSecret } from '@/pages/constant/constant';
 import { saveUserInfo, getStorePickerOptions } from '@/api/login.ts';
 import { customNavigateTo } from '@/utils/utils.ts';
 

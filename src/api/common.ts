@@ -14,12 +14,23 @@ if (import.meta.env.NODE_ENV === 'production') {
 
 /**上传文件 */
 export const uploadFileApi = (filePath, fileName) => {
-  //提示上传中
-  uni.showLoading({
-    title: '上传中',
-    mask: true
-  });
+  const extension = fileName.split('.').pop().toLowerCase();
+  const allowTypes = ['jpg', 'jpeg', 'png'];
+
   return new Promise((resolve, reject) => {
+    //格式校验
+    if (!allowTypes.includes(extension)) {
+      uni.showToast({ title: '仅支持 jpg/jpeg/png 格式的图片', icon: 'none' });
+      reject('文件格式错误');
+      return;
+    }
+
+    //提示上传中
+    uni.showLoading({
+      title: '上传中',
+      mask: true
+    });
+
     const url = '/api/file/v2/common/upload?access_token=' + token;
     uni.uploadFile({
       url: baseUrl + url, // 你的上传接口

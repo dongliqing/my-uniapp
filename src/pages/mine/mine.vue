@@ -14,7 +14,7 @@
       </view>
     </view>
     <view class="mt-[66rpx] rounded-[30rpx_30rpx_0_0] bg-[#f5f5f5] relative z-[9] h-[400rpx] p-[36rpx]">
-      <view class="flex items-center">
+      <view class="flex items-center" @click="jumpToBusiness">
         <image class="w-[60rpx] h-[60rpx]" src="@/static/images/icon-exchange.svg" mode="aspectFill" />
         <text class="text-[26rpx] text-[#000] ml-[24rpx]">切换商家版</text>
         <uni-icons type="forward" size="32rpx" color="#333" class="ml-auto" />
@@ -52,13 +52,14 @@ const editAvatar = () => {
   // 选择图片
   uni.chooseImage({
     count: 1, // 最多选择几张
+    // 仅在 H5 端生效，弹出选择框时只能选中 jpg 和 png 文件
+    extension: ['.jpg', '.jpeg', '.png'],
     sizeType: ['compressed'], // 指定是原图还是压缩图
     sourceType: ['camera', 'album'], // 指定来源是相机还是相册
-    extension: ['.jpg', '.jpeg', '.png'],
     success: async res => {
       const tempFilePath = res.tempFilePaths[0];
       const fileName = res.tempFiles[0].name;
-      // const type = res.tempFiles[0].type;
+      const type = res.tempFiles[0].type;
 
       // 上传到服务器
       const fileid = await uploadFileApi(tempFilePath, fileName);
@@ -92,6 +93,13 @@ const updateUserInfo = async () => {
         duration: 1500
       });
     }
+  });
+};
+
+const jumpToBusiness = () => {
+  const url = `https://jysj.syncbase.cn/sp/ebdpage/view/freepass/1268154919057244161?openid=${uni.getStorageSync('openid')}`;
+  uni.navigateTo({
+    url: '/pages/frame/frame?link=' + encodeURIComponent(url)
   });
 };
 

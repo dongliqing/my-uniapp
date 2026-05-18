@@ -4,14 +4,13 @@
     <view class="login-form pt-[40rpx] pb-[50rpx] flex flex-col items-center">
       <text style="font-weight: 600" class="text-[34rpx]">欢迎使用本系统</text>
       <text class="text-[#666] text-[26rpx] py-[8rpx]">快速登录，轻松使用</text>
-      <button class="login-btn" @click="handleGetPhone" :disabled="isLoading">手机号快捷登录</button>
+      <button class="login-btn" open-type="getPhoneNumber" @getphonenumber="handleGetPhone" :disabled="isLoading">手机号快捷登录</button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { appId, appSecret } from '@/pages/constant/constant';
-import { getUserInfo } from '@/api/login.ts';
+import { getUserInfo, getWxOpenid, getWxPhone } from '@/api/login.ts';
 import { customNavigateTo } from '@/utils/utils.ts';
 
 const redirectUrl = ref('');
@@ -20,7 +19,6 @@ onLoad(options => {
   // 从 options 中解构或直接获取参数
   redirectUrl.value = decodeURIComponent(options.redirect || '');
   // console.log('接收到的redirectUrl：', redirectUrl.value);
-  getOpenid();
 });
 
 // 表单数据
@@ -32,9 +30,9 @@ const formData = reactive({
 const isLoading = ref(false);
 
 const getOpenid = async () => {
-  uni.setStorageSync('openid', '1234567890');
+  // uni.setStorageSync('openid', '1234567890');
   // uni.setStorageSync('openid', '9234567890');
-  return;
+  // return;
   const loginRes = await uni.login({ provider: 'weixin' });
   console.log('loginRes', loginRes);
   if (loginRes.errMsg !== 'login:ok') {
@@ -43,70 +41,35 @@ const getOpenid = async () => {
   }
   const code = loginRes.code;
   console.log('获取到的 code:', code);
-  const requestRes = await uni.request({
-    url: `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&grant_type=authorization_code`,
-    method: 'GET',
-    data: { code: code }
-  });
+  const requestRes = await getWxOpenid({ code: code });
   console.log('requestRes', requestRes);
   // 3. 接收后端返回的 openid
-  const { openid } = requestRes.data as { openid: string };
+  const { openid } = requestRes as { openid: string };
   console.log('获取到的 openid:', openid);
   uni.setStorageSync('openid', openid);
 };
-// getOpenid();
-
-const getAccessToken = async () => {
-  const requestRes = await uni.request({
-    url: `https://api.weixin.qq.com/cgi-bin/token?appid=${appId}&secret=${appSecret}&grant_type=client_credential`,
-    method: 'GET'
-  });
-  const { access_token, expires_in } = requestRes.data as { access_token: string; expires_in: number };
-  //缓存access_token到本地
-  uni.setStorageSync('access_token', access_token);
-  const currentTime = Date.now(); //获取当前时间戳
-  const expiresIn = currentTime + expires_in * 1000;
-  uni.setStorageSync('access_token_expires_in', expiresIn);
-  console.log('获取到的 access_token:', access_token);
-  console.log('获取到的 expires_in:', expiresIn);
-};
-// getAccessToken();
+getOpenid();
 
 async function handleGetPhone(e) {
   console.log('e.detail', e.detail);
   // 2. 检查用户是否同意授权
   if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-    // uni.showToast({ title: '用户拒绝授权', icon: 'none' });
-    // return;
+    uni.showToast({ title: '用户拒绝授权', icon: 'none' });
+    return;
   }
 
-  uni.setStorageSync('phone', '19900009999');
   // uni.setStorageSync('phone', '19900007777');
 
-  getUserLoginInfo();
-
-  // await getAccessToken();
-  // const sessionToken = uni.getStorageSync('access_token');
-  // uni.request({
-  //   url: 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=' + sessionToken,
-  //   method: 'POST',
-  //   data: {
-  //     code: e.detail.code // 登录凭证
-  //   },
-  //   success: res => {
-  //     if (res.data.errcode === 0) {
-  //       const { phoneNumber } = res.data.phone_info;
-  //       formData.phone = phoneNumber;
-  //       // uni.showToast({ title: `手机号: ${phoneNumber}`, icon: 'success' });
-  //       // 这里可以进行后续的登录或绑定操作
-  //       console.log('phoneNumber：', phoneNumber);
-  //       //登录
-  //       uni.setStorageSync('phone', phoneNumber);
-  //     } else {
-  //       uni.showToast({ title: '获取失败', icon: 'none' });
-  //     }
-  //   }
-  // });
+  const res = await getWxPhone({
+    code: e.detail.code
+  });
+  const phoneNumber = res?.phoneInfo?.phoneNumber;
+  if (phoneNumber) {
+    uni.setStorageSync('phone', phoneNumber);
+    getUserLoginInfo();
+  } else {
+    uni.showToast({ title: '获取失败', icon: 'none' });
+  }
 }
 
 // 登录逻辑
@@ -138,7 +101,6 @@ const getUserLoginInfo = async () => {
         avatarFileId: result.tx || ''
       };
       uni.setStorageSync('userInfo', userInfo);
-
       customNavigateTo(redirectUrl.value);
     }
   });
