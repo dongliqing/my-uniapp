@@ -72,7 +72,7 @@
               </view>
             </view>
             <!-- 雷达图 -->
-            <ScoreRadarChart :dimensions="radarDimensions" :size="radarSize" class="manage__radar-wrap" />
+            <ScoreRadarChart v-if="loadCanvas" :dimensions="scoreDimensions" :size="radarSize" class="manage__radar-wrap" />
             <!-- ============ 商家展示 ============ -->
             <view class="manage__card">
               <!-- ============ 商家亮点 ============ -->
@@ -81,12 +81,17 @@
                   <image class="manage__section-bar" src="/static/images/svg/merchantDetail/title_line.svg" mode="aspectFit" />
                   <text class="manage__section-title">商家亮点</text>
                 </view>
-                <view v-for="hightlight in merchantInfo.highlights" :key="hightlight.id" class="manage__highlight-item">
-                  <image class="manage__highlight-icon" src="/static/images/svg/merchantDetail/high_comment.svg" mode="aspectFit" />
-                  <text class="manage__highlight-label">{{ hightlight.wdmc }}</text>
-                  <text class="manage__highlight-content">{{ hightlight.nr }}</text>
+                <view v-for="(hightlight, index) in merchantInfo.highlights" :key="hightlight.id">
+                  <view  class="manage__highlight-item">
+                    <image class="manage__highlight-icon" src="/static/images/svg/merchantDetail/high_comment.svg" mode="aspectFit" />
+                    <text class="manage__highlight-label">{{ hightlight.wdmc }}</text>
+                    <text class="manage__highlight-content">{{ hightlight.nr }}</text>
+                  </view>
+                  <view class="manage__highlight-divider" v-if="index !== merchantInfo.highlights.length - 1" ></view>
                 </view>
-                <view class="manage__highlight-divider" />
+         
+
+
               </view>
               <!-- ============ 警示信息 ============ -->
               <view class="manage__highlight-card">
@@ -209,13 +214,6 @@ const tabFixed = ref(false);
 
 // ==================== 雷达图数据 ====================
 const radarSize = ref(600);
-const radarDimensions = [
-  { name: '食品安全', score: 100 },
-  { name: '社会责任', score: 100 },
-  { name: '消费评价', score: 100 },
-  { name: '合规经营', score: 100 },
-  { name: '卫生环境', score: 100 }
-];
 
 // ==================== 警示信息 ====================
 const isEmptyAbnormal = computed(() => {
@@ -256,6 +254,7 @@ const tabs = [
 // ==================== 商家详情数据 ====================
 const merchantInfo = ref<any>({});
 
+  const loadCanvas = ref(false);
 // 五维评分
 const scoreDimensions = ref<ScoreDimension[]>([
   { key: 'spaqdf', name: '食品安全', score: 0 },
@@ -306,7 +305,7 @@ async function loadMerchantDetail(id: string) {
       });
     }
 
-    console.log('---scoreDimensions.value', scoreDimensions.value);
+    loadCanvas.value = true;
 
     // 3. 年度处罚 + 投诉信息（警示信息）
     if (merchantInfo.value.penalty || merchantInfo.value.complaint) {

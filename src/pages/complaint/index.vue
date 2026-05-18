@@ -98,11 +98,11 @@ function chooseImage() {
     uni.showToast({ title: '最多上传4张图片', icon: 'none' });
     return;
   }
-  uni.chooseImage({
+  uni.chooseMedia({
     count: 4 - form.tp.length,
     sizeType: ['compressed'],
+    mediaType: ['image'],
     sourceType: ['album', 'camera'],
-    extension: ['.jpg', '.jpeg', '.png'],
     success: async function (res) {
       const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
 

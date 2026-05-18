@@ -92,20 +92,20 @@ function chooseImage() {
     uni.showToast({ title: '最多上传4张图片', icon: 'none' });
     return;
   }
-  uni.chooseImage({
+  uni.chooseMedia({
     count: 4 - contentForm.tp.length,
     sizeType: ['compressed'],
+    mediaType: ['image'],
     sourceType: ['album', 'camera'],
-    extension: ['.jpg', '.jpeg', '.png'],
     success: async function (res) {
       const files: any[] = Array.isArray(res.tempFiles) ? res.tempFiles : [res.tempFiles];
 
       for (const file of files) {
         try {
           // 上传到服务器，获取文件ID
-          const fileid: any = await uploadFileApi(file.path, file.name);
+          const fileid: any = await uploadFileApi(file.tempFilePath, file.name);
           // 获取图片资源URL（base64）
-          previewImgs.value.push(file.path);
+          previewImgs.value.push(file.tempFilePath);
 
           contentForm.tp.push(fileid);
         } catch (e) {
