@@ -50,7 +50,8 @@
   "quickapp": {},
   /* 小程序特有相关 */
   "mp-weixin": {
-    "appid": "wx2db378085b7d6e59",
+    // "appid": "wx2db378085b7d6e59",
+    "appid": "wx4f84b2fd24d61e61",
     "requiredPrivateInfos": ["getLocation", "chooseLocation"],
     // 弹窗说明文字
     "permission": {

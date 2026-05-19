@@ -13,6 +13,7 @@
 import { getUserInfo, getWxOpenid, getWxPhone } from '@/api/login.ts';
 import { customNavigateTo } from '@/utils/utils.ts';
 
+const isTestMode = true;
 const redirectUrl = ref('');
 
 onLoad(options => {
@@ -46,19 +47,26 @@ const getOpenid = async () => {
   // 3. 接收后端返回的 openid
   const { openid } = requestRes as { openid: string };
   console.log('获取到的 openid:', openid);
-  uni.setStorageSync('openid', openid);
+  if (isTestMode) {
+    uni.setStorageSync('openid', 'abcdefgggg');
+  } else {
+    uni.setStorageSync('openid', openid);
+  }
 };
 getOpenid();
 
 async function handleGetPhone(e) {
+  if (isTestMode) {
+    uni.setStorageSync('phone', '19900007777');
+    getUserLoginInfo();
+    return;
+  }
   console.log('e.detail', e.detail);
   // 2. 检查用户是否同意授权
   if (e.detail.errMsg !== 'getPhoneNumber:ok') {
     uni.showToast({ title: '用户拒绝授权', icon: 'none' });
     return;
   }
-
-  // uni.setStorageSync('phone', '19900007777');
 
   const res = await getWxPhone({
     code: e.detail.code
@@ -83,7 +91,7 @@ const getUserLoginInfo = async () => {
     console.log('查询用户信息', res);
     const result = res?.datas?.[0]?.mainTable;
 
-    if (!result) {
+    if (isTestMode || !result) {
       // 用户不存在，跳转到注册页面
       if (redirectUrl.value) {
         uni.navigateTo({ url: '/pages/register/register?redirect=' + encodeURIComponent(redirectUrl.value) });
