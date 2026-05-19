@@ -69,13 +69,17 @@
     {
       "path": "pages/review/index",
       "style": {
-        "navigationBarTitleText": "评论"
+        "navigationBarTitleText": "评论",
+        "backgroundTextStyle": "dark",
+        "navigationBarBackgroundColor": "#c3e9ff"
       }
     },
     {
       "path": "pages/complaint/index",
       "style": {
-        "navigationBarTitleText": "投诉"
+        "navigationBarTitleText": "投诉",
+        "backgroundTextStyle": "dark",
+        "navigationBarBackgroundColor": "#c3e9ff"
       }
     },
     {

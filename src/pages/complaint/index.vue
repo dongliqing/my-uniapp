@@ -176,7 +176,7 @@ async function submit() {
 <style lang="scss">
 .complaint {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(180deg, #c3e9ff 0%, #fff 672rpx, #f5f5f5 100%);
   position: relative;
 
   &__hero-bg {
