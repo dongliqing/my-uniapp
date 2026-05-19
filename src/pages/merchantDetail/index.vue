@@ -42,7 +42,7 @@
           </view>
 
           <!-- 地址行 -->
-          <view class="detail-page__info-row">
+          <view class="detail-page__info-row" @click="goAddress">
             <text class="detail-page__info-text">{{ merchantInfo.sjdz }}</text>
             <uni-icons type="forward" size="26rpx" color="#333" class="" />
           </view>
@@ -296,12 +296,11 @@ async function loadMerchantDetail(id: string) {
 
     // 1. 商家基本信息
     merchantInfo.value = res;
-    console.log('-----', res);
 
     // 2. 商家得分（雷达图维度）
     if (merchantInfo.value.score) {
       scoreDimensions.value.forEach(item => {
-        item.score = merchantInfo.value.score[item.key];
+        item.score = merchantInfo.value.score[item.key] || 0;
       });
     }
 
@@ -333,11 +332,21 @@ function goReview() {
     url: `/pages/review/index?id=${merchantInfo.value.id}`
   });
 }
+
+// 跳转商家地址
+const goAddress = () => {
+  uni.openLocation({
+    latitude: Number(merchantInfo.value.sjdzjd),
+    longitude: Number(merchantInfo.value.sjdzwd),
+    name: merchantInfo.value.sjdz,
+    address: merchantInfo.value.sjdz
+  });
+};  
 </script>
 
 <style lang="scss" scoped>
 .detail-page {
-  min-height: 100vh;
+  min-height: 100%;
   background: #f5f5f5;
 
   &__content {

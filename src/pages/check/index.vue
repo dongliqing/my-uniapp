@@ -144,8 +144,6 @@ async function fetchData(reset: boolean = false) {
 function onPullDownRefresh() {
   refreshing.value = true;
   fetchData(true).then(res => {
-    console.log('---rs', res);
-
     refreshing.value = false;
   });
 }
