@@ -31,25 +31,22 @@ const formData = reactive({
 const isLoading = ref(false);
 
 const getOpenid = async () => {
-  // uni.setStorageSync('openid', '1234567890');
-  // uni.setStorageSync('openid', '9234567890');
-  // return;
-  const loginRes = await uni.login({ provider: 'weixin' });
-  console.log('loginRes', loginRes);
-  if (loginRes.errMsg !== 'login:ok') {
-    uni.showToast({ title: '登录失败', icon: 'none' });
-    return;
-  }
-  const code = loginRes.code;
-  console.log('获取到的 code:', code);
-  const requestRes = await getWxOpenid({ code: code });
-  console.log('requestRes', requestRes);
-  // 3. 接收后端返回的 openid
-  const { openid } = requestRes as { openid: string };
-  console.log('获取到的 openid:', openid);
   if (isTestMode) {
     uni.setStorageSync('openid', 'abcdefgggg');
   } else {
+    const loginRes = await uni.login({ provider: 'weixin' });
+    console.log('loginRes', loginRes);
+    if (loginRes.errMsg !== 'login:ok') {
+      uni.showToast({ title: '登录失败', icon: 'none' });
+      return;
+    }
+    const code = loginRes.code;
+    console.log('获取到的 code:', code);
+    const requestRes = await getWxOpenid({ code: code });
+    console.log('requestRes', requestRes);
+    // 3. 接收后端返回的 openid
+    const { openid } = requestRes as { openid: string };
+    console.log('获取到的 openid:', openid);
     uni.setStorageSync('openid', openid);
   }
 };
