@@ -336,8 +336,8 @@ function goReview() {
 // 跳转商家地址
 const goAddress = () => {
   uni.openLocation({
-    latitude: Number(merchantInfo.value.sjdzjd),
-    longitude: Number(merchantInfo.value.sjdzwd),
+    latitude: Number(merchantInfo.value.sjdzwd),
+    longitude: Number(merchantInfo.value.sjdzjd),
     name: merchantInfo.value.sjdz,
     address: merchantInfo.value.sjdz
   });
