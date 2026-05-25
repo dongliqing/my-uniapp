@@ -10,7 +10,6 @@
         <!-- 商家信息卡片 -->
         <view class="detail-page__info">
           <!-- 商家名称 -->
-          <image class="detail-page__name-logo" src="/static/images/svg/merchantDetail/status-normal.svg"></image>
           <text class="detail-page__name">{{ merchantInfo.sjxx }}</text>
           <!-- 评分行：星级 + 分数 + 分类 + 区域 -->
           <view class="detail-page__rating-row">
@@ -21,7 +20,7 @@
             <!-- <view class="detail-page__category-row">
               <text class="detail-page__category">{{ SJLX[merchantInfo.sjlx || 0] }}</text>
             </view> -->
-            <image class="detail-page__status" :src="`/static/images/svg/merchantDetail/status-0.svg`" mode="scaleToFill" />
+            <image class="detail-page__status" :src="`/static/images/svg/merchantDetail/${statusImage[merchantInfo.sjzt]}`" mode="scaleToFill" />
           </view>
 
           <!-- 标签行 -->
@@ -220,6 +219,12 @@ const isEmptyAbnormal = computed(() => {
   const info = merchantInfo.value?.erroInfo;
   return !info || Object.keys(info).length === 0;
 });
+
+const statusImage = {
+  0: 'status-0.svg',
+  1: 'status-1.png',
+  2: 'status-0.png'
+}
 
 const warningItems = [
   { label: '年度投诉', count: 0 },
